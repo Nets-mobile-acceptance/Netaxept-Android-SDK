@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        style="@style/ConfigConfirmationHeaderLabel"
+        android:text="@string/merchant_backend_base_url" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/ConfigConfirmationTypeLabel"
+            android:text="@string/test" />
+
+        <TextView
+            android:id="@+id/field_test_env"
+            style="@style/ConfigConfirmationValueLabel" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/ConfigConfirmationTypeLabel"
+            android:text="@string/production" />
+
+        <TextView
+            android:id="@+id/field_prod_env"
+            style="@style/ConfigConfirmationValueLabel" />
+
+    </LinearLayout>
+
+
+    <TextView
+        style="@style/ConfigConfirmationHeaderLabel"
+        android:layout_marginTop="20dp"
+        android:text="@string/netaxept_merchant_id" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/ConfigConfirmationTypeLabel"
+            android:text="@string/test" />
+
+        <TextView
+            android:id="@+id/field_test_id"
+            style="@style/ConfigConfirmationValueLabel" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/ConfigConfirmationTypeLabel"
+            android:text="@string/production" />
+
+        <TextView
+            android:id="@+id/field_prod_id"
+            style="@style/ConfigConfirmationValueLabel" />
+
+    </LinearLayout>
+
+</LinearLayout>

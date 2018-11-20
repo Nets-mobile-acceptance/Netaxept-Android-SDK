@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">PiaSample</string>
+
+    <!-- Main screen -->
+    <string name="payment_buy_btn">KÖP</string>
+    <string name="payment_total">Total</string>
+    <string name="payment_amount">10.00</string>
+    <string name="payment_enter_total_amount">Ange totalt belopp</string>
+    <string name="payment_description">Tack för att du handlar hos BikBok!</string>
+    <string name="payment_value_zero">Var vänlig ange ett värde större än noll.</string>
+    <string name="payment_rollback_error">Ett fel inträffade vid reversering av transaktionen.</string>
+    <string name="setting_menu">Inställningar</string>
+    <string name="share_menu">Dela</string>
+    <string name="currency_eur">EUR</string>
+    <string name="currency_sek">SEK</string>
+
+
+    <!-- Confirmation screen -->
+    <string name="merchant_name">Bik Bok</string>
+    <string name="done_btn">Klart</string>
+    <string name="payment_canceled">Transaktionen avbruten.</string>
+    <string name="payment_approved">Transaktionen godkänd.\nDu kan räkna med att få varorna inom 1&#8211;3 arbetsdagar.</string>
+    <string name="payment_failure">Ett oväntat fel inträffade.\nVar vänlig kontakta kundtjänst om problemet kvarstår.</string>
+
+    <!-- payment methods dialog -->
+    <string name="payment_method_title">Välj betalmetod</string>
+    <string name="payment_method_credit_cards">Kort</string>
+    <string name="payment_method_other">Andra</string>
+    <string name="payment_method_not_supported">Betalmetod stöds ej. </string>
+    <string name="card_expired_message">Kortet utgånget. Välj ett giltigt kort! </string>
+    <string name="card_expire_soon">Utår snart!</string>
+    <string name="card_expired">Utgånget!</string>
+
+    <!-- update customer id screen -->
+    <string name="enter_customer_id">Ange kundnummer</string>
+    <string name="change_customer_id">Ändra kundnummer</string>
+    <string name="logged_in_as">Inloggad som: &lt;br> &lt;i>%1$s&lt;/i></string>
+    <string name="login">Loggga in</string>
+    <string name="sign_up">Registrera</string>
+    <string name="register_card">Spara kort</string>
+    <string name="customer_id_is_invalid">Vänligen ange kundnummer.</string>
+    <string name="production_label">Produktion</string>
+    <string name="test_label">Test</string>
+    <string name="alert_ok">OK</string>
+
+    <!-- Confirmation Screen -->
+    <string name="process_cancelled">Bearbetning avbruten.</string>
+    <string name="process_error">Ett fel inträffade.\nFörsök igen senare.</string>
+    <string name="card_saved_success">Ditt kort\nhar sparats.</string>
+    <string name="thanks_for_shopping">Tack för att du handlar</string>
+    <string name="toolbar_title_cancelled">Avbrutet</string>
+    <string name="toolbar_title_failed">Fel</string>
+    <string name="toolbar_title_success_save">Kort sparat</string>
+    <string name="toolbar_title_success_pay">Betalning klar</string>
+</resources>

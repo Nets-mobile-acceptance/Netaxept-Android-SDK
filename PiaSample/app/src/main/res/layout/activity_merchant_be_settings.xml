@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".ui.activity.MerchantBESettingsActivity">
+
+    <eu.nets.pia.sample.ui.widget.CustomToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="54dp" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/toolbar"
+        android:background="@color/custom_spinner_background_color" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/divider"
+        android:isScrollContainer="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/MerchantSettingsHeader"
+                android:text="@string/merchant_backend_base_url" />
+
+            <TextView
+                style="@style/MerchantSettingsLabel"
+                android:text="@string/test_environment" />
+
+            <EditText
+                android:id="@+id/test_env_et"
+                style="@style/MerchantSettingsEditText"
+                android:imeOptions="actionNext"
+                android:nextFocusDown="@id/prod_env_et"
+                android:inputType="textUri" />
+
+            <TextView
+                style="@style/MerchantSettingsLabel"
+                android:text="@string/production_environment" />
+
+            <EditText
+                android:id="@+id/prod_env_et"
+                style="@style/MerchantSettingsEditText"
+                android:imeOptions="actionNext"
+                android:nextFocusDown="@id/test_merchant_id_et"
+                android:inputType="textUri" />
+
+            <TextView
+                style="@style/MerchantSettingsHeader"
+                android:layout_marginTop="20dp"
+                android:text="@string/netaxept_merchant_id" />
+
+            <TextView
+                style="@style/MerchantSettingsLabel"
+                android:text="@string/test_merchant_id" />
+
+            <EditText
+                android:id="@+id/test_merchant_id_et"
+                style="@style/MerchantSettingsEditText"
+                android:layout_marginEnd="160dp"
+                android:imeOptions="actionNext"
+                android:nextFocusDown="@id/prod_merchant_id_et"
+                android:inputType="text" />
+
+            <TextView
+                style="@style/MerchantSettingsLabel"
+                android:text="@string/production_merchant_id" />
+
+            <EditText
+                android:id="@+id/prod_merchant_id_et"
+                style="@style/MerchantSettingsEditText"
+                android:layout_marginEnd="160dp"
+                android:imeOptions="actionDone"
+                android:inputType="text" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>

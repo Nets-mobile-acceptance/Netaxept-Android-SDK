@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/divider"
+    android:orientation="vertical"
+    tools:context=".ui.activity.UICustomizationActivity">
+
+    <eu.nets.pia.sample.ui.widget.CustomToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_alignParentTop="true" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:id="@+id/header_global_customization"
+                style="@style/UICustomizationHeaderStyle"
+                android:text="@string/global_ui_customization" />
+
+            <LinearLayout
+                android:id="@+id/holder_nav_bar_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/header_global_customization">
+
+                <TextView
+                    android:id="@+id/nav_bar_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/navigation_bar_color" />
+
+                <ImageView
+                    android:id="@+id/nets_nav_bar_color"
+                    android:contentDescription="@string/navigation_bar_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@android:color/white" />
+
+                <ImageView
+                    android:id="@+id/dark_nav_bar_color"
+                    android:contentDescription="@string/navigation_bar_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/primary_dark" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_nav_bar_item_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_nav_bar_color">
+
+                <TextView
+                    android:id="@+id/nav_bar_item_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/navigation_bar_item_color" />
+
+                <ImageView
+                    android:id="@+id/nets_nav_bar_item_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/navigation_bar_item_color"
+                    android:background="@color/pia_custom_blue_tint_color" />
+
+                <ImageView
+                    android:id="@+id/dark_nav_bar_item_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/navigation_bar_item_color"
+                    android:background="@color/secondary_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_nav_bar_title_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_nav_bar_item_color">
+
+                <TextView
+                    android:id="@+id/nav_bar_title_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/navigation_bar_title_color" />
+
+                <ImageView
+                    android:id="@+id/nets_nav_bar_title_color"
+                    android:contentDescription="@string/navigation_bar_title_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@android:color/black" />
+
+                <ImageView
+                    android:id="@+id/dark_nav_bar_title_color"
+                    android:contentDescription="@string/navigation_bar_title_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/primary_light" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_background_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_nav_bar_title_color">
+
+                <TextView
+                    android:id="@+id/background_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/background_color" />
+
+                <ImageView
+                    android:id="@+id/nets_background_color"
+                    android:contentDescription="@+id/holder_nav_bar_title_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/pia_silver_color" />
+
+                <ImageView
+                    android:id="@+id/dark_background_color"
+                    android:contentDescription="@+id/holder_nav_bar_title_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@android:color/white" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_button_text_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_background_color">
+
+                <TextView
+                    android:id="@+id/button_text_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/button_text_color" />
+
+                <ImageView
+                    android:id="@+id/nets_button_text_color"
+                    android:contentDescription="@string/button_text_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@android:color/white" />
+
+                <ImageView
+                    android:id="@+id/dark_button_text_color"
+                    android:contentDescription="@string/button_text_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/primary_light" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_label_text_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_button_text_color">
+
+                <TextView
+                    android:id="@+id/label_text_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/label_text_color" />
+
+                <ImageView
+                    android:id="@+id/nets_label_text_color"
+                    android:contentDescription="@string/label_text_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@android:color/black" />
+
+                <ImageView
+                    android:id="@+id/dark_label_text_color"
+                    android:contentDescription="@string/label_text_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/primary_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_token_card_cvc_area_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_label_text_color">
+
+                <TextView
+                    android:id="@+id/token_card_cvc_area_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/token_card_cvc_area_color" />
+
+                <ImageView
+                    android:id="@+id/nets_token_card_cvc_area_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/token_card_cvc_area_color"
+                    android:background="@android:color/white" />
+
+                <ImageView
+                    android:id="@+id/dark_token_card_cvc_area_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/token_card_cvc_area_color"
+                    android:background="@color/accent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_text_field_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_token_card_cvc_area_color">
+
+                <TextView
+                    android:id="@+id/text_field_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/text_field_color" />
+
+                <ImageView
+                    android:id="@+id/nets_text_field_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/text_field_color"
+                    android:background="@android:color/black" />
+
+                <ImageView
+                    android:id="@+id/dark_text_field_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/text_field_color"
+                    android:background="@color/secondary_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_text_field_success_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_text_field_color">
+
+                <TextView
+                    android:id="@+id/text_field_success_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/text_field_success_color" />
+
+                <ImageView
+                    android:id="@+id/nets_text_field_success_color"
+                    android:contentDescription="@string/text_field_success_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/pia_green_dark_color" />
+
+                <ImageView
+                    android:id="@+id/dark_text_field_success_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/text_field_success_color"
+                    android:background="@color/custom_light_blue_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_text_field_error_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_text_field_success_color">
+
+                <TextView
+                    android:id="@+id/text_field_error_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/text_field_error_color" />
+
+                <ImageView
+                    android:id="@+id/nets_text_field_error_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/text_field_error_color"
+                    android:background="@color/pia_red_color" />
+
+                <ImageView
+                    android:id="@+id/dark_text_field_error_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/text_field_error_color"
+                    android:background="@android:color/holo_red_light" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_switch_thumb_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_text_field_error_color">
+
+                <TextView
+                    android:id="@+id/switch_thumb_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/switch_thumb_color" />
+
+                <ImageView
+                    android:id="@+id/nets_switch_thumb_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/switch_thumb_color"
+                    android:background="@color/pia_custom_blue_color" />
+
+                <ImageView
+                    android:id="@+id/dark_switch_thumb_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/switch_thumb_color"
+                    android:background="@color/primary" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_switch_on_tint_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_switch_thumb_color">
+
+                <TextView
+                    android:id="@+id/switch_on_tint_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/switch_on_tint_color" />
+
+                <ImageView
+                    android:id="@+id/nets_switch_on_tint_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/switch_on_tint_color"
+                    android:background="@color/pia_custom_blue_tint_color" />
+
+                <ImageView
+                    android:id="@+id/dark_switch_on_tint_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:contentDescription="@string/switch_on_tint_color"
+                    android:background="@color/primary_light" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_sample_font"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_switch_on_tint_color">
+
+                <TextView
+                    android:id="@+id/sample_font"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/use_sample_font_and_weight" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/use_sample_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_sample_image"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_sample_font">
+
+                <TextView
+                    android:id="@+id/sample_image"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/use_sample_image_for_logo" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/use_sample_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <!-- section start card io customization -->
+            <RelativeLayout
+                android:id="@+id/cardio_related_customization"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/holder_sample_image"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/header_cardio_customization"
+                    style="@style/UICustomizationHeaderStyle"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/cardio_ui_customization" />
+
+                <LinearLayout
+                    android:id="@+id/holder_cardio_background_color"
+                    style="@style/UICustomizationHolderSectionStyle"
+                    android:layout_below="@+id/header_cardio_customization">
+
+                    <TextView
+                        android:id="@+id/cardio_background_color"
+                        style="@style/UICustomizationOptionStyle"
+                        android:text="@string/cardio_background" />
+
+                    <ImageView
+                        android:id="@+id/nets_cardio_background_color"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:contentDescription="@string/cardio_background"
+                        android:background="@android:color/black" />
+
+                    <ImageView
+                        android:id="@+id/dark_cardio_background_color"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:contentDescription="@string/cardio_background"
+                        android:background="@android:color/white" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/holder_cardio_text_color"
+                    style="@style/UICustomizationHolderSectionStyle"
+                    android:layout_below="@+id/holder_cardio_background_color">
+
+                    <TextView
+                        android:id="@+id/cardio_text_color"
+                        style="@style/UICustomizationOptionStyle"
+                        android:text="@string/cardio_text_color" />
+
+                    <ImageView
+                        android:id="@+id/nets_cardio_text_color"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:contentDescription="@string/cardio_text_color"
+                        android:background="@android:color/white" />
+
+                    <ImageView
+                        android:id="@+id/dark_cardio_text_color"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:contentDescription="@string/cardio_text_color"
+                        android:background="@android:color/white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/holder_cardio_frame_color"
+                    style="@style/UICustomizationHolderSectionStyle"
+                    android:layout_below="@+id/holder_cardio_text_color">
+
+                    <TextView
+                        android:id="@+id/cardio_frame_color"
+                        style="@style/UICustomizationOptionStyle"
+                        android:text="@string/cardio_frame_color" />
+
+                    <ImageView
+                        android:id="@+id/nets_cardio_frame_color"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:contentDescription="@string/cardio_frame_color"
+                        android:background="@android:color/white" />
+
+                    <ImageView
+                        android:id="@+id/dark_cardio_frame_color"
+                        android:contentDescription="@string/cardio_frame_color"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:background="@android:color/white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/holder_cardio_button_background"
+                    style="@style/UICustomizationHolderSectionStyle"
+                    android:layout_below="@+id/holder_cardio_frame_color">
+
+                    <TextView
+                        android:id="@+id/cardio_button_background"
+                        style="@style/UICustomizationOptionStyle"
+                        android:text="@string/cardio_button_background" />
+
+                    <ImageView
+                        android:id="@+id/nets_cardio_button_background"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:contentDescription="@string/cardio_button_background"
+                        android:background="@android:color/white" />
+
+                    <ImageView
+                        android:id="@+id/dark_cardio_button_background"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:contentDescription="@string/cardio_button_background"
+                        android:background="@color/primary" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/holder_cardio_button_text_color"
+                    style="@style/UICustomizationHolderSectionStyle"
+                    android:layout_below="@+id/holder_cardio_button_background">
+
+                    <TextView
+                        android:id="@+id/cardio_button_text_color"
+                        style="@style/UICustomizationOptionStyle"
+                        android:text="@string/cardio_button_text_color" />
+
+                    <ImageView
+                        android:id="@+id/nets_cardio_button_text_color"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:contentDescription="@string/cardio_button_text_color"
+                        android:background="@color/primary" />
+
+                    <ImageView
+                        android:id="@+id/dark_cardio_button_text_color"
+                        style="@style/UICustomizationColorItemStyle"
+                        android:contentDescription="@string/cardio_button_text_color"
+                        android:background="@color/primary_light" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/holder_cardio_text_font"
+                    style="@style/UICustomizationHolderSectionStyle"
+                    android:layout_below="@+id/holder_cardio_button_text_color">
+
+                    <TextView
+                        android:id="@+id/cardio_text_font"
+                        style="@style/UICustomizationOptionStyle"
+                        android:text="@string/cardio_text_font" />
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/use_cardio_text_font"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/holder_cardio_button_text_font"
+                    style="@style/UICustomizationHolderSectionStyle"
+                    android:layout_below="@+id/holder_cardio_text_font">
+
+                    <TextView
+                        android:id="@+id/cardio_button_text_font"
+                        style="@style/UICustomizationOptionStyle"
+                        android:text="@string/cardio_button_text_font" />
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/use_button_cardio_text_font"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+            <!-- end section card io customization -->
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>

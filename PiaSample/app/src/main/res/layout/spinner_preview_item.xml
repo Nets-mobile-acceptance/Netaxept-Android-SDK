@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="2dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/currency_preview"
+        android:layout_width="match_parent"
+        android:textColor="@color/pia_black_color"
+        android:layout_height="wrap_content"
+        android:textSize="20sp" />
+
+</LinearLayout>

@@ -1,0 +1,60 @@
+
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "eu.nets.pia.sample"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode Integer.parseInt(VERSION_CODE)
+        versionName VERSION_NAME
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+
+    buildTypes {
+        release {
+            buildConfigField "String", "MERCHANT_ID_PROD", MERCHANT_ID_PROD
+            buildConfigField "String", "MERCHANT_BACKEND_URL_PROD", MERCHANT_BACKEND_URL_PROD
+            buildConfigField "String", "MERCHANT_ID_TEST", MERCHANT_ID_TEST
+            buildConfigField "String", "MERCHANT_BACKEND_URL_TEST", MERCHANT_BACKEND_URL_TEST
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            buildConfigField "String", "MERCHANT_ID_PROD", MERCHANT_ID_PROD
+            buildConfigField "String", "MERCHANT_BACKEND_URL_PROD", MERCHANT_BACKEND_URL_PROD
+            buildConfigField "String", "MERCHANT_ID_TEST", MERCHANT_ID_TEST
+            buildConfigField "String", "MERCHANT_BACKEND_URL_TEST", MERCHANT_BACKEND_URL_TEST
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:support-v4:26.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation "com.google.code.gson:gson:2.8.2"
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+
+	implementation('eu.nets.pia:pia-sdk:1.0.0@aar') { transitive = true; changing=true; }
+
+
+}

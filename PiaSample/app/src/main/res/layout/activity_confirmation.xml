@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
+    tools:context=".ui.activity.ConfirmationActivity">
+
+    <eu.nets.pia.sample.ui.widget.CustomToolbar
+        android:layout_width="match_parent"
+        android:id="@+id/custom_toolbar"
+        android:layout_alignParentTop="true"
+        android:layout_height="54dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_toolbar"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/status_icon"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:tint="@android:color/white"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:id="@+id/status_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="35sp"
+            android:layout_marginTop="20dp"
+            android:textColor="@android:color/white"
+            android:layout_below="@+id/status_icon"/>
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

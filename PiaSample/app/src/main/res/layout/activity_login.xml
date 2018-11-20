@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
+
+    <eu.nets.pia.sample.ui.widget.CustomToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="57dp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:src="@drawable/login_bg"
+        android:contentDescription="@string/background_image"
+        android:scaleType="centerCrop" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_margin="10dp"
+        android:fillViewport="true"
+        android:isScrollContainer="false">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/not_logged_in_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/customer_id_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/enter_customer_id"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp" />
+
+                <EditText
+                    android:id="@+id/customer_id_et"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/customer_id_tv"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/login_input_bg"
+                    android:gravity="center"
+                    android:hint="@string/customer_id_hint"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:letterSpacing="0.5"
+                    android:maxLength="6"
+                    android:maxLines="1"
+                    android:padding="2dp"
+                    android:textColor="@color/dark_blue"
+                    android:textColorHint="@color/light_gray"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/sign_up_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/customer_id_et"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/login_btn_bg"
+                    android:text="@string/sign_up"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/customer_id_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/customer_id"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/customer_id_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/customer_id_text"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/change_customer_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/customer_id_label"
+                    android:layout_toEndOf="@+id/customer_id_label"
+                    android:padding="5dp"
+                    android:text="@string/action_change"
+                    android:textColor="@color/custom_light_blue_color"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/app_version_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/change_customer_id"
+                    android:layout_marginTop="25dp"
+                    android:text="@string/application_version"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/app_version_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/app_version_text"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/details_app_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/app_version_label"
+                    android:layout_toEndOf="@+id/app_version_label"
+                    android:padding="5dp"
+                    android:text="@string/action_details"
+                    android:textColor="@color/custom_light_blue_color"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/features_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/app_version_label"
+                    android:layout_marginTop="25dp"
+                    android:text="@string/features"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/features_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/features_text"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/register_new_card"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/save_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/features_label"
+                    android:layout_toEndOf="@+id/features_label"
+                    android:padding="5dp"
+                    android:text="@string/action_register_new_card"
+                    android:textColor="@color/custom_light_blue_color"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/configurations_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/features_label"
+                    android:layout_marginTop="25dp"
+                    android:text="@string/configurations"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/url_switch_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/configurations_text"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/use_test_environment"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/pia_text_normal" />
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/url_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:theme="@style/SwitchStyleBasic" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/use_system_auth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/url_switch_group"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/use_system_authentication"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/pia_text_normal" />
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switch_sistem_auth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:theme="@style/SwitchStyleBasic" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/change_merchant_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/use_system_auth"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/change_merchant_info"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/action_change_merchant_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/change_merchant_info"
+                    android:layout_toEndOf="@+id/change_merchant_info"
+                    android:padding="5dp"
+                    android:text="@string/action_change"
+                    android:textColor="@color/custom_light_blue_color"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/customize_ui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/change_merchant_info"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/customize_ui"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/action_customize_ui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/customize_ui"
+                    android:layout_toEndOf="@+id/customize_ui"
+                    android:padding="5dp"
+                    android:text="@string/action_customize"
+                    android:textColor="@color/custom_light_blue_color"
+                    android:textSize="@dimen/pia_text_normal" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/spinner_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/custom_spinner_background_color"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/dark_blue"
+            android:indeterminateTintMode="src_atop" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

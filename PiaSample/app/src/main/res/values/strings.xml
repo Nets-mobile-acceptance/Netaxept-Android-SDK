@@ -1,0 +1,107 @@
+<resources>
+    <string name="app_name">PiaSample</string>
+
+    <!-- Main screen -->
+    <string name="payment_buy_btn">Buy</string>
+    <string name="payment_total">Total</string>
+    <string name="payment_amount">10.00</string>
+    <string name="payment_enter_total_amount">Enter total amount</string>
+    <string name="payment_description">Thank you for shopping on BikBok!</string>
+    <string name="payment_value_zero">Please add a non-zero value.</string>
+    <string name="payment_rollback_error">There was an error when rolling back the transaction.</string>
+    <string name="setting_menu">Settings</string>
+    <string name="share_menu">Share</string>
+    <string name="currency_eur">EUR</string>
+    <string name="currency_sek">SEK</string>
+    <string name="currency_dkk">DKK</string>
+    <string name="currency_nok">NOK</string>
+
+
+    <!-- payment methods dialog -->
+    <string name="payment_method_title">Choose a payment method</string>
+    <string name="payment_method_credit_cards">New Card</string>
+    <string name="payment_method_other">Other</string>
+    <string name="payment_method_not_supported">Payment method not supported. </string>
+    <string name="card_expired_message">Card has expired. Please select a valid card! </string>
+    <string name="card_expire_soon">Expire soon!</string>
+    <string name="card_expired">Expired!</string>
+
+    <!-- update customer id screen -->
+    <string name="enter_customer_id">Enter customer ID</string>
+    <string name="customer_id_is_invalid">Please fill in a customer id.</string>
+    <string name="use_system_authentication">Use System Authentication</string>
+    <string name="app_version">App version</string>
+    <string name="alert_ok">OK</string>
+    <string name="new_customer_id">New Customer ID</string>
+    <string name="customer_id_hint">- - - - - -</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="settings_title">Settings</string>
+    <string name="customer_id">Customer ID</string>
+    <string name="action_change">Change</string>
+    <string name="application_version">Application Version</string>
+    <string name="action_details">Details</string>
+    <string name="features">Features</string>
+    <string name="register_new_card">Register new card</string>
+    <string name="action_register_new_card">Add</string>
+    <string name="configurations">Configurations</string>
+    <string name="use_test_environment">Use test environment</string>
+    <string name="background_image">Background Image</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="customize_ui">Customize UI</string>
+    <string name="action_customize">Custom</string>
+
+    <!-- Confirmation Screen -->
+    <string name="process_cancelled">Process is cancelled.</string>
+    <string name="process_error">There was an error.\nPlease try again later.</string>
+    <string name="card_saved_success">Your card has\nbeen saved.</string>
+    <string name="thanks_for_shopping">Thanks for shopping</string>
+    <string name="toolbar_title_cancelled">Cancelled</string>
+    <string name="toolbar_title_failed">Failed</string>
+    <string name="toolbar_title_success_save">Card Saved</string>
+    <string name="toolbar_title_success_pay">Payment Completed</string>
+
+    <!-- Merchant Backend Settings Screen -->
+    <string name="change_merchant_info">Change Merchant Info</string>
+    <string name="merchant_backend_base_url">Merchant backend base URL</string>
+    <string name="test_environment">Test environment</string>
+    <string name="production_environment">Production environment</string>
+    <string name="netaxept_merchant_id">Netaxept Merchant ID</string>
+    <string name="test_merchant_id">Test Merchant ID</string>
+    <string name="production_merchant_id">Production Merchant ID</string>
+    <string name="test">Test</string>
+    <string name="production">Production</string>
+    <string name="new_configuration">New Configuration</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_ok">OK</string>
+    <string name="merchant_be_settings_title">Merchant BE Settings</string>
+
+    <!-- Customize UI Screen -->
+    <string name="global_ui_customization">Global UI Customization</string>
+    <string name="navigation_bar_color">Navigation Bar Color</string>
+    <string name="navigation_bar_item_color">Navigation Bar item Color</string>
+    <string name="navigation_bar_title_color">Navigation Bar title Color</string>
+    <string name="background_color">Background Color</string>
+    <string name="button_text_color">Button text Color</string>
+    <string name="label_text_color">Label text Color</string>
+    <string name="token_card_cvc_area_color">Token Card CVC area Color</string>
+    <string name="text_field_color">Text field Color</string>
+    <string name="text_field_success_color">Text field success Color</string>
+    <string name="text_field_error_color">Text field error Color</string>
+    <string name="switch_thumb_color">Switch thumb Color</string>
+    <string name="switch_on_tint_color">Switch on tint Color</string>
+    <string name="use_sample_font_and_weight">Use sample font and weight</string>
+    <string name="use_sample_image_for_logo">Use sample image for logo</string>
+    <!-- CardIO customization related strings -->
+    <string name="cardio_ui_customization">CardIO UI Customization</string>
+    <string name="cardio_background">CardIO background</string>
+    <string name="cardio_text_color">CardIO Text Color</string>
+    <string name="cardio_frame_color">CardIO Frame Color</string>
+    <string name="cardio_button_background">CardIO Button Background</string>
+    <string name="cardio_button_text_color">CardIO Button Text color</string>
+    <string name="cardio_text_font">CardIO Text Font</string>
+    <string name="cardio_button_text_font">CardIO Button Text Font</string>
+    <!-- end CardIO customization related strings -->
+
+
+</resources>
