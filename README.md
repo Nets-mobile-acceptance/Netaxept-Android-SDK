@@ -6,8 +6,8 @@ PiA Netaxept Android SDK is a library that provides the native In-App interactio
 
 **PiA - Netaxept iOS SDK** can also be found [here](https://github.com/Nets-mobile-acceptance/Netaxept-iOS-SDK)
 
-
-![Demo](readme-files/demo-sdk.gif)
+| ![](readme-files/demo_pay_with_new_card.gif)  | ![](readme-files/demo_pay_with_saved_card.gif) |
+| --- | --- |
 
 
 # Installation
