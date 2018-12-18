@@ -76,7 +76,7 @@ New releases (improvements and fixes) since `v1.0.0`:
 	+ **Security improvement:** Payment parameters passed by the SDK to the backend are now sent through a **POST**. The **GET** request is discontinued
     + **Xamarin** and **ReactNative** support
     + Fixed logo issue for _DinersClubInternational_ recurring payments
-    + Improved _PiaSDK.start()_ to accept _Fragment_ patrameter
+    + Improved _PiaSDK.start()_ to accept _Fragment_ parameter
     + New configuration to disable card scanner
 
 
