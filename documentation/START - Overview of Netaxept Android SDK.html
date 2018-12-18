@@ -37,9 +37,17 @@ Read below for more information on how to use it.</p>
 </ul>
 <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         ...
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.0.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.1.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         ...
     }
+</code></pre>
+<ul>
+<li>In your application's <code>proguard-rules.pro</code> file, add the following rules for <strong>Card.Io</strong> library:
+</ul>
+<pre><code class="language-gradle">
+#Rules required by Card.Io library
+-<span class="hljs-keyword">keep</span> class <span class="hljs-string">eu.nets.pia.cardio.**</span> { *; }
+-<span class="hljs-keyword">dontwarn</span> <span class="hljs-string">eu.nets.pia.cardio.**</span>
 </code></pre>
 <ul>
 <li><strong>PiA SDK</strong> is using Retrofit open-source HTTP client library for the network service which requires the acknowledgement and the same applies to the app that utilizes it<br>
@@ -67,6 +75,13 @@ needs to add acknowledgement for Retrofit reference library also. You can find i
 <li><code>TokenCardInfo</code> under key <code>PiaActivity.BUNDLE_TOKEN_CARD_INFO</code></li>
 </ul>
 </li>
+</ul>
+<p><strong>Note:</strong> For <strong>Xamarin</strong> integration, due to obfuscation in closed-source library, the Xamarin Bindings cannot convert the Keys from <code>PiaActivity</code> to be public. In order to have this library fully compatible with Xamarin, we added these properties in <code>PiaSDK</code> class:</p>
+<ul>
+<li><code>PiaSDK.BundleMerchantInfo</code></li>
+<li><code>PiaSDK.BundleOrderInfo</code></li>
+<li><code>PiaSDK.BundleTokenCardInfo</code></li>
+<li><code>PiaSDK.BundleCompleteResult</code></li>
 </ul>
 <p>After this step, the SDK will interact with the user to post payment sensitive data to Netaxept to process the transaction. As a consequence, you will be notified by the SDK about the <code>PiaResult</code> as Intent object <code>Intent</code> in the <code>onActivityResult</code> callback from your activity where the SDK is started.</p>
 <p>If you receive the successful result <code>PiaResult</code>, you could follow the sequence diagram to proceed the corresponding Netaxept call(s) to finalize the transaction. Otherwise, you need to handle the cancellation or failure case accordingly.</p>
@@ -485,6 +500,10 @@ When applying the configuration, please keep in mind the following:</p>
 <li>Due  to PCI DSS requirements and known vulnerabilities in secure protocols less than TLS 1.2, TLS 1.2 is the only secure protocol available when connecting towards Netaxept. For this reason, we don’t support the Android versions lower than 5.0 which are NOT enabled/supported TLS 1.2<br>
 by default. For more information, you can check the details from <a href="https://shop.nets.eu/web/partners/communication">Netaxept</a>.</li>
 </ul>
+<h1><a id="Disable_card_scanner"></a>Disable card scanner</h1>
+<hr>
+<p>If you wish to disable card scanning functionality, you can toggle the following parameter within <code>PiaInterfaceConfiguration</code> API.</p>
+<pre><code class="language-java">  PiaInterfaceConfiguration.getInstance().setDisableCardIO(true);</code></pre>
 <h1><a id="Error_Codes_Handling"></a>Error Codes Handling</h1>
 <hr>
 <p>In the following link, you can find the Microsoft Excel document with the error codes handled inside the <strong>PiA SDK</strong>, along with further description on how they are used. <a href="error-codes/PiA_SDK-Netaxept_-_Response_codes.xlsx">PiA SDK - Netaxept - Response codes</a></p>
@@ -536,5 +555,16 @@ The above copyright notice and this permission notice shall be included in all c
 <h4><a id="API_Changes_597"></a>API Changes:</h4>
 <ul>
 <li>First official release</li>
+</ul>
+<h4><a id="v110_Released_14Dec2018_580"></a>v1.1.0 Released: 18-Dec-2018</h4>
+<h4><a id="API_Changes_5581"></a>API Changes:</h4>
+<ul>
+<li><strong>Security improvement:</strong> Payment parameters passed by the SDK to the backend are now sent through a <strong>POST</strong>. The <strong>GET</strong> request is discontinued</li>
+<li><strong>Xamarin</strong> and <strong>React Native</strong> support</li>
+<li>Fixed logo issue for <i>DinersClubInternational</i> recurring payments</li>
+<li>Improved <i>PiaSDK.start()</i> to accept Fragment patrameter</li>
+<li>New configuration to disable card scanner</li>
+</ul>
+
 
 </body></html>

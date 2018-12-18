@@ -39,6 +39,9 @@ public class DisplayedToken extends PaymentMethod {
     }
 
     public String getIssuer() {
+        if (issuer.toLowerCase().equals(PaymentMethodsFragment.ID_DINERS.toLowerCase())) {
+            return "Diners"; //return just "Diners" since "DinersClubInternational" is too large
+        }
         return issuer;
     }
 
@@ -77,7 +80,9 @@ public class DisplayedToken extends PaymentMethod {
             case PaymentMethodsFragment.ID_DANKORT:
                 return R.drawable.pia_dan_kort;
             case PaymentMethodsFragment.ID_JCB:
-                return R.drawable.jcb_logo;
+                return R.drawable.pia_jcb;
+            case PaymentMethodsFragment.ID_DINERS:
+                return R.drawable.pia_diners;
             default:
                 return R.drawable.pia_visa;
         }

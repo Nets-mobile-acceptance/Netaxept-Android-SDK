@@ -36,6 +36,9 @@ public class SampleApplication extends Application {
         PiaSampleSharedPreferences.initPrefs(this);
 
 
+        //set the SDK configuration related to CardIo at runtime
+        PiaInterfaceConfiguration.getInstance().setDisableCardIO(PiaSampleSharedPreferences.isDisableCardIo());
+
         //apply custom UI elements to SDK such as colors, fonts and icons
         //uncomment the method call to test the customization
         //customizeSDK();

@@ -588,7 +588,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         if (issuer.equals("dankort")) {
             return SchemeType.DANKORT;
         }
-        if (issuer.equals("dinersclubinternational")) {
+        if (issuer.equals("diners")) {
             return SchemeType.DINERS_CLUB_INTERNATIONAL;
         }
         if (issuer.equals("amex") || issuer.equals("americanexpress")) {

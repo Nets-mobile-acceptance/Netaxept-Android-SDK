@@ -31,6 +31,7 @@ public class PiaSampleSharedPreferences {
     private static final String PIA_TEST_MODE = "pia_test_mode";
     private static final String CUSTOMER_CURRENCY = "customer_currency";
     private static final String USE_SYSTEM_AUTH = "use_system_auth";
+    private static final String DISABLE_CARD_IO = "disable_card_io";
     private static final String MERCHANT_ENV_TEST = "merchant_env_test";
     private static final String MERCHANT_ENV_PROD = "merchant_env_prod";
     private static final String MERCHANT_ID_TEST = "merchant_id_test";
@@ -72,6 +73,16 @@ public class PiaSampleSharedPreferences {
 
     public static boolean isPiaTestMode() {
         return mSharedPrefs.getBoolean(PIA_TEST_MODE, false);
+    }
+
+    public static void setDisableCardIo(boolean disableCardIo){
+        SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
+        prefsEditor.putBoolean(DISABLE_CARD_IO, disableCardIo);
+        prefsEditor.commit();
+    }
+
+    public static boolean isDisableCardIo(){
+        return mSharedPrefs.getBoolean(DISABLE_CARD_IO, false);
     }
 
     public static void setCustomerCurrency(String customerCurrency) {

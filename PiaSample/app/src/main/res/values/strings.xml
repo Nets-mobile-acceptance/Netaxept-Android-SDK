@@ -75,6 +75,7 @@
     <string name="action_confirm">Confirm</string>
     <string name="action_ok">OK</string>
     <string name="merchant_be_settings_title">Merchant BE Settings</string>
+    <string name="disable_cardio">Disable card scanner</string>
 
     <!-- Customize UI Screen -->
     <string name="global_ui_customization">Global UI Customization</string>

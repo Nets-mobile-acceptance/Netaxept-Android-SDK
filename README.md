@@ -1,4 +1,4 @@
-# PiA - Netaxept Android SDK v1.0.0
+# PiA - Netaxept Android SDK v1.1.0
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -14,7 +14,14 @@ PiA Netaxept Android SDK is a library that provides the native In-App interactio
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:1.0.0') { transitive = true; changing=true; }
+implementation('eu.nets.pia:pia-sdk:1.1.0') { transitive = true; changing=true; }
+```
+
+**Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
+```java
+#Rules required by Card.Io library
+-keep class eu.nets.pia.cardio.** { *; }
+-dontwarn eu.nets.pia.cardio.**
 ```
     
 **Note:** the library is available through both `jcenter()` and `mavenCentral()` repositories.
@@ -60,6 +67,17 @@ Supported payment methods:
      - Dankort
      - PayPal
 - Nordic mobile wallets (Vipps, Swish, MobilePay) – available soon
+
+# Releases
+
+New releases (improvements and fixes) since `v1.0.0`:
+
+- `v1.1.0`: Released on 18-Dec-2018
+	+ **Security improvement:** Payment parameters passed by the SDK to the backend are now sent through a **POST**. The **GET** request is discontinued
+    + **Xamarin** and **ReactNative** support
+    + Fixed logo issue for _DinersClubInternational_ recurring payments
+    + Improved _PiaSDK.start()_ to accept _Fragment_ patrameter
+    + New configuration to disable card scanner
 
 
 # Usage

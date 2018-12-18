@@ -31,6 +31,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.data.model.MerchantInfo;
@@ -93,6 +94,8 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     SwitchCompat mUrlSwitch;
     @BindView(R.id.switch_sistem_auth)
     SwitchCompat mSystemAuthSwitch;
+    @BindView(R.id.switch_disable_cardio)
+    SwitchCompat mDisableCardIOSwitch;
     //end
     @BindView(R.id.spinner_holder)
     protected RelativeLayout mProgressBar;
@@ -173,8 +176,18 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                 }
             });
 
+            mDisableCardIOSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    PiaSampleSharedPreferences.setDisableCardIo(isChecked);
+                    //also, update the flag inside the SDK
+                    PiaInterfaceConfiguration.getInstance().setDisableCardIO(isChecked);
+                }
+            });
+
             mSystemAuthSwitch.setChecked(PiaSampleSharedPreferences.isUseSystemAuth());
             mUrlSwitch.setChecked(PiaSampleSharedPreferences.isPiaTestMode());
+            mDisableCardIOSwitch.setChecked(PiaSampleSharedPreferences.isDisableCardIo());
         }
     }
 

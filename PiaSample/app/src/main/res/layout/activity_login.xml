@@ -243,11 +243,35 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/disable_card_io"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/use_system_auth"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/disable_cardio"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/pia_text_normal" />
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switch_disable_cardio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:theme="@style/SwitchStyleBasic" />
+
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/change_merchant_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/use_system_auth"
+                    android:layout_below="@+id/disable_card_io"
                     android:layout_marginEnd="10dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/change_merchant_info"
