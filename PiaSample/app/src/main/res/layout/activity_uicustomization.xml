@@ -40,15 +40,15 @@
 
                 <ImageView
                     android:id="@+id/nets_nav_bar_color"
-                    android:contentDescription="@string/navigation_bar_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@android:color/white" />
+                    android:background="@android:color/white"
+                    android:contentDescription="@string/navigation_bar_color" />
 
                 <ImageView
                     android:id="@+id/dark_nav_bar_color"
-                    android:contentDescription="@string/navigation_bar_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/primary_dark" />
+                    android:background="@color/primary_dark"
+                    android:contentDescription="@string/navigation_bar_color" />
 
             </LinearLayout>
 
@@ -65,14 +65,14 @@
                 <ImageView
                     android:id="@+id/nets_nav_bar_item_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/navigation_bar_item_color"
-                    android:background="@color/pia_custom_blue_tint_color" />
+                    android:background="@color/pia_custom_blue_tint_color"
+                    android:contentDescription="@string/navigation_bar_item_color" />
 
                 <ImageView
                     android:id="@+id/dark_nav_bar_item_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/navigation_bar_item_color"
-                    android:background="@color/secondary_text" />
+                    android:background="@color/secondary_text"
+                    android:contentDescription="@string/navigation_bar_item_color" />
 
             </LinearLayout>
 
@@ -88,15 +88,15 @@
 
                 <ImageView
                     android:id="@+id/nets_nav_bar_title_color"
-                    android:contentDescription="@string/navigation_bar_title_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@android:color/black" />
+                    android:background="@android:color/black"
+                    android:contentDescription="@string/navigation_bar_title_color" />
 
                 <ImageView
                     android:id="@+id/dark_nav_bar_title_color"
-                    android:contentDescription="@string/navigation_bar_title_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/primary_light" />
+                    android:background="@color/primary_light"
+                    android:contentDescription="@string/navigation_bar_title_color" />
 
             </LinearLayout>
 
@@ -112,15 +112,15 @@
 
                 <ImageView
                     android:id="@+id/nets_background_color"
-                    android:contentDescription="@+id/holder_nav_bar_title_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/pia_silver_color" />
+                    android:background="@color/pia_silver_color"
+                    android:contentDescription="@+id/holder_nav_bar_title_color" />
 
                 <ImageView
                     android:id="@+id/dark_background_color"
-                    android:contentDescription="@+id/holder_nav_bar_title_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@android:color/white" />
+                    android:background="@android:color/white"
+                    android:contentDescription="@+id/holder_nav_bar_title_color" />
 
             </LinearLayout>
 
@@ -136,22 +136,46 @@
 
                 <ImageView
                     android:id="@+id/nets_button_text_color"
-                    android:contentDescription="@string/button_text_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@android:color/white" />
+                    android:background="@android:color/white"
+                    android:contentDescription="@string/button_text_color" />
 
                 <ImageView
                     android:id="@+id/dark_button_text_color"
-                    android:contentDescription="@string/button_text_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/primary_light" />
+                    android:background="@color/primary_light"
+                    android:contentDescription="@string/button_text_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/main_buttonbackground_drawable"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_button_text_color">
+
+                <TextView
+                    android:id="@+id/button_background_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/main_button_background_drawable" />
+
+                <ImageView
+                    android:id="@+id/nets_button_background"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/pia_custom_blue_tint_color"
+                    android:contentDescription="@string/button_text_color" />
+
+                <ImageView
+                    android:id="@+id/dark_button_background"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/secondary_text"
+                    android:contentDescription="@string/button_text_color" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/holder_label_text_color"
                 style="@style/UICustomizationHolderSectionStyle"
-                android:layout_below="@+id/holder_button_text_color">
+                android:layout_below="@+id/main_buttonbackground_drawable">
 
                 <TextView
                     android:id="@+id/label_text_color"
@@ -160,15 +184,15 @@
 
                 <ImageView
                     android:id="@+id/nets_label_text_color"
-                    android:contentDescription="@string/label_text_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@android:color/black" />
+                    android:background="@android:color/black"
+                    android:contentDescription="@string/label_text_color" />
 
                 <ImageView
                     android:id="@+id/dark_label_text_color"
-                    android:contentDescription="@string/label_text_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/primary_text" />
+                    android:background="@color/primary_text"
+                    android:contentDescription="@string/label_text_color" />
 
             </LinearLayout>
 
@@ -185,14 +209,14 @@
                 <ImageView
                     android:id="@+id/nets_token_card_cvc_area_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/token_card_cvc_area_color"
-                    android:background="@android:color/white" />
+                    android:background="@android:color/white"
+                    android:contentDescription="@string/token_card_cvc_area_color" />
 
                 <ImageView
                     android:id="@+id/dark_token_card_cvc_area_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/token_card_cvc_area_color"
-                    android:background="@color/accent" />
+                    android:background="@color/accent"
+                    android:contentDescription="@string/token_card_cvc_area_color" />
 
             </LinearLayout>
 
@@ -209,21 +233,45 @@
                 <ImageView
                     android:id="@+id/nets_text_field_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/text_field_color"
-                    android:background="@android:color/black" />
+                    android:background="@android:color/black"
+                    android:contentDescription="@string/text_field_color" />
 
                 <ImageView
                     android:id="@+id/dark_text_field_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/text_field_color"
-                    android:background="@color/secondary_text" />
+                    android:background="@color/secondary_text"
+                    android:contentDescription="@string/text_field_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_text_field_background_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_text_field_color">
+
+                <TextView
+                    android:id="@+id/text_field_background_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/text_field_background_color" />
+
+                <ImageView
+                    android:id="@+id/nets_text_field_background_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@android:color/white"
+                    android:contentDescription="@string/text_field_color" />
+
+                <ImageView
+                    android:id="@+id/dark_text_field_background_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/accent"
+                    android:contentDescription="@string/text_field_color" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/holder_text_field_success_color"
                 style="@style/UICustomizationHolderSectionStyle"
-                android:layout_below="@+id/holder_text_field_color">
+                android:layout_below="@+id/holder_text_field_background_color">
 
                 <TextView
                     android:id="@+id/text_field_success_color"
@@ -232,15 +280,15 @@
 
                 <ImageView
                     android:id="@+id/nets_text_field_success_color"
-                    android:contentDescription="@string/text_field_success_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/pia_green_dark_color" />
+                    android:background="@color/pia_green_dark_color"
+                    android:contentDescription="@string/text_field_success_color" />
 
                 <ImageView
                     android:id="@+id/dark_text_field_success_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/text_field_success_color"
-                    android:background="@color/custom_light_blue_color" />
+                    android:background="@color/custom_light_blue_color"
+                    android:contentDescription="@string/text_field_success_color" />
 
             </LinearLayout>
 
@@ -257,14 +305,14 @@
                 <ImageView
                     android:id="@+id/nets_text_field_error_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/text_field_error_color"
-                    android:background="@color/pia_red_color" />
+                    android:background="@color/pia_red_color"
+                    android:contentDescription="@string/text_field_error_color" />
 
                 <ImageView
                     android:id="@+id/dark_text_field_error_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/text_field_error_color"
-                    android:background="@android:color/holo_red_light" />
+                    android:background="@android:color/holo_red_light"
+                    android:contentDescription="@string/text_field_error_color" />
 
             </LinearLayout>
 
@@ -281,14 +329,14 @@
                 <ImageView
                     android:id="@+id/nets_switch_thumb_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/switch_thumb_color"
-                    android:background="@color/pia_custom_blue_color" />
+                    android:background="@color/pia_custom_blue_color"
+                    android:contentDescription="@string/switch_thumb_color" />
 
                 <ImageView
                     android:id="@+id/dark_switch_thumb_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/switch_thumb_color"
-                    android:background="@color/primary" />
+                    android:background="@color/primary"
+                    android:contentDescription="@string/switch_thumb_color" />
 
             </LinearLayout>
 
@@ -305,14 +353,14 @@
                 <ImageView
                     android:id="@+id/nets_switch_on_tint_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/switch_on_tint_color"
-                    android:background="@color/pia_custom_blue_tint_color" />
+                    android:background="@color/pia_custom_blue_tint_color"
+                    android:contentDescription="@string/switch_on_tint_color" />
 
                 <ImageView
                     android:id="@+id/dark_switch_on_tint_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:contentDescription="@string/switch_on_tint_color"
-                    android:background="@color/primary_light" />
+                    android:background="@color/primary_light"
+                    android:contentDescription="@string/switch_on_tint_color" />
 
             </LinearLayout>
 
@@ -350,12 +398,46 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/holder_disable_save_card_option"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_sample_image">
+
+                <TextView
+                    android:id="@+id/disable_save_card_option"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/disable_save_card_option" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/use_disable_save_card_option"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_turn_on_save_card_option"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_disable_save_card_option">
+
+                <TextView
+                    android:id="@+id/turn_on_save_card_option"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/turn_on_save_card_option" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_turn_on_save_card_option"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
             <!-- section start card io customization -->
             <RelativeLayout
                 android:id="@+id/cardio_related_customization"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/holder_sample_image"
+                android:layout_below="@+id/holder_turn_on_save_card_option"
                 android:layout_marginTop="10dp">
 
                 <TextView
@@ -377,14 +459,14 @@
                     <ImageView
                         android:id="@+id/nets_cardio_background_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:contentDescription="@string/cardio_background"
-                        android:background="@android:color/black" />
+                        android:background="@android:color/black"
+                        android:contentDescription="@string/cardio_background" />
 
                     <ImageView
                         android:id="@+id/dark_cardio_background_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:contentDescription="@string/cardio_background"
-                        android:background="@android:color/white" />
+                        android:background="@android:color/white"
+                        android:contentDescription="@string/cardio_background" />
 
                 </LinearLayout>
 
@@ -402,14 +484,14 @@
                     <ImageView
                         android:id="@+id/nets_cardio_text_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:contentDescription="@string/cardio_text_color"
-                        android:background="@android:color/white" />
+                        android:background="@android:color/white"
+                        android:contentDescription="@string/cardio_text_color" />
 
                     <ImageView
                         android:id="@+id/dark_cardio_text_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:contentDescription="@string/cardio_text_color"
-                        android:background="@android:color/white" />
+                        android:background="@android:color/white"
+                        android:contentDescription="@string/cardio_text_color" />
 
                 </LinearLayout>
 
@@ -426,14 +508,14 @@
                     <ImageView
                         android:id="@+id/nets_cardio_frame_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:contentDescription="@string/cardio_frame_color"
-                        android:background="@android:color/white" />
+                        android:background="@android:color/white"
+                        android:contentDescription="@string/cardio_frame_color" />
 
                     <ImageView
                         android:id="@+id/dark_cardio_frame_color"
-                        android:contentDescription="@string/cardio_frame_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:background="@android:color/white" />
+                        android:background="@android:color/white"
+                        android:contentDescription="@string/cardio_frame_color" />
 
                 </LinearLayout>
 
@@ -450,14 +532,14 @@
                     <ImageView
                         android:id="@+id/nets_cardio_button_background"
                         style="@style/UICustomizationColorItemStyle"
-                        android:contentDescription="@string/cardio_button_background"
-                        android:background="@android:color/white" />
+                        android:background="@android:color/white"
+                        android:contentDescription="@string/cardio_button_background" />
 
                     <ImageView
                         android:id="@+id/dark_cardio_button_background"
                         style="@style/UICustomizationColorItemStyle"
-                        android:contentDescription="@string/cardio_button_background"
-                        android:background="@color/primary" />
+                        android:background="@color/primary"
+                        android:contentDescription="@string/cardio_button_background" />
 
                 </LinearLayout>
 
@@ -474,14 +556,14 @@
                     <ImageView
                         android:id="@+id/nets_cardio_button_text_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:contentDescription="@string/cardio_button_text_color"
-                        android:background="@color/primary" />
+                        android:background="@color/primary"
+                        android:contentDescription="@string/cardio_button_text_color" />
 
                     <ImageView
                         android:id="@+id/dark_cardio_button_text_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:contentDescription="@string/cardio_button_text_color"
-                        android:background="@color/primary_light" />
+                        android:background="@color/primary_light"
+                        android:contentDescription="@string/cardio_button_text_color" />
 
                 </LinearLayout>
 

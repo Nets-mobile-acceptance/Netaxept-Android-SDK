@@ -11,7 +11,7 @@ import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 /**
  * MIT License
  * <p>
- * Copyright (c) 2018 Nets Denmark A/S
+ * Copyright (c) 2019 Nets Denmark A/S
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
@@ -38,6 +38,7 @@ public class SampleApplication extends Application {
 
         //set the SDK configuration related to CardIo at runtime
         PiaInterfaceConfiguration.getInstance().setDisableCardIO(PiaSampleSharedPreferences.isDisableCardIo());
+        PiaInterfaceConfiguration.getInstance().setDisableSaveCardOption(PiaSampleSharedPreferences.isDisableSaveCardOption());
 
         //apply custom UI elements to SDK such as colors, fonts and icons
         //uncomment the method call to test the customization
@@ -51,6 +52,7 @@ public class SampleApplication extends Application {
         //SDK Configuration
         PiaInterfaceConfiguration.getInstance().setLabelTextColor(ContextCompat.getColor(this, R.color.custom_orange_color));
         PiaInterfaceConfiguration.getInstance().setFieldTextColor(Color.BLUE);
+        PiaInterfaceConfiguration.getInstance().setFieldBackgroundColor(ContextCompat.getColor(this,R.color.accent));
         PiaInterfaceConfiguration.getInstance().setButtonTextColor(Color.WHITE);
         PiaInterfaceConfiguration.getInstance().setSwitchThumbColor(ContextCompat.getColor(this, R.color.pia_green_color));
         PiaInterfaceConfiguration.getInstance().setMainButtonBackgroundSelector(ContextCompat.getDrawable(this, R.drawable.pia_save_card_button));

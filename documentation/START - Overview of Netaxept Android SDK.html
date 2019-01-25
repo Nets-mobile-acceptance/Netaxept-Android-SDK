@@ -37,7 +37,7 @@ Read below for more information on how to use it.</p>
 </ul>
 <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         ...
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.1.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.1.1'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         ...
     }
 </code></pre>
@@ -412,6 +412,7 @@ When applying the configuration, please keep in mind the following:</p>
     <span class="hljs-comment">//SDK Configuration</span>
     PiaInterfaceConfiguration.getInstance().setLabelTextColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
     PiaInterfaceConfiguration.getInstance().setFieldTextColor(Color.BLUE);
+    PiaInterfaceConfiguration.getInstance().setFieldBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
     PiaInterfaceConfiguration.getInstance().setButtonTextColor(Color.WHITE);
     PiaInterfaceConfiguration.getInstance().setSwitchThumbColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.pia_green_color));
     PiaInterfaceConfiguration.getInstance().setMainButtonBackgroundSelector(ContextCompat.getDrawable(<span class="hljs-keyword">this</span>, R.drawable.pia_save_card_button));
@@ -427,6 +428,7 @@ When applying the configuration, please keep in mind the following:</p>
     PiaInterfaceConfiguration.getInstance().setToolbarTitleColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.pia_black_color));
     PiaInterfaceConfiguration.getInstance().setBodyBackgroundColor(Color.WHITE);
     PiaInterfaceConfiguration.getInstance().setTokenCardCVCLayoutBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
+    PiaInterfaceConfiguration.getInstance().setDisableSaveCardOption(true);
 
     <span class="hljs-comment">//Scan Card UI configuration</span>
     PiaInterfaceConfiguration.getInstance().setCardIOBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
@@ -509,7 +511,7 @@ by default. For more information, you can check the details from <a href="https:
 <p>In the following link, you can find the Microsoft Excel document with the error codes handled inside the <strong>PiA SDK</strong>, along with further description on how they are used. <a href="error-codes/PiA_SDK-Netaxept_-_Response_codes.xlsx">PiA SDK - Netaxept - Response codes</a></p>
 <p><strong>Note:</strong>*<br>
 The error codes are returned back to the application, through the <code>onActivityResult()</code> method, inside the <code>PiaResult</code>. If is error case, this object will contain the<code>PiaError</code>, which has getters for error code and error message. The error codes are mapped inside an enum <code>PiaErrorCode</code>, but each explanation message is stored in the strings file. If you want custom error messages, you can create your custom map based on the codes.<br>
-<strong>Note:</strong>** Beside the Netaxept error codes, there are handled internal SDK errors, such as:</p>
+<strong>Note:</strong>** We recommend that you keep all error codes internal without showing them to your users. Instead, you should provide generic messages encouraging them to retry the transaction, to select another payment method, or to contact your customer service. Beside the Netaxept error codes, there are handled internal SDK errors, such as:</p>
 <ul>
 <li><strong>GENERIC_ERROR, code 300:</strong> Terminal call has completed with an unexpected error. Please make the Netaxept Query call to get more detailed information.</li>
 <li><strong>REQUEST_FAILED, code 200:</strong> May occur in the folowing cases:
@@ -533,7 +535,7 @@ The error codes are returned back to the application, through the <code>onActivi
 <ul>
 <li><strong>PiA - Netaxept Android SDK</strong></li>
 </ul>
-<p><strong><code>Copyright © 2018 Nets Denmark A/S</code></strong></p>
+<p><strong><code>Copyright © 2019 Nets Denmark A/S</code></strong></p>
 <p>NETS DENMARK A/S, ("NETS"), FOR AND ON BEHALF OF ITSELF AND ITS SUBSIDIARIES AND AFFILIATES UNDER COMMON CONTROL, IS WILLING TO LICENSE THE SOFTWARE TO YOU ONLY UPON THE CONDITION THAT YOU ACCEPT ALL OF THE TERMS CONTAINED IN THIS BINARY CODE LICENSE AGREEMENT. BY USING THE SOFTWARE YOU ACKNOWLEDGE THAT YOU HAVE READ THE TERMS AND AGREE TO THEM. IF YOU ARE AGREEING TO THESE TERMS ON BEHALF OF A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT THAT YOU HAVE THE LEGAL AUTHORITY TO BIND THE LEGAL ENTITY TO THESE TERMS. IF YOU DO NOT HAVE SUCH AUTHORITY, OR IF YOU DO NOT WISH TO BE BOUND BY THE TERMS, YOU MUST NOT USE THE SOFTWARE ON THIS SITE OR ANY OTHER MEDIA ON WHICH THE SOFTWARE IS CONTAINED.</p>
 <p>Software is copyrighted. Title to Software and all associated intellectual property rights is retained by NETS and/or its licensors. Unless enforcement is prohibited by applicable law, you may not modify, decompile, or reverse engineer Software.</p>
 <p>No right, title or interest in or to any trademark, service mark, logo or trade name of NETS or its licensors is granted under this Agreement.</p>
@@ -565,6 +567,16 @@ The above copyright notice and this permission notice shall be included in all c
 <li>Improved <i>PiaSDK.start()</i> to accept Fragment parameter</li>
 <li>New configuration to disable card scanner</li>
 </ul>
-
+<h4><a id="v111_Released_25Jan2019_580"></a>v1.1.1 Released: 25-Jan-2019</h4>
+<h4><a id="API_Changes_5581"></a>API Changes:</h4>
+<ul>
+<li>Improvements for UI Customization:</li>
+	<ul>
+		<li>added new flag for hiding the "Save card for later use" functionality from payment screen</li>
+		<li>added new option for setting custom background color for input fields</li>
+		<li>updated card logos</li>
+	</ul>
+<li>Improvements in WebView navigation bar: replaced text with specific icons</li>
+</ul>
 
 </body></html>

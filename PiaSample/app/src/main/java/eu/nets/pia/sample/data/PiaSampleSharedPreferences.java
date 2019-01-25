@@ -8,7 +8,7 @@ import eu.nets.pia.sample.BuildConfig;
 /**
  * MIT License
  * <p>
- * Copyright (c) 2018 Nets Denmark A/S
+ * Copyright (c) 2019 Nets Denmark A/S
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
@@ -36,6 +36,7 @@ public class PiaSampleSharedPreferences {
     private static final String MERCHANT_ENV_PROD = "merchant_env_prod";
     private static final String MERCHANT_ID_TEST = "merchant_id_test";
     private static final String MERCHANT_ID_PROD = "merchant_id_prod";
+    private static final String DISABLE_SAVE_CARD_OPTION = "disable_save_card_option";
 
     private static SharedPreferences mSharedPrefs;
 
@@ -85,6 +86,16 @@ public class PiaSampleSharedPreferences {
         return mSharedPrefs.getBoolean(DISABLE_CARD_IO, false);
     }
 
+    public static void setDisableSaveCardOption(boolean disableSaveCardOption) {
+        SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
+        prefsEditor.putBoolean(DISABLE_SAVE_CARD_OPTION, disableSaveCardOption);
+        prefsEditor.commit();
+    }
+
+    public static boolean isDisableSaveCardOption() {
+        return mSharedPrefs.getBoolean(DISABLE_SAVE_CARD_OPTION, false);
+    }
+    
     public static void setCustomerCurrency(String customerCurrency) {
         SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
         prefsEditor.putString(CUSTOMER_CURRENCY, customerCurrency);

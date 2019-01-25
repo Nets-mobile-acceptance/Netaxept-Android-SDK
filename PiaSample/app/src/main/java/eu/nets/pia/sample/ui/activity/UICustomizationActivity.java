@@ -1,8 +1,10 @@
 
 package eu.nets.pia.sample.ui.activity;
 
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,12 +20,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.sample.R;
+import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 import eu.nets.pia.sample.ui.widget.CustomToolbar;
 
 /**
  * MIT License
  * <p>
- * Copyright (c) 2018 Nets Denmark A/S
+ * Copyright (c) 2019 Nets Denmark A/S
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
@@ -53,15 +56,18 @@ public class UICustomizationActivity extends AppCompatActivity {
     private Integer mNavBarTitleColor;
     private Integer mBackgroundColor;
     private Integer mButtonTextColor;
+    private Integer mButtonBackground;
     private Integer mLabelTextColor;
     private Integer mTokenCardCvcAreaColor;
     private Integer mTextFieldColor;
+    private Integer mTextFieldBackgroundColor;
     private Integer mTextFieldSuccessColor;
     private Integer mTextFieldErrorColor;
     private Integer mSwitchThumbColor;
     private Integer mSwitchOnTintColor;
     private boolean mUseSampleFont;
     private boolean mUseSampleImageForLogo;
+    private boolean mTurnSaveCardSwitchOn;
     //end section
 
     //section cardio customization
@@ -111,6 +117,31 @@ public class UICustomizationActivity extends AppCompatActivity {
                     ((TextView) findViewById(R.id.sample_image)).setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
                 } else {
                     ((TextView) findViewById(R.id.sample_image)).setTypeface(null);
+                }
+            }
+        });
+
+        ((SwitchCompat) findViewById(R.id.use_disable_save_card_option)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PiaSampleSharedPreferences.setDisableSaveCardOption(isChecked);
+                PiaInterfaceConfiguration.getInstance().setDisableSaveCardOption(isChecked);
+
+                if (isChecked) {
+                    ((TextView) findViewById(R.id.disable_save_card_option)).setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+                } else {
+                    ((TextView) findViewById(R.id.disable_save_card_option)).setTypeface(null);
+                }
+            }
+        });
+        ((SwitchCompat) findViewById(R.id.switch_turn_on_save_card_option)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mTurnSaveCardSwitchOn = isChecked;
+                if (isChecked) {
+                    ((TextView) findViewById(R.id.turn_on_save_card_option)).setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+                } else {
+                    ((TextView) findViewById(R.id.turn_on_save_card_option)).setTypeface(null);
                 }
             }
         });
@@ -179,6 +210,13 @@ public class UICustomizationActivity extends AppCompatActivity {
             //apply nets UI config
             onNetsButtonTextColor();
         }
+        if (configuration.getMainButtonBackgroundSelector() != null) {
+            //apply dark theme UI config
+            onDarkButtonBackground();
+        } else {
+            //apply nets UI config
+            onNetsButtonBackground();
+        }
         if (configuration.getLabelTextColor() != null) {
             //apply dark theme UI config
             onDarkLabelTextColor();
@@ -199,6 +237,13 @@ public class UICustomizationActivity extends AppCompatActivity {
         } else {
             //apply nets UI config
             onNetsTextFieldColor();
+        }
+        if (configuration.getFieldBackgroundColor() != null) {
+            //apply dark theme UI config
+            onDarkTextFieldBackgroundColor();
+        } else {
+            //apply nets UI config
+            onNetsTextFieldBackgroundColor();
         }
         if (configuration.getValidFieldBorderColor() != null) {
             //apply dark theme UI config
@@ -233,6 +278,12 @@ public class UICustomizationActivity extends AppCompatActivity {
         }
         if (configuration.getLabelFont() != null) {
             ((SwitchCompat) findViewById(R.id.use_sample_font)).setChecked(true);
+        }
+        if (configuration.isDisableSaveCardOption()) {
+            ((SwitchCompat) findViewById(R.id.use_disable_save_card_option)).setChecked(true);
+        }
+        if (configuration.isSaveCardSwitchDefault()) {
+            ((SwitchCompat) findViewById(R.id.switch_turn_on_save_card_option)).setChecked(true);
         }
 
         //section card io customization selection
@@ -282,42 +333,33 @@ public class UICustomizationActivity extends AppCompatActivity {
 
     private void saveSelection() {
         PiaInterfaceConfiguration configuration = PiaInterfaceConfiguration.getInstance();
-        if (mNavBarColor != null) {
-            configuration.setToolbarBackgroundColor(mNavBarColor);
+        configuration.setToolbarBackgroundColor(mNavBarColor);
+        configuration.setToolbarTitleColor(mNavBarTitleColor);
+        configuration.setToolbarActionButtonTextColor(mNavBarItemColor);
+        configuration.setBodyBackgroundColor(mBackgroundColor);
+        configuration.setButtonTextColor(mButtonTextColor);
+        if (mButtonBackground != null) {
+            Drawable backgroundSelector;
+            if (mButtonBackground == ((ColorDrawable) findViewById(R.id.nets_button_background).getBackground()).getColor()) {
+                //is nets drawable
+                backgroundSelector = ContextCompat.getDrawable(this, R.drawable.pia_save_card_button);
+            } else {
+                //is dark theme background
+                backgroundSelector = ContextCompat.getDrawable(this, R.drawable.pia_save_card_button);
+                backgroundSelector.setColorFilter(mButtonBackground, PorterDuff.Mode.SRC_IN);
+            }
+            configuration.setMainButtonBackgroundSelector(backgroundSelector);
+        } else {
+            configuration.setMainButtonBackgroundSelector(null);
         }
-        if (mNavBarTitleColor != null) {
-            configuration.setToolbarTitleColor(mNavBarTitleColor);
-        }
-        if (mNavBarItemColor != null) {
-            configuration.setToolbarActionButtonTextColor(mNavBarItemColor);
-        }
-        if (mBackgroundColor != null) {
-            configuration.setBodyBackgroundColor(mBackgroundColor);
-        }
-        if (mButtonTextColor != null) {
-            configuration.setButtonTextColor(mButtonTextColor);
-        }
-        if (mLabelTextColor != null) {
-            configuration.setLabelTextColor(mLabelTextColor);
-        }
-        if (mTokenCardCvcAreaColor != null) {
-            configuration.setTokenCardCVCLayoutBackgroundColor(mTokenCardCvcAreaColor);
-        }
-        if (mTextFieldColor != null) {
-            configuration.setFieldTextColor(mTextFieldColor);
-        }
-        if (mTextFieldSuccessColor != null) {
-            configuration.setValidFieldBorderColor(mTextFieldSuccessColor);
-        }
-        if (mTextFieldErrorColor != null) {
-            configuration.setErrorFieldBorderColor(mTextFieldErrorColor);
-        }
-        if (mSwitchThumbColor != null) {
-            configuration.setSwitchThumbColor(mSwitchThumbColor);
-        }
-        if (mSwitchOnTintColor != null) {
-            configuration.setSwitchOnTrackColor(mSwitchOnTintColor);
-        }
+        configuration.setLabelTextColor(mLabelTextColor);
+        configuration.setTokenCardCVCLayoutBackgroundColor(mTokenCardCvcAreaColor);
+        configuration.setFieldTextColor(mTextFieldColor);
+        configuration.setFieldBackgroundColor(mTextFieldBackgroundColor);
+        configuration.setValidFieldBorderColor(mTextFieldSuccessColor);
+        configuration.setErrorFieldBorderColor(mTextFieldErrorColor);
+        configuration.setSwitchThumbColor(mSwitchThumbColor);
+        configuration.setSwitchOnTrackColor(mSwitchOnTintColor);
 
         configuration.setLogoDrawable(mUseSampleImageForLogo ?
                 ContextCompat.getDrawable(this, R.drawable.ic_header) :
@@ -331,16 +373,9 @@ public class UICustomizationActivity extends AppCompatActivity {
         configuration.setCardIOButtonTextFont(mUseSampleFont ? Typeface.SERIF : null);
 
         //section cardio save configuration
-
-        if (mCardIoBackground != null) {
-            configuration.setCardIOBackgroundColor(mCardIoBackground);
-        }
-        if (mCardIoTextColor != null) {
-            configuration.setCardIOTextColor(mCardIoTextColor);
-        }
-        if (mCardIoFrameColor != null) {
-            configuration.setCardIOPreviewFrameColor(mCardIoFrameColor);
-        }
+        configuration.setCardIOBackgroundColor(mCardIoBackground);
+        configuration.setCardIOTextColor(mCardIoTextColor);
+        configuration.setCardIOPreviewFrameColor(mCardIoFrameColor);
         if (mCardIoButtonBackground != null) {
             //create gradient drawable for testing purpose
             //it's recommended to pass here the XML drawable for button states: normal, pressed, disabled
@@ -348,13 +383,13 @@ public class UICustomizationActivity extends AppCompatActivity {
             drawable.setColor(mCardIoButtonBackground);
             drawable.setCornerRadius(8);
             configuration.setCardIOButtonBackgroundSelector(drawable);
+        } else {
+            configuration.setCardIOButtonBackgroundSelector(null);
         }
-        if (mCardIoButtonTextColor != null) {
-            configuration.setCardIOButtonTextColor(mCardIoButtonTextColor);
-        }
-
+        configuration.setCardIOButtonTextColor(mCardIoButtonTextColor);
         configuration.setCardIOTextFont(useCardIoTextFont ? Typeface.MONOSPACE : null);
         configuration.setCardIOButtonTextFont(useCardIoButtonTextFont ? Typeface.MONOSPACE : null);
+        configuration.setSaveCardSwitchDefault(mTurnSaveCardSwitchOn);
 
         //end section
     }
@@ -385,6 +420,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsNavBar() {
         mNavBarColor = ((ColorDrawable) findViewById(R.id.nets_nav_bar_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.nav_bar_color)).setTextColor(mNavBarColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mNavBarColor = null;
     }
 
     @OnClick(R.id.dark_nav_bar_color)
@@ -397,6 +434,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsNavBarItem() {
         mNavBarItemColor = ((ColorDrawable) findViewById(R.id.nets_nav_bar_item_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.nav_bar_item_color)).setTextColor(mNavBarItemColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mNavBarItemColor = null;
     }
 
     @OnClick(R.id.dark_nav_bar_item_color)
@@ -409,6 +448,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsNavBarTitle() {
         mNavBarTitleColor = ((ColorDrawable) findViewById(R.id.nets_nav_bar_title_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.nav_bar_title_color)).setTextColor(mNavBarTitleColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mNavBarTitleColor = null;
     }
 
     @OnClick(R.id.dark_nav_bar_title_color)
@@ -421,6 +462,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsBackgroundColor() {
         mBackgroundColor = ((ColorDrawable) findViewById(R.id.nets_background_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.background_color)).setTextColor(mBackgroundColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mBackgroundColor = null;
     }
 
     @OnClick(R.id.dark_background_color)
@@ -433,6 +476,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsButtonTextColor() {
         mButtonTextColor = ((ColorDrawable) findViewById(R.id.nets_button_text_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.button_text_color)).setTextColor(mButtonTextColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mButtonTextColor = null;
     }
 
     @OnClick(R.id.dark_button_text_color)
@@ -441,10 +486,26 @@ public class UICustomizationActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.button_text_color)).setTextColor(mButtonTextColor);
     }
 
+    @OnClick(R.id.nets_button_background)
+    public void onNetsButtonBackground() {
+        mButtonBackground = ((ColorDrawable) findViewById(R.id.nets_button_background).getBackground()).getColor();
+        ((TextView) findViewById(R.id.button_background_color)).setTextColor(mButtonBackground);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mButtonBackground = null;
+    }
+
+    @OnClick(R.id.dark_button_background)
+    public void onDarkButtonBackground() {
+        mButtonBackground = ((ColorDrawable) findViewById(R.id.dark_button_background).getBackground()).getColor();
+        ((TextView) findViewById(R.id.button_background_color)).setTextColor(mButtonBackground);
+    }
+
     @OnClick(R.id.nets_label_text_color)
     public void onNetsLabelTextColor() {
         mLabelTextColor = ((ColorDrawable) findViewById(R.id.nets_label_text_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.label_text_color)).setTextColor(mLabelTextColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mLabelTextColor = null;
     }
 
     @OnClick(R.id.dark_label_text_color)
@@ -457,6 +518,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsTokenCardCvcAreaColor() {
         mTokenCardCvcAreaColor = ((ColorDrawable) findViewById(R.id.nets_token_card_cvc_area_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.token_card_cvc_area_color)).setTextColor(mTokenCardCvcAreaColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mTokenCardCvcAreaColor = null;
     }
 
     @OnClick(R.id.dark_token_card_cvc_area_color)
@@ -469,6 +532,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsTextFieldColor() {
         mTextFieldColor = ((ColorDrawable) findViewById(R.id.nets_text_field_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.text_field_color)).setTextColor(mTextFieldColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mTextFieldColor = null;
     }
 
     @OnClick(R.id.dark_text_field_color)
@@ -477,10 +542,26 @@ public class UICustomizationActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.text_field_color)).setTextColor(mTextFieldColor);
     }
 
+    @OnClick(R.id.nets_text_field_background_color)
+    public void onNetsTextFieldBackgroundColor() {
+        mTextFieldBackgroundColor = ((ColorDrawable) findViewById(R.id.nets_text_field_background_color).getBackground()).getColor();
+        ((TextView) findViewById(R.id.text_field_background_color)).setTextColor(mTextFieldBackgroundColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mTextFieldBackgroundColor = null;
+    }
+
+    @OnClick(R.id.dark_text_field_background_color)
+    public void onDarkTextFieldBackgroundColor() {
+        mTextFieldBackgroundColor = ((ColorDrawable) findViewById(R.id.dark_text_field_background_color).getBackground()).getColor();
+        ((TextView) findViewById(R.id.text_field_background_color)).setTextColor(mTextFieldBackgroundColor);
+    }
+
     @OnClick(R.id.nets_text_field_success_color)
     public void onNetsTextFieldSuccessColor() {
         mTextFieldSuccessColor = ((ColorDrawable) findViewById(R.id.nets_text_field_success_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.text_field_success_color)).setTextColor(mTextFieldSuccessColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mTextFieldSuccessColor = null;
     }
 
     @OnClick(R.id.dark_text_field_success_color)
@@ -493,6 +574,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsTextFieldErrorColor() {
         mTextFieldErrorColor = ((ColorDrawable) findViewById(R.id.nets_text_field_error_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.text_field_error_color)).setTextColor(mTextFieldErrorColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mTextFieldErrorColor = null;
     }
 
     @OnClick(R.id.dark_text_field_error_color)
@@ -505,6 +588,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsSwitchThumbColor() {
         mSwitchThumbColor = ((ColorDrawable) findViewById(R.id.nets_switch_thumb_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.switch_thumb_color)).setTextColor(mSwitchThumbColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mSwitchThumbColor = null;
     }
 
     @OnClick(R.id.dark_switch_thumb_color)
@@ -517,6 +602,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsSwitchOnTintColor() {
         mSwitchOnTintColor = ((ColorDrawable) findViewById(R.id.nets_switch_on_tint_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.switch_on_tint_color)).setTextColor(mSwitchOnTintColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mSwitchOnTintColor = null;
     }
 
     @OnClick(R.id.dark_switch_on_tint_color)
@@ -531,6 +618,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsCardIoBackground() {
         mCardIoBackground = ((ColorDrawable) findViewById(R.id.nets_cardio_background_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.cardio_background_color)).setTextColor(mCardIoBackground);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mCardIoBackground = null;
     }
 
     @OnClick(R.id.dark_cardio_background_color)
@@ -543,6 +632,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsCardIoTextColor() {
         mCardIoTextColor = ((ColorDrawable) findViewById(R.id.nets_cardio_text_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.cardio_text_color)).setTextColor(mCardIoTextColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mCardIoTextColor = null;
     }
 
     @OnClick(R.id.dark_cardio_text_color)
@@ -555,6 +646,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsCardIoFrameColor() {
         mCardIoFrameColor = ((ColorDrawable) findViewById(R.id.nets_cardio_frame_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.cardio_frame_color)).setTextColor(mCardIoFrameColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mCardIoFrameColor = null;
     }
 
     @OnClick(R.id.dark_cardio_frame_color)
@@ -567,6 +660,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsCardIoButtonBackgroundColor() {
         mCardIoButtonBackground = ((ColorDrawable) findViewById(R.id.nets_cardio_button_background).getBackground()).getColor();
         ((TextView) findViewById(R.id.cardio_button_background)).setTextColor(mCardIoButtonBackground);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mCardIoButtonBackground = null;
     }
 
     @OnClick(R.id.dark_cardio_button_background)
@@ -579,6 +674,8 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsCardIoButtonTextColor() {
         mCardIoButtonTextColor = ((ColorDrawable) findViewById(R.id.nets_cardio_button_text_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.cardio_button_text_color)).setTextColor(mCardIoButtonTextColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mCardIoButtonTextColor = null;
     }
 
     @OnClick(R.id.dark_cardio_button_text_color)

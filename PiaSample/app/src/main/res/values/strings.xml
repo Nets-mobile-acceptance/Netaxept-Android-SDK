@@ -80,28 +80,32 @@
     <!-- Customize UI Screen -->
     <string name="global_ui_customization">Global UI Customization</string>
     <string name="navigation_bar_color">Navigation Bar Color</string>
-    <string name="navigation_bar_item_color">Navigation Bar item Color</string>
+    <string name="navigation_bar_item_color">Navigation Bar button Color</string>
     <string name="navigation_bar_title_color">Navigation Bar title Color</string>
-    <string name="background_color">Background Color</string>
-    <string name="button_text_color">Button text Color</string>
-    <string name="label_text_color">Label text Color</string>
-    <string name="token_card_cvc_area_color">Token Card CVC area Color</string>
-    <string name="text_field_color">Text field Color</string>
-    <string name="text_field_success_color">Text field success Color</string>
-    <string name="text_field_error_color">Text field error Color</string>
-    <string name="switch_thumb_color">Switch thumb Color</string>
-    <string name="switch_on_tint_color">Switch on tint Color</string>
+    <string name="background_color">SDK Background Color</string>
+    <string name="button_text_color">Buy Button text Color</string>
+    <string name="main_button_background_drawable">Buy Button Background</string>
+    <string name="label_text_color">Text Color</string>
+    <string name="token_card_cvc_area_color">Saved Card CVC area color</string>
+    <string name="text_field_color">Text entry text color</string>
+    <string name="text_field_background_color">Text entry background color</string>
+    <string name="text_field_success_color">Text entry success Color</string>
+    <string name="text_field_error_color">Text entry error color</string>
+    <string name="switch_thumb_color">Switch Color</string>
+    <string name="switch_on_tint_color">Switch turn on color</string>
     <string name="use_sample_font_and_weight">Use sample font and weight</string>
     <string name="use_sample_image_for_logo">Use sample image for logo</string>
+    <string name="turn_on_save_card_option">Turn save card switch on</string>
+    <string name="disable_save_card_option">Disable save card</string>
     <!-- CardIO customization related strings -->
-    <string name="cardio_ui_customization">CardIO UI Customization</string>
-    <string name="cardio_background">CardIO background</string>
-    <string name="cardio_text_color">CardIO Text Color</string>
-    <string name="cardio_frame_color">CardIO Frame Color</string>
-    <string name="cardio_button_background">CardIO Button Background</string>
-    <string name="cardio_button_text_color">CardIO Button Text color</string>
-    <string name="cardio_text_font">CardIO Text Font</string>
-    <string name="cardio_button_text_font">CardIO Button Text Font</string>
+    <string name="cardio_ui_customization">Card scanner UI Customization</string>
+    <string name="cardio_background">Card scanner Background</string>
+    <string name="cardio_text_color">Card scanner Text Color</string>
+    <string name="cardio_frame_color">Card scanner Frame Color</string>
+    <string name="cardio_button_background">Card scanner Button Background</string>
+    <string name="cardio_button_text_color">Card scanner Button Text color</string>
+    <string name="cardio_text_font">Card scanner Text Font</string>
+    <string name="cardio_button_text_font">Card scanner Button Text Font</string>
     <!-- end CardIO customization related strings -->
 
 
