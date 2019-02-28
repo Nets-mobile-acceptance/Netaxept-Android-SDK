@@ -19,7 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -76,13 +76,13 @@ public class PiaSampleSharedPreferences {
         return mSharedPrefs.getBoolean(PIA_TEST_MODE, false);
     }
 
-    public static void setDisableCardIo(boolean disableCardIo){
+    public static void setDisableCardIo(boolean disableCardIo) {
         SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
         prefsEditor.putBoolean(DISABLE_CARD_IO, disableCardIo);
         prefsEditor.commit();
     }
 
-    public static boolean isDisableCardIo(){
+    public static boolean isDisableCardIo() {
         return mSharedPrefs.getBoolean(DISABLE_CARD_IO, false);
     }
 
@@ -95,7 +95,7 @@ public class PiaSampleSharedPreferences {
     public static boolean isDisableSaveCardOption() {
         return mSharedPrefs.getBoolean(DISABLE_SAVE_CARD_OPTION, false);
     }
-    
+
     public static void setCustomerCurrency(String customerCurrency) {
         SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
         prefsEditor.putString(CUSTOMER_CURRENCY, customerCurrency);

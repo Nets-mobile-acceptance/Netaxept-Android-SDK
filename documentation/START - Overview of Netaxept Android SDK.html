@@ -6,6 +6,7 @@ Read below for more information on how to use it.</p>
 <hr>
 <ol>
 <li><a href="#Terminology">Terminology</a></li>
+<li><a href="#FAQs">Frequently Asked Questions</a></li>
 <li><a href="#Installation">Installation</a></li>
 <li><a href="#Getting_started_with_card_payment">Getting started with card payment</a></li>
 <li><a href="#Basic_payment_flow_description">Basic payment flow description</a></li>
@@ -30,6 +31,11 @@ Read below for more information on how to use it.</p>
 <li><strong>Easy Payment</strong> - After the initial transaction, the customer can initiate the following transaction by logging in to your webshop or mobile app and paying simply with one click and entering their card’s CVV/CVC security code. Easy Payment is applicable especially for mobile applications where it significantly eases and accelerates the returning customer’s purchase experience.</li>
 <li><strong>Recurring Payments</strong> - After the initial transaction, you as a merchant can charge the customer’s preferred card at specific times based on the agreement you have made with th customer. Traditionally the concept of Recurring Payments is applicable especially for paying subscriptions, membership fees and other regular payments, without the need of customer interaction after the initial payment. However, in PiA SDK we use the Recurring Payments concept to allow you as a merchant to enable easy subsequent payment for returning customers, without the need to collect again their security code (CVV/CVC).</li>
 </ol>
+
+<h1><a id="FAQs"></a>Frequently Asked Questions</h1>
+<hr>
+If you encounter any blockers when integrating the <code>Netaxept - Android SDK</code>, feel free to check the <a href="../FAQs.md">Frequently Asked Questions</a> page. If any of these answers does not fit your question, don't hesitate to <a href="#Get_in_touch">contact us</a>.
+
 <h1><a id="Installation"></a>Installation</h1>
 <hr>
 <ul>
@@ -37,7 +43,7 @@ Read below for more information on how to use it.</p>
 </ul>
 <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         ...
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.1.1'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.2.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         ...
     }
 </code></pre>
@@ -404,6 +410,40 @@ When applying the configuration, please keep in mind the following:</p>
 <li>For the fonts, you can use the assets files to create <code>TypeFace</code> object (e.g. <code>Typeface.createFromAsset()</code>)</li>
 <li>For drawable selectors, you can create your custom XML selectors, for different button states: normal, pressed, disabled</li>
 </ul>
+
+<p><strong>Note:</strong> The SDK now supports dynamic language configuration. Through <code>PiaInterfaceConfiguration</code>, the SDK can ignore the device's locale, and use only the specified one. The possible values are found in the <code>PiaLanguage</code> enum: 
+</p>
+<pre><code class="language-java"> 
+/**
+ * Available Translation for English
+ */
+<span class="hljs-keyword">ENGLISH("en", "English")</span>,
+/**
+ * Available Translation for Swedish
+ */
+<span class="hljs-keyword">SWEDISH("sv", "Swedish")</span>,
+/**
+ * Available Translation for Danish
+ */
+<span class="hljs-keyword">DANISH("da", "Danish")</span>,
+/**
+ * Available Translation for Norwegian
+ */
+<span class="hljs-keyword">NORWEGIAN("nb", "Norwegian")</span>,
+/**
+ * Available Translation for Finnish
+ */
+<span class="hljs-keyword">FINNISH("fi", "Finnish")</span>;
+</code></pre>
+<p>Use cases for language configuration:</p>
+<ul>
+	<li>Set valid language by providing <code>PiaLanguage</code> enum item. Please note that this configuration applies only for the SDK Activities. It does not affect any Locale configuration that you set in your own application: 
+		<pre><code class="language-java">PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.<span class="hljs-keyword">SWEDISH</span>);</code></pre>
+	</li>
+	<li>Notify SDK to use the device's default Locale when providing translation: 
+		<pre><code class="language-java">PiaInterfaceConfiguration.getInstance().setPiaLanguage(<span class="hljs-keyword">null</span>);</code></pre>
+	</li>
+</ul>
 <p><strong>Note:</strong> It is recommended to apply the customization in the Application class, to have the SDK configured at runtime. Any field that is not configured, will be using the default value. Check the snippet below for reference:</p>
 <pre><code class="language-java"><span class="hljs-comment">/**
  * As colors, pass only resolved colors (ColorInt): ContextCompat.getColor() or Color objects, as below
@@ -437,6 +477,9 @@ When applying the configuration, please keep in mind the following:</p>
     PiaInterfaceConfiguration.getInstance().setCardIOTextColor(Color.YELLOW);
     PiaInterfaceConfiguration.getInstance().setCardIOPreviewFrameColor(Color.RED);
     PiaInterfaceConfiguration.getInstance().setCardIOTextFont(Typeface.MONOSPACE);
+	
+    <span class="hljs-comment">//PiaSDK localization language</span>
+    PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.<span class="hljs-keyword">SWEDISH</span>);	
 }
 </code></pre>
 <p>For further understanding, please check the sample code as well as these images below:</p>
@@ -514,6 +557,18 @@ The error codes are returned back to the application, through the <code>onActivi
 <strong>Note:</strong>** We recommend that you keep all error codes internal without showing them to your users. Instead, you should provide generic messages encouraging them to retry the transaction, to select another payment method, or to contact your customer service. Beside the Netaxept error codes, there are handled internal SDK errors, such as:</p>
 <ul>
 <li><strong>GENERIC_ERROR, code 300:</strong> Terminal call has completed with an unexpected error. Please make the Netaxept Query call to get more detailed information.</li>
+<li><strong>TERMINAL_VALIDATION_ERROR, code 301:</strong> Operation denied by transaction filter. May occur in the following cases:
+<ul>
+<li>Credit card type denied</li>
+<li>Velocity filter</li>
+<li>Blocked IP</li>
+</ul>
+<strong>NOTE TO DEVELOPER:</strong> 
+<ul>
+<li>Check transaction filter parameters on Netaxept Admin</li>
+<li>Conversion tips: suggest user to retry transaction with another card / payment method"</li>
+</ul>
+</li>
 <li><strong>REQUEST_FAILED, code 200:</strong> May occur in the folowing cases:
 <ul>
 <li>internet connectivity issues</li>
@@ -554,12 +609,12 @@ The above copyright notice and this permission notice shall be included in all c
 <h1><a id="Change_log"></a>Change log</h1>
 <hr>
 <h4><a id="v100_Released_20Nov2018_564"></a>v1.0.0 Released: 20-Nov-2018</h4>
-<h4><a id="API_Changes_597"></a>API Changes:</h4>
+<h4><a id="Release_notes_597"></a>Release notes:</h4>
 <ul>
 <li>First official release</li>
 </ul>
 <h4><a id="v110_Released_14Dec2018_580"></a>v1.1.0 Released: 18-Dec-2018</h4>
-<h4><a id="API_Changes_5581"></a>API Changes:</h4>
+<h4><a id="Release_notes_5581"></a>Release notes:</h4>
 <ul>
 <li><strong>Security improvement:</strong> Payment parameters passed by the SDK to the backend are now sent through a <strong>POST</strong>. The <strong>GET</strong> request is discontinued</li>
 <li><strong>Xamarin</strong> and <strong>React Native</strong> support</li>
@@ -568,7 +623,7 @@ The above copyright notice and this permission notice shall be included in all c
 <li>New configuration to disable card scanner</li>
 </ul>
 <h4><a id="v111_Released_25Jan2019_580"></a>v1.1.1 Released: 25-Jan-2019</h4>
-<h4><a id="API_Changes_5581"></a>API Changes:</h4>
+<h4><a id="Release_notes_5581"></a>Release notes:</h4>
 <ul>
 <li>Improvements for UI Customization:</li>
 	<ul>
@@ -577,6 +632,16 @@ The above copyright notice and this permission notice shall be included in all c
 		<li>updated card logos</li>
 	</ul>
 <li>Improvements in WebView navigation bar: replaced text with specific icons</li>
+</ul>
+
+<h4><a id="v120_Released_5MAR2019_660"></a>v1.2.0 Released: 5-Mar-2019</h4>
+<h4><a id="Release_notes_667"></a>Release notes:</h4>
+<ul>
+<li>New language customization settings: it is now possible to set SDK's language according to locale (default) or based on a different language selected by application's users</li>
+<li>New <strong>FAQs</strong> appendix</li>
+<li>New error code (301) handling for operations restricted by transaction filter (credit card, country filter, ...) as set in Netaxept admin</li>
+<li>Availability of <code>Light PiA SDK</code> a new version of the SDK without <strong>Card.IO</strong>. Available upon request on Android and iOS.</li>
+<li>Improved expiration date verification for Tokenized Card payments</li>
 </ul>
 
 </body></html>

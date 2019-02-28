@@ -50,6 +50,7 @@
     <string name="sign_up">Sign Up</string>
     <string name="customize_ui">Customize UI</string>
     <string name="action_customize">Custom</string>
+    <string name="select_sdk_language">Select SDK Language</string>
 
     <!-- Confirmation Screen -->
     <string name="process_cancelled">Process is cancelled.</string>
@@ -60,6 +61,7 @@
     <string name="toolbar_title_failed">Failed</string>
     <string name="toolbar_title_success_save">Card Saved</string>
     <string name="toolbar_title_success_pay">Payment Completed</string>
+    <string name="terminal_verification_failed_message">Examples of reason:\n• Credit card type denied\n• Velocity filter\n•Blocked IP\n…</string>
 
     <!-- Merchant Backend Settings Screen -->
     <string name="change_merchant_info">Change Merchant Info</string>
@@ -98,7 +100,7 @@
     <string name="turn_on_save_card_option">Turn save card switch on</string>
     <string name="disable_save_card_option">Disable save card</string>
     <!-- CardIO customization related strings -->
-    <string name="cardio_ui_customization">Card scanner UI Customization</string>
+	<string name="cardio_ui_customization">Card scanner UI Customization</string>
     <string name="cardio_background">Card scanner Background</string>
     <string name="cardio_text_color">Card scanner Text Color</string>
     <string name="cardio_frame_color">Card scanner Frame Color</string>

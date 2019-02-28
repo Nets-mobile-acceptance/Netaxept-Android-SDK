@@ -6,11 +6,15 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import eu.nets.pia.data.exception.PiaErrorCode;
 import eu.nets.pia.data.model.PiaResult;
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.ui.widget.CustomToolbar;
@@ -95,13 +99,26 @@ public class ConfirmationActivity extends AppCompatActivity {
             //there was an error processing the transaction
             String errorMessage = "";
             if (piaError != null && piaError.getError() != null) {
-                errorMessage = String.format(
-                        "%1$s%n[%2$s]", piaError.getError().getMessage(this), piaError.getError().getCode().getStatusCode()
-                );
+                if (piaError.getError().getCode() == PiaErrorCode.TERMINAL_VALIDATION_ERROR) {
+                    errorMessage = String.format(
+                            "%1$s%n[%2$s]%n%n%3$s",
+                            piaError.getError().getMessage(this),
+                            piaError.getError().getCode().getStatusCode(),
+                            getString(R.string.terminal_verification_failed_message)
+                    );
+                    mStatusIcon.setBackgroundResource(R.drawable.ic_retry);
+                    mStatusMessage.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                } else {
+                    errorMessage = String.format(
+                            "%1$s%n[%2$s]", piaError.getError().getMessage(this), piaError.getError().getCode().getStatusCode()
+                    );
+                    mStatusIcon.setBackgroundResource(R.drawable.outline_highlight_off_white_48);
+                }
             } else {
                 errorMessage = getString(R.string.process_error);
+                mStatusIcon.setBackgroundResource(R.drawable.outline_highlight_off_white_48);
             }
-            mStatusIcon.setBackgroundResource(R.drawable.outline_highlight_off_white_48);
+
             mStatusMessage.setText(errorMessage);
             mToolbar.setTitle(R.string.toolbar_title_failed);
             mRootView.setBackgroundColor(ContextCompat.getColor(this, R.color.custom_red_color));

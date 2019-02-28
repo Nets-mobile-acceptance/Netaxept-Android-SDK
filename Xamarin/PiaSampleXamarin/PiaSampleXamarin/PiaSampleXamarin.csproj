@@ -50,9 +50,9 @@
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PiASDKBinding, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="PiaSDKBinding">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DLL Files\PiASDKBinding.dll</HintPath>
+      <HintPath>..\..\DLL Files\PiaSDKBinding.dll</HintPath>
     </Reference>
     <Reference Include="RetrofitScalarsBinding">
       <HintPath>..\..\DLL Files\RetrofitScalarsBinding.dll</HintPath>

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import eu.nets.pia.PiaInterfaceConfiguration;
+import eu.nets.pia.data.model.PiaLanguage;
 import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 
 
@@ -52,7 +53,7 @@ public class SampleApplication extends Application {
         //SDK Configuration
         PiaInterfaceConfiguration.getInstance().setLabelTextColor(ContextCompat.getColor(this, R.color.custom_orange_color));
         PiaInterfaceConfiguration.getInstance().setFieldTextColor(Color.BLUE);
-        PiaInterfaceConfiguration.getInstance().setFieldBackgroundColor(ContextCompat.getColor(this,R.color.accent));
+        PiaInterfaceConfiguration.getInstance().setFieldBackgroundColor(ContextCompat.getColor(this, R.color.accent));
         PiaInterfaceConfiguration.getInstance().setButtonTextColor(Color.WHITE);
         PiaInterfaceConfiguration.getInstance().setSwitchThumbColor(ContextCompat.getColor(this, R.color.pia_green_color));
         PiaInterfaceConfiguration.getInstance().setMainButtonBackgroundSelector(ContextCompat.getDrawable(this, R.drawable.pia_save_card_button));
@@ -77,5 +78,7 @@ public class SampleApplication extends Application {
         PiaInterfaceConfiguration.getInstance().setCardIOPreviewFrameColor(Color.RED);
         PiaInterfaceConfiguration.getInstance().setCardIOTextFont(Typeface.MONOSPACE);
 
+        //PiaSDK localization language
+        PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.SWEDISH);
     }
 }

@@ -1,4 +1,4 @@
-# PiA - Netaxept Android SDK v1.1.1
+# PiA - Netaxept Android SDK v1.2.0
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -14,7 +14,7 @@ PiA Netaxept Android SDK is a library that provides the native In-App interactio
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:1.1.1') { transitive = true; changing=true; }
+implementation('eu.nets.pia:pia-sdk:1.2.0') { transitive = true; changing=true; }
 ```
 
 **Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
@@ -25,6 +25,10 @@ implementation('eu.nets.pia:pia-sdk:1.1.1') { transitive = true; changing=true; 
 ```
     
 **Note:** the library is available through both `jcenter()` and `mavenCentral()` repositories.
+
+# Frequently Asked Questions
+---
+If you encounter any blockers when integrating the `Netaxept - Android SDK`, feel free to check the [Frequently Asked Questions](FAQs.md) page. If any of these answers does not fit your question, don't hesitate to [contact us](#contact).
 
 
 # Requirements
@@ -67,25 +71,6 @@ Supported payment methods:
      - Dankort
      - PayPal
 - Nordic mobile wallets (Vipps, Swish, MobilePay) – available soon
-
-# Releases
-
-New releases (improvements and fixes) since `v1.0.0`:
-
-- `v1.1.0`: Released on 18-Dec-2018
-	+ **Security improvement:** Payment parameters passed by the SDK to the backend are now sent through a **POST**. The **GET** request is discontinued
-    + **Xamarin** and **ReactNative** support
-    + Fixed logo issue for _DinersClubInternational_ recurring payments
-    + Improved _PiaSDK.start()_ to accept _Fragment_ parameter
-    + New configuration to disable card scanner
-	
-- `v1.1.1`: Released on 25-Jan-2019
-	+ Improvements for UI Customization:
-		- added new flag for hiding the "Save card for later use" functionality from payment screen
-		- added new option for setting custom background color for input fields
-		- updated card logos
-	+ Improvements in WebView navigation bar: replaced text with specific icons 
-
 
 # Usage
 ----

@@ -19,14 +19,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +42,7 @@ import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.data.model.MerchantInfo;
+import eu.nets.pia.data.model.PiaLanguage;
 import eu.nets.pia.data.model.PiaResult;
 import eu.nets.pia.sample.BuildConfig;
 import eu.nets.pia.sample.R;
@@ -46,6 +54,7 @@ import eu.nets.pia.sample.network.MerchantRestClient;
 import eu.nets.pia.sample.network.model.Amount;
 import eu.nets.pia.sample.network.model.PaymentMethodsResponse;
 import eu.nets.pia.sample.network.model.PaymentRegisterRequest;
+import eu.nets.pia.sample.ui.adapter.LanguageAdapter;
 import eu.nets.pia.sample.ui.data.PaymentMethod;
 import eu.nets.pia.sample.ui.widget.CustomToolbar;
 import eu.nets.pia.ui.main.PiaActivity;
@@ -96,11 +105,16 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     SwitchCompat mSystemAuthSwitch;
     @BindView(R.id.switch_disable_cardio)
     SwitchCompat mDisableCardIOSwitch;
+    @BindView(R.id.language_dropdown)
+    Spinner mLanguageSpinner;
+
     //end
     @BindView(R.id.spinner_holder)
     protected RelativeLayout mProgressBar;
 
     private static final String ORDER_NUMBER = "PiaSDK-Android";
+    private static final String DEFAULT_LANGUAGE = "Select";
+    private static PiaLanguage currentSelection;
 
     private MerchantRestClient mRestClient = MerchantRestClient.getInstance();
     private PaymentFlowCache mPaymentCache;
@@ -188,7 +202,47 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
             mSystemAuthSwitch.setChecked(PiaSampleSharedPreferences.isUseSystemAuth());
             mUrlSwitch.setChecked(PiaSampleSharedPreferences.isPiaTestMode());
             mDisableCardIOSwitch.setChecked(PiaSampleSharedPreferences.isDisableCardIo());
+
+            setupLanguageSpinner();
         }
+    }
+
+    private void setupLanguageSpinner() {
+        List<String> spinnerArrayList = new ArrayList<String>(Arrays.asList(
+                DEFAULT_LANGUAGE,
+                PiaLanguage.ENGLISH.getLanguageName(),
+                PiaLanguage.SWEDISH.getLanguageName(),
+                PiaLanguage.DANISH.getLanguageName(),
+                PiaLanguage.NORWEGIAN.getLanguageName(),
+                PiaLanguage.FINNISH.getLanguageName()
+        ));
+
+        final LanguageAdapter adapter = new LanguageAdapter(this, android.R.layout.simple_spinner_item, spinnerArrayList);
+        mLanguageSpinner.setAdapter(adapter);
+
+        //set previous selection
+        if (currentSelection != null) {
+            //show previous selection
+            mLanguageSpinner.setSelection(adapter.getPositionForItem(currentSelection.getLanguageName()));
+        } else {
+            //show default option
+            mLanguageSpinner.setSelection(adapter.getPositionForItem(DEFAULT_LANGUAGE));
+        }
+
+
+        mLanguageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //set it in the PiaInterfaceConfiguration
+                currentSelection = PiaLanguage.findByName(adapter.getItem(position));
+                PiaInterfaceConfiguration.getInstance().setPiaLanguage(currentSelection);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //do nothing
+            }
+        });
     }
 
     @OnClick(R.id.change_customer_id)
