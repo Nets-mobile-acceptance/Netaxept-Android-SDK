@@ -1,4 +1,5 @@
 # Xamarin Integration Guide
+This is a reference source code of an application (under MIT license) using the SDK, provided for demo purpose!
 ---
 
 ## Purpose
@@ -11,11 +12,15 @@ Need-to-know basics on how to get started:
 + Android SDK minimum supported API version is 21
 + The SDK requires external dependencies (some of them can be found on NuGet package manager, and some of them need to be included manually as Binding Libraries)
 
+**Note:** The `PiA Xamarin Android` library is also available on [NuGet](https://www.nuget.org/).
+
 We have provided a [PiaSampleXamarin](PiaSampleXamarin) application which integrates the `PiASDK` Xamarin Binding Library and implements basic functionalities.
 
 ## Step-by-step instructions
-1. Include `.dll` files in your Xamarin application
-    + In your solution explorer, Right click on the application's References folder: **Add Reference** - **Assemblies** - **Browse** - Go to the `DLL Files` folder and select all files and click **OK**
+1. Include **PiA Xamarin SDK** in your application. You can do this in two ways:
+    + Include NuGet solution `eu.nets.pia.pia-xamarin-android` from **Nuget Gallery** 
+    + Or manually include `.dll` files we provided in your Xamarin application
+        + In your solution explorer, Right click on the application's References folder: **Add Reference** - **Assemblies** - **Browse** - Go to the `DLL Files` folder and select all files and click **OK**
 2. Include required external dependencies
     + In your solution explorer, Right click on the application's References folder: **Manage NuGet Packages** - Search and install the following libraries:
         + `Xamarin.Android.Support.Constraint.Layout`
@@ -40,7 +45,7 @@ We have provided a [PiaSampleXamarin](PiaSampleXamarin) application which integr
         TransactionInfo IRegisterPaymentHandler.DoRegisterPaymentRequest(bool p0)
         {
             //make register payment request synchronous to your backend and return the Transaction info
-            return new TransactionInfo("transactionId", "redirectOk", "'redirectCancel");
+            return new TransactionInfo("transactionId", "redirectOk");
         }
     }
 ```
@@ -99,7 +104,7 @@ The SDK can be started in 4 ways, depending on the content of the Bundle
         ``` java
         MerchantInfo merchant = new MerchantInfo("merchant_id", false);
         OrderInfo order = new OrderInfo(1, "DKK");
-        TokenCardInfo tokenCardInfo = new TokenCardInfo("4925********0004", "0822", true, false);
+        TokenCardInfo tokenCardInfo = new TokenCardInfo("4925********0004", "08/22", true, false);
         
         Bundle bundle = new Bundle();
         bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
@@ -121,3 +126,8 @@ The SDK can be started in 4 ways, depending on the content of the Bundle
         ```
 
 For technical information, please check our detailed overview documentation on our [GitHub Page](../).
+
+## PiA Sample Xamarin uses the following 3rd party library:
+---
+- [Naxam.Retrofit2.ConvertGson.Droid](https://github.com/NAXAM/retrofit2-convertgson-android-binding)
+- [RetrofitScalarsBinding](https://github.com/square/retrofit/tree/master/retrofit-converters/scalars)

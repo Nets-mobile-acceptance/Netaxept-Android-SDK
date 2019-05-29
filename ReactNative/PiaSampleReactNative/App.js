@@ -73,11 +73,11 @@ export default class App extends Component<Props> {
           }).then((response) => response.json())
               .then((responseJson) => {
                 console.log('onResponse'+responseJson.transactionId)
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK , responseJson.redirectCancel);
+                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
               })
               .catch((error) => {
                 console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null ,null);
+                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
               });
     });
   }
@@ -102,11 +102,11 @@ export default class App extends Component<Props> {
             body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "1","vatAmount": 0}}'
           }).then((response) => response.json())
               .then((responseJson) => {
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK , responseJson.redirectCancel);
+                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
               })
               .catch((error) => {
                 console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null ,null);
+                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
               });
     });
   }
@@ -131,11 +131,11 @@ export default class App extends Component<Props> {
            body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "1","vatAmount": 0}}'
           }).then((response) => response.json())
               .then((responseJson) => {
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK , responseJson.redirectCancel);
+                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
               })
               .catch((error) => {
                 console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null ,null);
+                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
               });
     });
   }

@@ -1,5 +1,6 @@
-# React Native Integration Guide
+﻿# React Native Integration Guide
 ---
+## This is a reference source code of an application (under MIT license) using the SDK, provided for demo purpose!
 
 ## Purpose
 This document provides the basic information to include the **Netaxept - Android SDK** (JAVA native) in your React Native application. Please check below the instructions on how to get started.
@@ -18,7 +19,7 @@ We have provided a `PiaSampleReactNative` application which integrates the `PiAS
 1. Add dependency for **PiaSDK**
     + In your **android** folder, in `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:1.2.0') { transitive = true; }
+implementation('eu.nets.pia:pia-sdk:1.3.0') { transitive = true; }
 ```
 2. Create a _.java_ class in your Android folder which extends `ReactContextBaseJavaModule`. Make sure to override the `getName()` method, and return a proper String
 3. Create a _.java_ class in your Android folder which extends `ReactPackage`. In the array returned by the `createNativeModules()` method add a new instance of the class created at the previous step
@@ -137,7 +138,7 @@ public void buildTransactionInfo(String transactionId, String redirectOK, String
         if(transactionId == null){
             transactionInfo = null;
         } else {
-            transactionInfo = new TransactionInfo(transactionId, redirectOK, redirectCancel);
+            transactionInfo = new TransactionInfo(transactionId, redirectOK);
         }
         //release the thread to continue with the payment
         threadSynchronizator.notify();
@@ -167,11 +168,11 @@ saveCard = () => {
         body: requestString
     }).then((response) => response.json())
       .then((responseJson) => {
-            NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK , responseJson.redirectCancel);
+            NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
         })
       .catch((error) => {
             console.error(error);
-            NativeModules.PiaSDK.buildTransactionInfo(null ,null ,null);
+            NativeModules.PiaSDK.buildTransactionInfo(null ,null);
         });
     });
 }

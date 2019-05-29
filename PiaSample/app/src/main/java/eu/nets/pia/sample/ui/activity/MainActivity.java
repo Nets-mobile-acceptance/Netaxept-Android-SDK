@@ -19,7 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import eu.nets.pia.PiaSDK;
@@ -113,15 +112,29 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
          */
         mRegisterPaymentHandler = new RegisterPaymentHandlerImpl();
 
+        //clear all fragments added in backstack -- when activity is created, it's better to have a fresh stack
+        clearFragmentStack();
+
         //first time activity is created show checkout
         changeFragment(new CheckoutFragment());
 
     }
 
+    /**
+     * Each time the Activity is created, clear the fragment stack to remove all cached data
+     */
+    private void clearFragmentStack() {
+        for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
+            getSupportFragmentManager().popBackStack();
+        }
+    }
+
     private void changeFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        if (fragment == null) return;
-
+        //if fragment is null or already added in stack, don't add it again
+        if (fragment == null || fragmentAlreadyInStack(fragment.getClass().getSimpleName())) {
+            return;
+        }
         transaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 
         transaction.replace(mFrame.getId(), fragment, fragment.getClass().getSimpleName());
@@ -131,6 +144,22 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         }
         transaction.commit();
     }
+
+    /**
+     * Searches for the fragment class name in the backstack; if it's found, returns true
+     *
+     * @param fragmentToAdd class simple name of the fragment
+     * @return boolean with result found or not
+     */
+    private boolean fragmentAlreadyInStack(String fragmentToAdd) {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment.getClass().getSimpleName().equals(fragmentToAdd)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public void onBackPressed() {

@@ -53,7 +53,8 @@ public interface MerchantBackendAPI {
     @PUT("v1/payment/{merchantId}/{transactionId}/commit")
     Call<PaymentCommitResponse> commitPayment(
             @Path("transactionId") String transactionId,
-            @Path("merchantId") String merchantId
+            @Path("merchantId") String merchantId,
+            @Body String emptyBody
     );
 
     @PUT("v1/payment/{transactionId}/commit")
@@ -64,7 +65,8 @@ public interface MerchantBackendAPI {
     @PUT("v1/payment/{merchantId}/{transactionId}/storecard")
     Call<PaymentCommitResponse> verifyPayment(
             @Path("transactionId") String transactionId,
-            @Path("merchantId") String merchantId
+            @Path("merchantId") String merchantId,
+            @Body String emptyBody
     );
 
     @PUT("v1/payment/{transactionId}/storecard")

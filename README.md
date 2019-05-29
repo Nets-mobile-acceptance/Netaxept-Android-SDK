@@ -1,4 +1,4 @@
-# PiA - Netaxept Android SDK v1.2.0
+# PiA - Netaxept Android SDK v1.3.0
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -14,7 +14,7 @@ PiA Netaxept Android SDK is a library that provides the native In-App interactio
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:1.2.0') { transitive = true; changing=true; }
+implementation('eu.nets.pia:pia-sdk:1.3.0') { transitive = true; changing=true; }
 ```
 
 **Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
@@ -93,8 +93,7 @@ In the example below, the SDK is launched to perform a payment with a new card.
             if (!paymentFlowCache.finishedWithError()) {
                 PaymentRegisterResponse registerResponse = paymentFlowCache.getPaymentRegisterResponse();
                 return new TransactionInfo(registerResponse.getTransactionId(),
-                        registerResponse.getRedirectOK(),
-                        registerResponse.getRedirectCancel());
+                        registerResponse.getRedirectOK());
             }
 
             return null;
@@ -119,7 +118,8 @@ In the example below, the SDK is launched to perform a payment with a new card.
         }
 
         private MerchantInfo getMerchantInfo() {
-            return new MerchantInfo(BuildConfig.MERCHANT_ID);
+            boolean testMode = true; //Notify the SDK to use the test environment
+            return new MerchantInfo(BuildConfig.MERCHANT_ID, testMode);
         }
 
         private OrderInfo getOrderInfo() {

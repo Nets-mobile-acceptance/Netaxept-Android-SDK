@@ -220,7 +220,7 @@ namespace PiaSampleXamarin
         TransactionInfo IRegisterPaymentHandler.DoRegisterPaymentRequest(bool p0)
         {
             //make register payment request synchronous to your backend and return the Transaction info
-            return new TransactionInfo("transaction_id", "redirect_ok", "redirect_cancel");
+            return new TransactionInfo("transaction_id", "redirect_ok");
         }
     }
 }

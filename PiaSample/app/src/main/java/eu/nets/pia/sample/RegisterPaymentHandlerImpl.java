@@ -31,11 +31,11 @@ public class RegisterPaymentHandlerImpl implements RegisterPaymentHandler {
     /**
      * Create your own class to implement {@link eu.nets.pia.RegisterPaymentHandler}, and override
      * {@link eu.nets.pia.RegisterPaymentHandler#doRegisterPaymentRequest(boolean)}
-     *       - in this method create a request to your backend to register a payment synchronously
-     *          (the body of the request, here, is stored in a {@link eu.nets.pia.sample.data.PaymentFlowCache}
-     *       - with the register response, create a {@link eu.nets.pia.data.model.TransactionInfo} with
+     * - in this method create a request to your backend to register a payment synchronously
+     * (the body of the request, here, is stored in a {@link eu.nets.pia.sample.data.PaymentFlowCache}
+     * - with the register response, create a {@link eu.nets.pia.data.model.TransactionInfo} with
      * transactionId, redirectOK and redirectCance
-     *       - return the TransactionInfo Object
+     * - return the TransactionInfo Object
      * This handler will be passed to the SDK and will be used as a first step when making a payment. This
      * transactionId will be used to send the paymentRequest to Netaxept.
      *
@@ -53,9 +53,10 @@ public class RegisterPaymentHandlerImpl implements RegisterPaymentHandler {
 
         if (!paymentFlowCache.finishedWithError() && paymentFlowCache.getPaymentRegisterResponse() != null) {
             PaymentRegisterResponse registerResponse = paymentFlowCache.getPaymentRegisterResponse();
+
             return new TransactionInfo(registerResponse.getTransactionId(),
-                    registerResponse.getRedirectOK(),
-                    registerResponse.getRedirectCancel());
+                    registerResponse.getRedirectOK());
+
         }
 
         return null;

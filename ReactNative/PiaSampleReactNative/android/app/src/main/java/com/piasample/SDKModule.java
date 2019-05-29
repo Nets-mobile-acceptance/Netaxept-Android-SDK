@@ -183,12 +183,12 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * @param redirectCancel - the redirectCancel case
      */
     @ReactMethod
-    public void buildTransactionInfo(String transactionId, String redirectOK, String redirectCancel) {
+    public void buildTransactionInfo(String transactionId, String redirectOK) {
         synchronized (threadSynchronizator) {
             if(transactionId == null){
                 transactionInfo = null;
             } else {
-                transactionInfo = new TransactionInfo(transactionId, redirectOK, redirectCancel);
+                transactionInfo = new TransactionInfo(transactionId, redirectOK);
             }
             threadSynchronizator.notify();
         }

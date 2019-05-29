@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import eu.nets.pia.sample.BuildConfig;
 import eu.nets.pia.sample.RegisterPaymentHandlerImpl;
 import eu.nets.pia.sample.data.PaymentFlowCache;
 import eu.nets.pia.sample.data.PaymentFlowState;
@@ -159,7 +158,7 @@ public class MerchantRestClient {
     public void commitPayment(String transactionId) {
         Log.d(TAG, "[commitPayment] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
         mPaymentCache.setState(PaymentFlowState.SENDING_COMMIT_PAYMENT_CALL);
-        mMerchantBackendAPI.commitPayment(transactionId, getMerchantId()).enqueue(new Callback<PaymentCommitResponse>() {
+        mMerchantBackendAPI.commitPayment(transactionId, getMerchantId(), "{}").enqueue(new Callback<PaymentCommitResponse>() {
             @Override
             public void onResponse(Call<PaymentCommitResponse> call, Response<PaymentCommitResponse> response) {
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
@@ -192,7 +191,7 @@ public class MerchantRestClient {
     public void verifyPayment(String transactionId) {
         Log.d(TAG, "[verifyPayment] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
         mPaymentCache.setState(PaymentFlowState.SENDING_COMMIT_PAYMENT_CALL);
-        mMerchantBackendAPI.verifyPayment(transactionId, getMerchantId()).enqueue(new Callback<PaymentCommitResponse>() {
+        mMerchantBackendAPI.verifyPayment(transactionId, getMerchantId(), "{}").enqueue(new Callback<PaymentCommitResponse>() {
             @Override
             public void onResponse(Call<PaymentCommitResponse> call, Response<PaymentCommitResponse> response) {
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
