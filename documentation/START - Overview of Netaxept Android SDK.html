@@ -43,7 +43,7 @@ If you encounter any blockers when integrating the <code>Netaxept - Android SDK<
 </ul>
 <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         ...
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.3.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.3.1'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         ...
     }
 </code></pre>
@@ -689,8 +689,6 @@ The above copyright notice and this permission notice shall be included in all c
 <li>Availability of <code>Light PiA SDK</code> a new version of the SDK without <strong>Card.IO</strong>. Available upon request on Android and iOS.</li>
 <li>Improved expiration date verification for Tokenized Card payments</li>
 </ul>
-
-
 <h4><a id="v130_Released_23MAY2019_660"></a>v1.3.0 Released: 29-May-2019</h4>
 <h4><a id="Release_notes_670"></a>Release notes:</h4>
 <ul>
@@ -700,4 +698,10 @@ The above copyright notice and this permission notice shall be included in all c
 <li>Card scanner UI improvements</li>
 <li>The constructor <code>TransactionInfo("transactionId", "redirectOk", "RedirectCancel")</code> has been <strong>Deprecated</strong>. Use a secondary constructor <code>TransactionInfo("transactionId", "redirectOk")</code> in place of it</li>
 </ul>
+<h4><a id="v131_Released_24JUN2019_660"></a>v1.3.1 Released: 24-Jun-2019</h4>
+<h4><a id="Release_notes_731"></a>Release notes:</h4>
+<ul>
+<li>Added support of app switch for the Swedish BankId verification on <strong>MasterCard ID Check</strong></li>
+</ul>
+
 </body></html>
