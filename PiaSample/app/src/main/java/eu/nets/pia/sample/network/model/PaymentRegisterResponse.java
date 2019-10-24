@@ -32,6 +32,9 @@ public class PaymentRegisterResponse {
     @SerializedName("redirectCancel")
     private String redirectCancel = null;
 
+    @SerializedName("walletUrl")
+    private String walletUrl = null;
+
     /**
      * RedirectOK
      **/
@@ -65,6 +68,14 @@ public class PaymentRegisterResponse {
         this.transactionId = transactionId;
     }
 
+    public String getWalletUrl() {
+        return walletUrl;
+    }
+
+    public void setWalletUrl(String walletUrl) {
+        this.walletUrl = walletUrl;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -72,6 +83,7 @@ public class PaymentRegisterResponse {
         sb.append("transactionId='").append(transactionId).append("'");
         sb.append(",redirectOK='").append(redirectOK).append("'");
         sb.append(",redirectCancel='").append(redirectCancel).append("'");
+        sb.append(",walletUrl='").append(walletUrl).append("'");
 
         sb.append("}");
         return sb.toString();

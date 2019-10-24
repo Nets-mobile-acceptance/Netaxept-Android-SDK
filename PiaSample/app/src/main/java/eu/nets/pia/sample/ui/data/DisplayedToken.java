@@ -2,6 +2,7 @@ package eu.nets.pia.sample.ui.data;
 
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment;
+import eu.nets.pia.utils.StringUtils;
 
 /**
  * MIT License
@@ -66,7 +67,7 @@ public class DisplayedToken extends PaymentMethod {
     }
 
     public String getMaskedPan() {
-        return "•••• " + tokenId.substring(tokenId.length() - 4, tokenId.length());
+        return "•••• " + StringUtils.safeSubString(tokenId, tokenId.length() - 4, tokenId.length());
     }
 
     public int getCardSchemeLogo() {
@@ -81,6 +82,8 @@ public class DisplayedToken extends PaymentMethod {
                 return R.drawable.pia_dan_kort;
             case PaymentMethodsFragment.ID_JCB:
                 return R.drawable.pia_jcb;
+            case PaymentMethodsFragment.ID_MAESTRO:
+                return R.drawable.pia_maestro_icon;
             case PaymentMethodsFragment.ID_DINERS:
                 return R.drawable.pia_diners;
             default:

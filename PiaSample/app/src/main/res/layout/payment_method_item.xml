@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingTop="8dp"
+    android:id="@+id/otherMethodRootView"
     android:paddingStart="8dp"
     android:paddingEnd="8dp">
 

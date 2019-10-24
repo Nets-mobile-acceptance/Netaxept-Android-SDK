@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tokenMethodRootView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="8dp"
+    android:paddingEnd="8dp"
     android:paddingStart="8dp"
-    android:paddingEnd="8dp">
+    android:paddingTop="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +17,7 @@
         <ImageView
             android:id="@+id/card_scheme_logo"
             android:layout_width="80dp"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp" />
 
         <TextView
             android:id="@+id/card_scheme_digits"

@@ -37,6 +37,7 @@ public class PiaSampleSharedPreferences {
     private static final String MERCHANT_ID_TEST = "merchant_id_test";
     private static final String MERCHANT_ID_PROD = "merchant_id_prod";
     private static final String DISABLE_SAVE_CARD_OPTION = "disable_save_card_option";
+    private static final String CUSTOMER_PHONE_NUMBER = "customer_phone_number";
 
     private static SharedPreferences mSharedPrefs;
 
@@ -149,6 +150,17 @@ public class PiaSampleSharedPreferences {
     public static String getMerchantIdProd() {
         String prodId = mSharedPrefs.getString(MERCHANT_ID_PROD, BuildConfig.MERCHANT_ID_PROD);
         return prodId.isEmpty() ? null : prodId;
+    }
+
+    public static void setPhoneNumber(String phoneNumber) {
+        SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
+        prefsEditor.putString(CUSTOMER_PHONE_NUMBER, phoneNumber);
+        prefsEditor.commit();
+    }
+
+    public static String getPhoneNumber() {
+        String phoneNumber = mSharedPrefs.getString(CUSTOMER_PHONE_NUMBER, "");
+        return phoneNumber.isEmpty() ? null : phoneNumber;
     }
 
     public static boolean isUsingNetsEnv() {

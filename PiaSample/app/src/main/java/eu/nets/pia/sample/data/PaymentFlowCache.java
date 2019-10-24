@@ -40,7 +40,7 @@ public class PaymentFlowCache {
     private PaymentRegisterRequest mPaymentRegisterRequest;
     private PaymentRegisterResponse mPaymentRegisterResponse;
     private PaymentCommitResponse mPaymentCommitResponse;
-    private boolean mPaymentMethodSelected = false;
+    private PaymentMethodSelected mPaymentSelected = PaymentMethodSelected.NOT_SELECTED;
 
     private PaymentFlowCache() {
 
@@ -52,6 +52,7 @@ public class PaymentFlowCache {
         mState = PaymentFlowState.IDLE;
         mFinishedWithError = false;
         mFailedRequest = false;
+        mPaymentSelected = PaymentMethodSelected.NOT_SELECTED;
     }
 
     public void setPaymentRegisterResponse(PaymentRegisterResponse mPaymentRegisterResponse) {
@@ -70,7 +71,7 @@ public class PaymentFlowCache {
         return mState;
     }
 
-    public boolean finishedWithError() {
+    public boolean isFinishedWithError() {
         return mFinishedWithError;
     }
 
@@ -90,6 +91,10 @@ public class PaymentFlowCache {
         return mPaymentCommitResponse;
     }
 
+    public void setPaymentCommitResponse(PaymentCommitResponse paymentCommitResponse) {
+        this.mPaymentCommitResponse = paymentCommitResponse;
+    }
+
     public PaymentRegisterRequest getPaymentRegisterRequest() {
         return mPaymentRegisterRequest;
     }
@@ -98,15 +103,12 @@ public class PaymentFlowCache {
         this.mPaymentRegisterRequest = mPaymentRegisterRequest;
     }
 
-    public void setPaymentCommitResponse(PaymentCommitResponse paymentCommitResponse) {
-        this.mPaymentCommitResponse = paymentCommitResponse;
+    public PaymentMethodSelected getPaymentMethodSelected() {
+        return mPaymentSelected;
     }
 
-    public boolean isPaymentMethodSelected () {
-        return mPaymentMethodSelected;
+    public void setPaymentMethodSelected(PaymentMethodSelected mPaymentSelected) {
+        this.mPaymentSelected = mPaymentSelected;
     }
 
-    public void setPaymentMethodSelected (boolean mPaymentMethodSelected ) {
-        this.mPaymentMethodSelected = mPaymentMethodSelected;
-    }
 }

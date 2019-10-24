@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -33,7 +34,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,6 +54,7 @@ import eu.nets.pia.sample.network.MerchantRestClient;
 import eu.nets.pia.sample.network.model.Amount;
 import eu.nets.pia.sample.network.model.PaymentMethodsResponse;
 import eu.nets.pia.sample.network.model.PaymentRegisterRequest;
+import eu.nets.pia.sample.ui.activity.main.MainActivity;
 import eu.nets.pia.sample.ui.adapter.LanguageAdapter;
 import eu.nets.pia.sample.ui.data.PaymentMethod;
 import eu.nets.pia.sample.ui.widget.CustomToolbar;
@@ -107,6 +108,11 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     SwitchCompat mDisableCardIOSwitch;
     @BindView(R.id.language_dropdown)
     Spinner mLanguageSpinner;
+
+    @BindView(R.id.phone_number_text)
+    TextView customerPhoneNumber;
+    @BindView(R.id.change_phone_number)
+    TextView changePhoneNumber;
 
     //end
     @BindView(R.id.spinner_holder)
@@ -163,7 +169,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
 
     private void initViews() {
         String customerId = PiaSampleSharedPreferences.getCustomerId();
-
+        String phoneNumber = PiaSampleSharedPreferences.getPhoneNumber();
         if (customerId.isEmpty()) {
             //user is not logged in
             mMainLayout.setVisibility(View.GONE);
@@ -172,6 +178,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
             mMainLayout.setVisibility(View.VISIBLE);
             mCustomerIdLabel.setText(customerId);
             mAppVersionLabel.setText(PiaSDK.getInstance().getVersionName());
+            customerPhoneNumber.setText(phoneNumber == null ? "Not configured" : phoneNumber);
 
             mUrlSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -249,6 +256,12 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     public void onChangeCustomerId() {
         //show input popup to change id
         showInputDialog();
+    }
+
+    @OnClick(R.id.change_phone_number)
+    public void onChangePhoneNumber() {
+        //show input popup to change phone number
+        showInputDialogChangeNumber();
     }
 
     @OnClick(R.id.action_customize_ui)
@@ -487,16 +500,8 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
      * In this object, you notify the SDK about:
      * 1. Which merchant is requesting the payments to be processed (your merchant ID)
      * 2. Which base URL should be used: TEST or PRODUCTION
-     * 3. If your merchant configuration supports payments without CVC, it notifies the SDK
-     * to hide the CVC entry.
-     * <p>
-     * Note:
-     * This _cvcRequired_ flag is set based on a local check. The current logic implemented there, is
-     * to have two cases (true and false) based on the customerId being odd or even. This was made only
-     * for Demo purposes.
-     * <p>
-     * For your implementation, check with your acquirer if payment for the specific user can be made without CVV/CVC,
-     * and send this flag accordingly.
+     * 3. Always show the CVC entry.
+     * 
      *
      * @return MerchantInfo object
      */
@@ -507,16 +512,14 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
             return new MerchantInfo(
                     getMerchantId(true),
                     true,
-                    Integer.parseInt(PiaSampleSharedPreferences.getCustomerId()) % 2 != 0
-                    //for odd customerId the CVC will be required and for even will not be required
+                    true
             );
         } else {
             //launch SDK with production merchant id; if testMode is not specified, is false by default
             return new MerchantInfo(
                     getMerchantId(false),
                     false,
-                    Integer.parseInt(PiaSampleSharedPreferences.getCustomerId()) % 2 != 0
-                    //for odd customerId the CVC will be required and for even will not be required
+                    true
             );
         }
 
@@ -560,9 +563,9 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     }
 
     private void handlePaymentFlowState() {
-        Log.d(TAG, "[handlePaymentFlowState] [finishedWithError=" + mPaymentCache.finishedWithError() +
+        Log.d(TAG, "[handlePaymentFlowState] [isFinishedWithError=" + mPaymentCache.isFinishedWithError() +
                 "; state=" + mPaymentCache.getState() + "]");
-        if (!mPaymentCache.finishedWithError()) {
+        if (!mPaymentCache.isFinishedWithError()) {
             switch (mPaymentCache.getState()) {
                 case COMMIT_PAYMENT_CALL_FINISHED:
                     Bundle bundle = new Bundle();
@@ -605,6 +608,85 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
             mRestClient.transactionRollback(
                     mPaymentCache.getPaymentRegisterResponse().getTransactionId()
             );
+        }
+    }
+
+    private void showInputDialogChangeNumber() {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.InputAlertDialogTheme);
+
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle("Phone Number");
+
+        LinearLayout layout = new LinearLayout(this);
+        final EditText input = new EditText(this);
+        input.setHint("+4741111111");
+        input.setInputType(InputType.TYPE_CLASS_PHONE);
+        input.setTextColor(Color.BLACK);
+        input.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        input.setHintTextColor(ContextCompat.getColor(this, R.color.light_gray));
+
+        LinearLayout.LayoutParams parentLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layout.setLayoutParams(parentLp);
+        layout.setGravity(Gravity.CENTER);
+        layout.setPadding(20, 20, 20, 10);
+
+        LinearLayout.LayoutParams childLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        input.setLetterSpacing(0.5f);
+        input.setLayoutParams(childLp);
+        input.setGravity(Gravity.CENTER);
+        childLp.gravity = Gravity.CENTER;
+
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setStroke(2, ContextCompat.getColor(this, R.color.light_gray));
+        input.setBackground(drawable);
+        layout.addView(input);
+
+        alertDialog.setView(layout);
+
+        alertDialog.setPositiveButton(R.string.action_save, null);
+        alertDialog.setNegativeButton(R.string.pia_action_cancel, null);
+
+        final AlertDialog mDialog = alertDialog.create();
+
+        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button saveBtn = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                Button btnCancel = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                saveBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String phoneNumner = input.getText().toString();
+                        if (phoneNumner.isEmpty()) {
+                            //show the toast but do not dismiss the dialog
+                            Toast.makeText(LoginActivity.this, "Please enter phone number", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            PiaSampleSharedPreferences.setPhoneNumber(phoneNumner);
+                            customerPhoneNumber.setText(phoneNumner);
+                            mDialog.cancel();
+                        }
+                    }
+                });
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!PiaSampleSharedPreferences.getCustomerId().isEmpty()) {
+                            // dismiss dialog only if is not login
+                            mDialog.cancel();
+                        }
+                    }
+                });
+            }
+        });
+
+        try {
+            mDialog.show();
+        } catch (Exception e) {
+            //just make sure nothing goes wrong
         }
     }
 }

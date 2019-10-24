@@ -1,4 +1,4 @@
-# PiA - Netaxept Android SDK v1.3.1
+# PiA - Netaxept Android SDK v1.4.0
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -14,7 +14,7 @@ PiA Netaxept Android SDK is a library that provides the native In-App interactio
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:1.3.1') { transitive = true; changing=true; }
+implementation('eu.nets.pia:pia-sdk:1.4.0') { transitive = true; changing=true; }
 ```
 
 **Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
@@ -62,15 +62,9 @@ We have provided a [Sample Application](PiaSample/) to help you understand the u
 # Project Status
 ---
 Supported payment methods:
-- Cards
-     - Visa
-     - Mastercard
-     - American Express
-     - Diners
-     - JCB
-     - Dankort
-     - PayPal
-- Nordic mobile wallets (Vipps, Swish, MobilePay) – available soon
+- Cards: Visa, Mastercard, American Express, Diners, JCB, Maestro, Dankort, PayPal
+- Vipps
+- Mobile wallets (MobilePay, Swish) – available soon
 
 # Usage
 ----
@@ -90,10 +84,10 @@ In the example below, the SDK is launched to perform a payment with a new card.
 
             MerchantRestClient.getInstance().registerPayment(paymentRegisterRequest);
 
-            if (!paymentFlowCache.finishedWithError()) {
-                PaymentRegisterResponse registerResponse = paymentFlowCache.getPaymentRegisterResponse();
-                return new TransactionInfo(registerResponse.getTransactionId(),
-                        registerResponse.getRedirectOK());
+            if (!paymentFlowCache.isFinishedWithError()) {
+                PaymentRegisterResponse paymentRegisterResponse = paymentFlowCache.getPaymentRegisterResponse();
+                return new TransactionInfo(paymentRegisterResponse.getTransactionId(),
+                        paymentRegisterResponse.getRedirectOK());
             }
 
             return null;

@@ -1,16 +1,14 @@
 package eu.nets.pia.sample.ui.activity;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.TypedValue;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,6 +16,8 @@ import eu.nets.pia.data.exception.PiaErrorCode;
 import eu.nets.pia.data.model.PiaResult;
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.ui.widget.CustomToolbar;
+
+import static eu.nets.pia.data.exception.PiaErrorCode.VIPPS_ERROR;
 
 /**
  * MIT License
@@ -81,8 +81,7 @@ public class ConfirmationActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        PiaResult piaError = getIntent().getParcelableExtra(BUNDLE_ERROR_OBJECT);
-
+        PiaResult piaResult = getIntent().getParcelableExtra(BUNDLE_ERROR_OBJECT);
         if (getIntent().getBooleanExtra(BUNDLE_PAYMENT_CANCELED, false)) {
             //the user cancelled the transaction
             mStatusIcon.setBackgroundResource(R.drawable.outline_error_outline_white_48);
@@ -98,30 +97,56 @@ public class ConfirmationActivity extends AppCompatActivity {
         } else {
             //there was an error processing the transaction
             String errorMessage = "";
-            if (piaError != null && piaError.getError() != null) {
-                if (piaError.getError().getCode() == PiaErrorCode.TERMINAL_VALIDATION_ERROR) {
+            String titleMsg;
+            int color, image;
+            if (piaResult != null && piaResult.getError() != null) {
+                if (piaResult.getError().getCode() == PiaErrorCode.TERMINAL_VALIDATION_ERROR) {
                     errorMessage = String.format(
                             "%1$s%n[%2$s]%n%n%3$s",
-                            piaError.getError().getMessage(this),
-                            piaError.getError().getCode().getStatusCode(),
+                            piaResult.getError().getMessage(this),
+                            piaResult.getError().getCode().getStatusCode(),
                             getString(R.string.terminal_verification_failed_message)
                     );
+                    titleMsg = piaResult.getError().getMessage(this);
+                    image = R.drawable.ic_retry;
+                    mStatusMessage.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                    color = ContextCompat.getColor(this, R.color.custom_red_color);
+                } else if (piaResult.getError().getCode() == VIPPS_ERROR) {
+                    titleMsg = getString(R.string.toolbar_title_failed);
+                    color = ContextCompat.getColor(this, R.color.custom_red_color);
+                    image = R.drawable.ic_retry;
+                    String errorVal = PiaErrorCode.VIPPS_ERROR.getStatusCode();
+                    String errorCode = String.valueOf(piaResult.getError().getMobileWalletErrorCode());
+                    if (errorCode == null || errorCode.equals("null")) {
+                        errorCode = "";
+                    }
+                    errorMessage = String.format("%1$s%n%2$s%n%n%3$s",
+                            piaResult.getError().getMessage(this),
+                            "[" + errorVal + "]",
+                            "" + errorCode);
                     mStatusIcon.setBackgroundResource(R.drawable.ic_retry);
                     mStatusMessage.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                    mStatusMessage.setText(errorMessage);
                 } else {
                     errorMessage = String.format(
-                            "%1$s%n[%2$s]", piaError.getError().getMessage(this), piaError.getError().getCode().getStatusCode()
+                            "%1$s%n[%2$s]",
+                            piaResult.getError().getMessage(this),
+                            piaResult.getError().getCode().getStatusCode()
                     );
-                    mStatusIcon.setBackgroundResource(R.drawable.outline_highlight_off_white_48);
+                    image = R.drawable.ic_retry;
+                    titleMsg = getString(R.string.toolbar_title_failed);
+                    color = ContextCompat.getColor(this, R.color.custom_red_color);
                 }
             } else {
                 errorMessage = getString(R.string.process_error);
-                mStatusIcon.setBackgroundResource(R.drawable.outline_highlight_off_white_48);
+                titleMsg = getString(R.string.toolbar_title_failed);
+                color = ContextCompat.getColor(this, R.color.custom_red_color);
+                image = R.drawable.ic_retry;
             }
-
+            mToolbar.setTitle(titleMsg);
+            mRootView.setBackgroundColor(color);
             mStatusMessage.setText(errorMessage);
-            mToolbar.setTitle(R.string.toolbar_title_failed);
-            mRootView.setBackgroundColor(ContextCompat.getColor(this, R.color.custom_red_color));
+            mStatusIcon.setBackgroundResource(image);
         }
     }
 

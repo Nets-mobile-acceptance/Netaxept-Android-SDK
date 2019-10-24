@@ -13,8 +13,10 @@
     <color name="custom_blue_color">#005776</color>
     <color name="custom_blue_tint_color">#b4005776</color>
     <color name="custom_light_blue_color">@color/light_blue</color>
+    <color name="custom_light_gray_color">#D3D3D3</color>
     <color name="custom_red_color">#ff0040</color>
     <color name="custom_orange_color">#ffae42</color>
+    <color name="custom_light_green_color">#00FF00</color>
     <color name="custom_spinner_background_color">#b9e2e1e1</color>
     <color name="dark_gray">#a4a3a3</color>
 

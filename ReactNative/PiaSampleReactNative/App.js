@@ -27,6 +27,10 @@ const instructions = Platform.select({
     'Double tap R on your keyboard to reload,\n' +
     'Shake or press menu button for dev menu',
 });
+const backendUrlProd = "YOUR BACKEND PROD URL HERE";
+const backendUrlTest = "YOUR BACKEND TEST URL HERE";
+const merchantIdProd = "YOUR PROD MERCHANT ID HERE";
+const merchantIdTest = "YOUR TEST MERCHANT ID HERE";
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -45,6 +49,9 @@ export default class App extends Component<Props> {
         <View style={styles.button}>
           <Button  onPress={this.paypal} title="Paypal" />
         </View>
+        <View style={styles.button}>
+          <Button  onPress={this.vipps} title="Vipps" />
+        </View>
       </View>
     );
   }
@@ -53,7 +60,7 @@ export default class App extends Component<Props> {
 
   pay = () => {
     //for pay with new card, set only the MechantInfo and Order info objects
-    NativeModules.PiaSDK.buildMerchantInfo("merchant_id",false,true);
+    NativeModules.PiaSDK.buildMerchantInfo(merchantIdTest, true, true);
     NativeModules.PiaSDK.buildOrderInfo(1,"EUR");
 
     //set the payment result promise
@@ -64,12 +71,13 @@ export default class App extends Component<Props> {
     });
    
     NativeModules.PiaSDK.start((saveCardBool) => {
-        fetch('BASE_URL/v1/payment/merchant_id/register', {
+        fetch(backendUrlTest + "v2/payment/"+ merchantIdTest +"/register", {
             method: 'POST',
             headers: {
-              'Accept': 'application/json'
+              'Accept': 'application/json;charset=utf-8;version=2.0',
+              'Content-Type': 'application/json;charset=utf-8;version=2.0'
             },
-            body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "1","vatAmount": 0}}'
+            body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
           }).then((response) => response.json())
               .then((responseJson) => {
                 console.log('onResponse'+responseJson.transactionId)
@@ -84,7 +92,7 @@ export default class App extends Component<Props> {
 
   saveCard = () => {
     //for save card only MerchantInfo object is required
-    NativeModules.PiaSDK.buildMerchantInfo("merchant_id",true,true);
+    NativeModules.PiaSDK.buildMerchantInfo(merchantIdTest, true, true);
 
     //set the payment result promise
     NativeModules.PiaSDK.handleSDKResult().then(()=>{
@@ -94,10 +102,11 @@ export default class App extends Component<Props> {
     });
 
     NativeModules.PiaSDK.start((saveCardBool) => {
-        fetch('BASE_URL/v1/payment/merchant_id/register', {
+        fetch(backendUrlTest + "v2/payment/"+ merchantIdTest +"/register", {
             method: 'POST',
             headers: {
-              'Accept': 'application/json'
+              'Accept': 'application/json;charset=utf-8;version=2.0',
+              'Content-Type': 'application/json;charset=utf-8;version=2.0'
             },
             body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "1","vatAmount": 0}}'
           }).then((response) => response.json())
@@ -113,7 +122,7 @@ export default class App extends Component<Props> {
 
   paypal = () => {
     //for PayPal set only the MerchantInfo object
-    NativeModules.PiaSDK.buildMerchantInfo("merchant_id",false,true);
+    NativeModules.PiaSDK.buildMerchantInfo(merchantIdProd, false, true);
 
     //set the payment result promise
     NativeModules.PiaSDK.handleSDKResult().then(()=>{
@@ -123,12 +132,13 @@ export default class App extends Component<Props> {
     });
      
     NativeModules.PiaSDK.startPayPalProcess((saveCardBool) => {
-        fetch('BASE_URL/v1/payment/merchant_id/register', {
+        fetch(backendUrlProd + "v2/payment/"+ merchantIdProd +"/register", {
             method: 'POST',
             headers: {
-              'Accept': 'application/json'
+              'Accept': 'application/json;charset=utf-8;version=2.0',
+              'Content-Type': 'application/json;charset=utf-8;version=2.0'
             },
-           body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "1","vatAmount": 0}}'
+           body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "DKK", "totalAmount": "100","vatAmount": 0}, "method": {"id":"PayPal"}}'
           }).then((response) => response.json())
               .then((responseJson) => {
                   NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
@@ -139,6 +149,37 @@ export default class App extends Component<Props> {
               });
     });
   }
+
+  vipps = () => {
+  
+    NativeModules.PiaSDK.buildMerchantInfo(merchantIdProd, false, false);
+    NativeModules.PiaSDK.buildOrderInfo(1,"NOK");
+    //set the payment result promise
+    NativeModules.PiaSDK.handleSDKResult().then(()=>{
+         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) =>{
+         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    });
+     
+    NativeModules.PiaSDK.startVippsProcess((saveCardBool) => {
+        fetch(backendUrlProd + "v2/payment/"+ merchantIdProd +"/register", {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json;charset=utf-8;version=2.0',
+              'Content-Type': 'application/json;charset=utf-8;version=2.0'
+            },
+           body: '{"amount":{"currencyCode":"NOK","totalAmount":100,"vatAmount":0},"customerId":"000013","method":{"id":"Vipps"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:Vipps}]","phoneNumber":"+4748059560","redirectUrl":"eu.nets.pia.sample://piasdk","storeCard":false}'
+          }).then((response) => response.json())
+              .then((responseJson) => {
+                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.walletUrl);
+              })
+              .catch((error) => {
+                console.error(error);
+                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
+              });
+    });
+  }
+
 }
 
 

@@ -52,12 +52,11 @@ public class PaymentMethodsFragment extends Fragment {
     public static final String ID_DINERS = "DinersClubInternational";
     public static final String ID_APPLE_PAY = "ApplePay";
     public static final String ID_PAY_PAL = "PayPal";
-    public static final String ID_MOBILE_PAY = "MobilePay";
-    public static final String ID_KLARNA = "Klarna";
-    public static final String ID_SWISH = "Swish";
     public static final String ID_VIPPS = "Vipps";
+    public static final String ID_SWISH = "Swish";
     public static final String ID_EASY_PAYMENT = "EasyPayment";
     public static final String ID_JCB = "JCB";
+    public static final String ID_MAESTRO = "Maestro";
 
     @BindView(R.id.toolbar)
     CustomToolbar mToolbar;
@@ -142,7 +141,10 @@ public class PaymentMethodsFragment extends Fragment {
     private ArrayList<Method> getSupportedCardSchemes() {
         ArrayList<Method> supportedMethods = new ArrayList<>();
         for (Method method : mPaymentMethods.getMethods()) {
-            if (!method.getId().equals(ID_APPLE_PAY) && !method.getId().equals(ID_EASY_PAYMENT) && !method.getId().equals(ID_PAY_PAL)) {
+            if (!method.getId().equals(ID_APPLE_PAY) && !method.getId().equals(ID_EASY_PAYMENT)
+                    && !method.getId().equals(ID_PAY_PAL)
+                    && !method.getId().equals(ID_VIPPS)
+                    && !method.getId().contains(ID_SWISH)) {
                 supportedMethods.add(method);
             }
         }
@@ -198,7 +200,7 @@ public class PaymentMethodsFragment extends Fragment {
         creditCards.setType(PaymentMethodType.CREDIT_CARDS);
         creditCards.setDisplayName(getString(R.string.payment_method_credit_cards));
         creditCards.setId(getString(R.string.payment_method_credit_cards));
-        creditCards.setCvcRequired(cardVerificationRequired);
+        creditCards.setCvcRequired(true);
         methods.add(creditCards);
 
         PaymentMethod payPal = new PaymentMethod();
@@ -206,25 +208,15 @@ public class PaymentMethodsFragment extends Fragment {
         payPal.setId(ID_PAY_PAL);
         methods.add(payPal);
 
-        PaymentMethod mobilePay = new PaymentMethod();
-        mobilePay.setType(PaymentMethodType.MOBILE_PAY);
-        mobilePay.setId(ID_MOBILE_PAY);
-        methods.add(mobilePay);
-
-        PaymentMethod klarna = new PaymentMethod();
-        klarna.setType(PaymentMethodType.KLARNA);
-        klarna.setId(ID_KLARNA);
-        methods.add(klarna);
+        PaymentMethod vipps = new PaymentMethod();
+        vipps.setType(PaymentMethodType.VIPPS);
+        vipps.setId(ID_VIPPS);
+        methods.add(vipps);
 
         PaymentMethod swish = new PaymentMethod();
         swish.setType(PaymentMethodType.SWISH);
         swish.setId(ID_SWISH);
         methods.add(swish);
-
-        PaymentMethod vipps = new PaymentMethod();
-        vipps.setType(PaymentMethodType.VIPPS);
-        vipps.setId(ID_VIPPS);
-        methods.add(vipps);
 
         return methods;
     }

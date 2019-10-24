@@ -42,8 +42,8 @@
                 android:id="@+id/test_env_et"
                 style="@style/MerchantSettingsEditText"
                 android:imeOptions="actionNext"
-                android:nextFocusDown="@id/prod_env_et"
-                android:inputType="textUri" />
+                android:inputType="textUri"
+                android:nextFocusDown="@id/prod_env_et" />
 
             <TextView
                 style="@style/MerchantSettingsLabel"
@@ -53,8 +53,8 @@
                 android:id="@+id/prod_env_et"
                 style="@style/MerchantSettingsEditText"
                 android:imeOptions="actionNext"
-                android:nextFocusDown="@id/test_merchant_id_et"
-                android:inputType="textUri" />
+                android:inputType="textUri"
+                android:nextFocusDown="@id/test_merchant_id_et" />
 
             <TextView
                 style="@style/MerchantSettingsHeader"
@@ -70,8 +70,8 @@
                 style="@style/MerchantSettingsEditText"
                 android:layout_marginEnd="160dp"
                 android:imeOptions="actionNext"
-                android:nextFocusDown="@id/prod_merchant_id_et"
-                android:inputType="text" />
+                android:inputType="text"
+                android:nextFocusDown="@id/prod_merchant_id_et" />
 
             <TextView
                 style="@style/MerchantSettingsLabel"

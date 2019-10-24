@@ -3,10 +3,18 @@ package eu.nets.pia.sample;
 import android.app.Application;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.TextAppearanceSpan;
+
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.data.model.PiaLanguage;
 import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
+
 
 
 /**
@@ -56,7 +64,7 @@ public class SampleApplication extends Application {
         PiaInterfaceConfiguration.getInstance().setFieldBackgroundColor(ContextCompat.getColor(this, R.color.accent));
         PiaInterfaceConfiguration.getInstance().setButtonTextColor(Color.WHITE);
         PiaInterfaceConfiguration.getInstance().setSwitchThumbColor(ContextCompat.getColor(this, R.color.pia_green_color));
-        PiaInterfaceConfiguration.getInstance().setMainButtonBackgroundSelector(ContextCompat.getDrawable(this, R.drawable.pia_save_card_button));
+        PiaInterfaceConfiguration.getInstance().setButtonBackgroundColor(R.drawable.pia_save_card_button);
         PiaInterfaceConfiguration.getInstance().setToolbarActionButtonTextColor(ContextCompat.getColor(this, R.color.colorAccent));
         PiaInterfaceConfiguration.getInstance().setLabelFont(Typeface.SANS_SERIF);
         PiaInterfaceConfiguration.getInstance().setButtonFont(Typeface.SERIF);
@@ -80,5 +88,25 @@ public class SampleApplication extends Application {
 
         //PiaSDK localization language
         PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.SWEDISH);
+
+        //Manual entry text adjacent to save card switch
+        String text = this.getResources().getString(R.string.use_save_card_text);
+        TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(this, R.style.UICustomizationTextViewStyle);
+        SpannableString spannableString = new SpannableString(text);
+        spannableString.setSpan(textAppearanceSpan, 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        PiaInterfaceConfiguration.getInstance().setSpannableSaveCardText(spannableString);
+
+        PiaInterfaceConfiguration.getInstance().setActionButtonLeftMargin(50);
+        PiaInterfaceConfiguration.getInstance().setActionButtonRightMargin(50);
+        PiaInterfaceConfiguration.getInstance().setActionButtonBottomMargin(50);
+        PiaInterfaceConfiguration.getInstance().setFieldRoundCorner(50);
+        PiaInterfaceConfiguration.getInstance().setSwitchTurnOffColor(ContextCompat.getColor(this, R.color.custom_orange_color));
+        PiaInterfaceConfiguration.getInstance().setButtonRoundCorner((int) getResources().getDimension(R.dimen.custom_button_radius));
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(ContextCompat.getColor(this, R.color.light_gray));
+        drawable.setCornerRadius(8);
+        PiaInterfaceConfiguration.getInstance().setCardIOButtonBackgroundSelector(drawable);
+        PiaInterfaceConfiguration.getInstance().setInputTextHintColor(ContextCompat.getColor(this, R.color.custom_orange_color));
+        PiaInterfaceConfiguration.getInstance().setSwitchOnTrackColor(ContextCompat.getColor(this, R.color.light_gray));
     }
 }

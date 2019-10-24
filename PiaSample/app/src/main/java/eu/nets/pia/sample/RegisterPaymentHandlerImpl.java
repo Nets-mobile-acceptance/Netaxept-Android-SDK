@@ -3,6 +3,7 @@ package eu.nets.pia.sample;
 import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.data.model.TransactionInfo;
 import eu.nets.pia.sample.data.PaymentFlowCache;
+import eu.nets.pia.sample.data.PaymentMethodSelected;
 import eu.nets.pia.sample.network.MerchantRestClient;
 import eu.nets.pia.sample.network.model.PaymentRegisterRequest;
 import eu.nets.pia.sample.network.model.PaymentRegisterResponse;
@@ -28,6 +29,8 @@ import eu.nets.pia.sample.network.model.PaymentRegisterResponse;
 
 public class RegisterPaymentHandlerImpl implements RegisterPaymentHandler {
 
+    private final String TAG = RegisterPaymentHandlerImpl.class.getSimpleName();
+
     /**
      * Create your own class to implement {@link eu.nets.pia.RegisterPaymentHandler}, and override
      * {@link eu.nets.pia.RegisterPaymentHandler#doRegisterPaymentRequest(boolean)}
@@ -48,17 +51,16 @@ public class RegisterPaymentHandlerImpl implements RegisterPaymentHandler {
         PaymentFlowCache paymentFlowCache = PaymentFlowCache.getInstance();
         PaymentRegisterRequest paymentRegisterRequest = paymentFlowCache.getPaymentRegisterRequest();
         paymentRegisterRequest.setStoreCard(saveCard);
-
         MerchantRestClient.getInstance().registerPayment(paymentRegisterRequest);
-
-        if (!paymentFlowCache.finishedWithError() && paymentFlowCache.getPaymentRegisterResponse() != null) {
-            PaymentRegisterResponse registerResponse = paymentFlowCache.getPaymentRegisterResponse();
-
-            return new TransactionInfo(registerResponse.getTransactionId(),
-                    registerResponse.getRedirectOK());
-
+        if (!paymentFlowCache.isFinishedWithError() && paymentFlowCache.getPaymentRegisterResponse() != null) {
+            PaymentRegisterResponse paymentRegisterResponse = paymentFlowCache.getPaymentRegisterResponse();
+            if (paymentFlowCache.getPaymentMethodSelected() == PaymentMethodSelected.VIPPS) {
+                return new TransactionInfo(paymentRegisterResponse.getWalletUrl());
+            } else {
+                return new TransactionInfo(paymentRegisterResponse.getTransactionId(),
+                        paymentRegisterResponse.getRedirectOK());
+            }
         }
-
         return null;
     }
 

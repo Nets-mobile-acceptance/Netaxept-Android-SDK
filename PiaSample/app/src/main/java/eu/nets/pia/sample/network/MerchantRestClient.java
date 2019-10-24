@@ -1,11 +1,10 @@
 package eu.nets.pia.sample.network;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import eu.nets.pia.sample.RegisterPaymentHandlerImpl;
 import eu.nets.pia.sample.data.PaymentFlowCache;
@@ -16,6 +15,10 @@ import eu.nets.pia.sample.network.model.PaymentCommitResponse;
 import eu.nets.pia.sample.network.model.PaymentMethodsResponse;
 import eu.nets.pia.sample.network.model.PaymentRegisterRequest;
 import eu.nets.pia.sample.network.model.PaymentRegisterResponse;
+import eu.nets.pia.sample.network.model.ProcessingOption;
+import eu.nets.pia.sample.network.model.ProcessingOptionRequest;
+import eu.nets.pia.utils.LogUtils;
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +53,7 @@ public class MerchantRestClient {
 
     private Gson mGson;
     private PaymentFlowCache mPaymentCache;
+    private final long CLIENT_TIMEOUT = 20;
 
     public interface PaymentFlowCallback {
         void onPaymentCallFinished();
@@ -73,6 +77,7 @@ public class MerchantRestClient {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(getHttpClientBuilder().build())
                 .baseUrl(BASE_URL)
                 .build();
 
@@ -82,6 +87,18 @@ public class MerchantRestClient {
         mPaymentCache = PaymentFlowCache.getInstance();
 
         mPaymentFlowListeners = new LinkedBlockingQueue();
+    }
+
+    private OkHttpClient.Builder getHttpClientBuilder() {
+        /*
+         * Since BE callback mechanism is not in place and may take atleast 10 sec to process
+         * so adding 20 sec timeout
+         * */
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.connectTimeout(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+        httpClient.readTimeout(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+        httpClient.writeTimeout(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+        return httpClient;
     }
 
     private String getBaseUrl(boolean isTestMode) {
@@ -104,6 +121,7 @@ public class MerchantRestClient {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(getHttpClientBuilder().build())
                 .baseUrl(BASE_URL)
                 .build();
 
@@ -125,16 +143,16 @@ public class MerchantRestClient {
      * In error case, the register response from the cache will be null, so SDK will be notified that TransactionInfo
      * object is null - the payment won't go through
      *
-     * @param paymentRegisterRequest -
+     * @param paymentRegisterRequest
      */
     public void registerPayment(PaymentRegisterRequest paymentRegisterRequest) {
-        Log.d(TAG, "[registerPayment] [paymentRegisterRequest:" + paymentRegisterRequest.toString() + " merchantId:" + getMerchantId() + "]");
+        LogUtils.logD(TAG, "[registerPayment] [paymentRegisterRequest:" + paymentRegisterRequest.toString() + " merchantId:" + getMerchantId() + "]");
         mPaymentCache.setState(PaymentFlowState.SENDING_REGISTER_PAYMENT_CALL);
         try {
             Response<PaymentRegisterResponse> response = mMerchantBackendAPI.registerPayment(paymentRegisterRequest, getMerchantId()).execute();
             mPaymentCache.setState(PaymentFlowState.REGISTER_PAYMENT_CALL_FINISHED);
             if (response.isSuccessful()) {
-                Log.d(TAG, "[onResponse] [response.body():" + response.body() != null ? response.body().toString() : "" + "]");
+                LogUtils.logD(TAG, "[onResponse] [response.body():" + response.body() != null ? response.body().toString() : "" + "]");
                 mPaymentCache.setPaymentRegisterResponse(response.body());
                 mPaymentCache.setFinishedWithError(false);
             } else {
@@ -142,7 +160,6 @@ public class MerchantRestClient {
             }
             notifyPaymentFlowEvents();
         } catch (IOException e) {
-            Log.e(TAG, "[onFailure] [throwable:" + e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName() + "]");
             mPaymentCache.setState(PaymentFlowState.REGISTER_PAYMENT_CALL_FINISHED);
             mPaymentCache.setFinishedWithError(true);
             notifyPaymentFlowEvents();
@@ -156,14 +173,18 @@ public class MerchantRestClient {
      * @param transactionId The ID of the transaction
      */
     public void commitPayment(String transactionId) {
-        Log.d(TAG, "[commitPayment] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
+        LogUtils.logD(TAG, "[commitPayment] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
         mPaymentCache.setState(PaymentFlowState.SENDING_COMMIT_PAYMENT_CALL);
-        mMerchantBackendAPI.commitPayment(transactionId, getMerchantId(), "{}").enqueue(new Callback<PaymentCommitResponse>() {
+        mMerchantBackendAPI.processPayment(
+                transactionId,
+                getMerchantId(),
+                new ProcessingOptionRequest(ProcessingOption.COMMIT)
+        ).enqueue(new Callback<PaymentCommitResponse>() {
             @Override
             public void onResponse(Call<PaymentCommitResponse> call, Response<PaymentCommitResponse> response) {
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "[onResponse] [response.body():" + response.body() != null ? response.body().toString() : "" + "]");
+                    LogUtils.logD(TAG, "[onResponse] [response.body():" + response.body() != null ? response.body().toString() : "" + "]");
                     mPaymentCache.setPaymentCommitResponse(response.body());
                     mPaymentCache.setFinishedWithError(false);
                 } else {
@@ -174,7 +195,6 @@ public class MerchantRestClient {
 
             @Override
             public void onFailure(Call<PaymentCommitResponse> call, Throwable t) {
-                Log.e(TAG, "[onFailure] [throwable:" + t.getMessage() != null ? t.getMessage() : t.getClass().getSimpleName() + "]");
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
                 mPaymentCache.setFinishedWithError(true);
                 notifyPaymentFlowEvents();
@@ -189,14 +209,18 @@ public class MerchantRestClient {
      * @param transactionId The id of the transaction
      */
     public void verifyPayment(String transactionId) {
-        Log.d(TAG, "[verifyPayment] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
+        LogUtils.logD(TAG, "[verifyPayment] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
         mPaymentCache.setState(PaymentFlowState.SENDING_COMMIT_PAYMENT_CALL);
-        mMerchantBackendAPI.verifyPayment(transactionId, getMerchantId(), "{}").enqueue(new Callback<PaymentCommitResponse>() {
+        mMerchantBackendAPI.processPayment(
+                transactionId,
+                getMerchantId(),
+                new ProcessingOptionRequest(ProcessingOption.VERIFY)
+        ).enqueue(new Callback<PaymentCommitResponse>() {
             @Override
             public void onResponse(Call<PaymentCommitResponse> call, Response<PaymentCommitResponse> response) {
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "[onResponse] [response.body():" + response.body() != null ? response.body().toString() : "" + "]");
+                    LogUtils.logD(TAG, "[onResponse] [response.body():" + response.body() != null ? response.body().toString() : "" + "]");
                     mPaymentCache.setPaymentCommitResponse(response.body());
                     mPaymentCache.setFinishedWithError(false);
                 } else {
@@ -207,7 +231,6 @@ public class MerchantRestClient {
 
             @Override
             public void onFailure(Call<PaymentCommitResponse> call, Throwable t) {
-                Log.e(TAG, "[onFailure] [throwable:" + t.getMessage() != null ? t.getMessage() : t.getClass().getSimpleName() + "]");
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
                 mPaymentCache.setFinishedWithError(true);
                 notifyPaymentFlowEvents();
@@ -221,12 +244,12 @@ public class MerchantRestClient {
      * @param consumerId - the id of the customer
      */
     public void getPaymentMethods(String consumerId) {
-        Log.d(TAG, "[getPaymentMethods] [consumerId=" + consumerId + "]");
+        LogUtils.logD(TAG, "[getPaymentMethods] [consumerId=" + consumerId + "]");
         mMerchantBackendAPI.getPaymentMethods(consumerId).enqueue(new Callback<PaymentMethodsResponse>() {
             @Override
             public void onResponse(Call<PaymentMethodsResponse> call, Response<PaymentMethodsResponse> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "[onResponse] [response.body():" + response.body() != null ? response.body().toString() : "" + "]");
+                    LogUtils.logD(TAG, "[onResponse] [response.body():" + response.body() != null ? response.body().toString() : "" + "]");
                     notifyGetPaymentMethodsEvent(response.body());
                 } else {
                     parseErrorResponse(response.errorBody());
@@ -238,7 +261,6 @@ public class MerchantRestClient {
 
             @Override
             public void onFailure(Call<PaymentMethodsResponse> call, Throwable t) {
-                Log.e(TAG, "[onFailure] [throwable:" + t.getMessage() != null ? t.getMessage() : t.getClass().getSimpleName() + "]");
                 mPaymentCache.setFailedRequest(true);
                 notifyPaymentFlowEvents();
             }
@@ -253,14 +275,14 @@ public class MerchantRestClient {
      * @param transactionId The ID of the transaction
      */
     public void transactionRollback(String transactionId) {
-        Log.d(TAG, "[transactionRollback] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
+        LogUtils.logD(TAG, "[transactionRollback] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
         mPaymentCache.setState(PaymentFlowState.SENDING_ROLLBACK_TRANSACTION_CALL);
         mMerchantBackendAPI.transactionRollback(transactionId, getMerchantId()).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 mPaymentCache.setState(PaymentFlowState.ROLLBACK_TRANSACTION_FINISHED);
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "[onResponse]");
+                    LogUtils.logD(TAG, "[onResponse]");
                     mPaymentCache.setFinishedWithError(false);
                 } else {
                     parseErrorResponse(response.errorBody());
@@ -270,7 +292,6 @@ public class MerchantRestClient {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.e(TAG, "[onFailure] [throwable:" + t.getMessage() != null ? t.getMessage() : t.getClass().getSimpleName() + "]");
                 mPaymentCache.setState(PaymentFlowState.ROLLBACK_TRANSACTION_FINISHED);
                 mPaymentCache.setFinishedWithError(true);
                 notifyPaymentFlowEvents();
@@ -280,19 +301,20 @@ public class MerchantRestClient {
 
     private void parseErrorResponse(ResponseBody errorBody) {
         try {
-            Log.d(TAG, "[onResponse] [response.errorBody():" + errorBody != null ? errorBody.string() : "" + "]");
+            LogUtils.logD(TAG, "[onResponse] [response.errorBody():" + errorBody != null ? errorBody.string() : "" + "]");
             mPaymentCache.setFinishedWithError(true);
             if (errorBody != null && !errorBody.string().isEmpty()) {
                 ErrorResponse errorResponse = mGson.fromJson(errorBody.string(), ErrorResponse.class);
                 if (errorResponse != null && errorResponse.getExplanationText() != null) {
-                    Log.e(TAG, errorResponse.getExplanationText() + ": " +
+                    LogUtils.logE(TAG, errorResponse.getExplanationText() + ": " +
                             (errorResponse.getParams() != null ? errorResponse.getParams().getMessage() : ""));
                 } else {
-                    Log.e(TAG, errorBody.string());
+                    LogUtils.logE(TAG, errorBody.string());
                 }
             }
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+            LogUtils.logE(TAG, e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+            e.printStackTrace();
         }
     }
 

@@ -145,4 +145,10 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
+    <style name="UICustomizationTextViewStyle">
+        <item name="android:textColor">#fcaedf</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
 </resources>

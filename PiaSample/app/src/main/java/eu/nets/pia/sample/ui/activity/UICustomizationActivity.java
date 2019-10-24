@@ -1,18 +1,17 @@
-
 package eu.nets.pia.sample.ui.activity;
 
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.text.SpannableString;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -50,6 +49,9 @@ public class UICustomizationActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     CustomToolbar mToolbar;
 
+    @BindView(R.id.nets_save_card_text)
+    EditText mSaveCardText;
+
     //section general customization
     private Integer mNavBarColor;
     private Integer mNavBarItemColor;
@@ -65,9 +67,16 @@ public class UICustomizationActivity extends AppCompatActivity {
     private Integer mTextFieldErrorColor;
     private Integer mSwitchThumbColor;
     private Integer mSwitchOnTintColor;
+    private Integer mInputTextHintColor;
+    private Integer mInputTextBorderColor;
     private boolean mUseSampleFont;
     private boolean mUseSampleImageForLogo;
     private boolean mTurnSaveCardSwitchOn;
+
+    private final Integer mActionButtonLeftMargin = 50;
+    private final Integer mActionButtonRightMargin = 50;
+    private final Integer mActionButtonBottomMargin = 50;
+    private final Integer mEditFieldRoundedCorner = 50;
     //end section
 
     //section cardio customization
@@ -76,6 +85,7 @@ public class UICustomizationActivity extends AppCompatActivity {
     private Integer mCardIoFrameColor;
     private Integer mCardIoButtonBackground;
     private Integer mCardIoButtonTextColor;
+    private Integer mSwitchTurnOffColor;
     private boolean useCardIoTextFont;
     private boolean useCardIoButtonTextFont;
     //end section
@@ -145,6 +155,72 @@ public class UICustomizationActivity extends AppCompatActivity {
                 }
             }
         });
+
+        ((SwitchCompat) findViewById(R.id.switch_action_button_left_margin)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ((TextView) findViewById(R.id.text_action_button_left_margin)).setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+                    PiaInterfaceConfiguration.getInstance().setActionButtonLeftMargin(mActionButtonLeftMargin);
+                } else {
+                    ((TextView) findViewById(R.id.text_action_button_left_margin)).setTypeface(null);
+                    PiaInterfaceConfiguration.getInstance().setActionButtonLeftMargin(null);
+                }
+            }
+        });
+
+        ((SwitchCompat) findViewById(R.id.switch_action_button_right_margin)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ((TextView) findViewById(R.id.text_action_button_right_margin)).setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+                    PiaInterfaceConfiguration.getInstance().setActionButtonRightMargin(mActionButtonRightMargin);
+                } else {
+                    ((TextView) findViewById(R.id.text_action_button_right_margin)).setTypeface(null);
+                    PiaInterfaceConfiguration.getInstance().setActionButtonRightMargin(null);
+                }
+            }
+        });
+
+        ((SwitchCompat) findViewById(R.id.switch_action_button_bottom_margin)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ((TextView) findViewById(R.id.text_action_button_bottom_margin)).setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+                    PiaInterfaceConfiguration.getInstance().setActionButtonBottomMargin(mActionButtonBottomMargin);
+                } else {
+                    ((TextView) findViewById(R.id.text_action_button_bottom_margin)).setTypeface(null);
+                    PiaInterfaceConfiguration.getInstance().setActionButtonBottomMargin(null);
+                }
+            }
+        });
+
+        ((SwitchCompat) findViewById(R.id.switch_field_rounded_corner)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ((TextView) findViewById(R.id.text_field_rounded_corner)).setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+                    PiaInterfaceConfiguration.getInstance().setFieldRoundCorner(mEditFieldRoundedCorner);
+                } else {
+                    ((TextView) findViewById(R.id.text_field_rounded_corner)).setTypeface(null);
+                    PiaInterfaceConfiguration.getInstance().setFieldRoundCorner(null);
+                }
+            }
+        });
+
+        ((SwitchCompat) findViewById(R.id.switch_sample_button_rounded_corner)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ((TextView) findViewById(R.id.text_sample_button_rounded_corner)).setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+                    PiaInterfaceConfiguration.getInstance().setButtonRoundCorner((int) getResources().getDimension(R.dimen.custom_button_radius));
+                } else {
+                    ((TextView) findViewById(R.id.text_sample_button_rounded_corner)).setTypeface(null);
+                    PiaInterfaceConfiguration.getInstance().setButtonRoundCorner(null);
+                }
+            }
+        });
+
     }
 
     private void handleCardIoCustomizationSwitches() {
@@ -210,7 +286,7 @@ public class UICustomizationActivity extends AppCompatActivity {
             //apply nets UI config
             onNetsButtonTextColor();
         }
-        if (configuration.getMainButtonBackgroundSelector() != null) {
+        if (configuration.getButtonBackgroundColor() != null) {
             //apply dark theme UI config
             onDarkButtonBackground();
         } else {
@@ -253,17 +329,15 @@ public class UICustomizationActivity extends AppCompatActivity {
             onNetsTextFieldSuccessColor();
         }
         if (configuration.getErrorFieldBorderColor() != null) {
-            //apply dark theme UI config
+            //apply nets UI config
             onDarkTextFieldErrorColor();
         } else {
-            //apply nets UI config
+            //apply dark theme UI config
             onNetsTextFieldErrorColor();
         }
         if (configuration.getSwitchThumbColor() != null) {
-            //apply dark theme UI config
             onDarkSwitchThumbColor();
         } else {
-            //apply nets UI config
             onNetsSwitchThumbColor();
         }
         if (configuration.getSwitchOnTrackColor() != null) {
@@ -272,6 +346,20 @@ public class UICustomizationActivity extends AppCompatActivity {
         } else {
             //apply nets UI config
             onNetsSwitchOnTintColor();
+        }
+        /*Cardio text hint*/
+        if (configuration.getInputTextHintColor() != null) {
+            //apply orange color to hint
+            onTextInputHintCustomColor();
+        } else {
+            //apply default color to hint
+            onTextInputHintDefaultColor();
+        }
+        /*Cardio text hint*/
+        if (configuration.getInputTextBorderColor() != null) {
+            onTextInputBorderCustomColor();
+        } else {
+            onTextInputBorderDefaultColor();
         }
         if (configuration.getLogoDrawable() != null) {
             ((SwitchCompat) findViewById(R.id.use_sample_image)).setChecked(true);
@@ -328,6 +416,42 @@ public class UICustomizationActivity extends AppCompatActivity {
         if (configuration.getCardIOButtonTextFont() != null) {
             ((SwitchCompat) findViewById(R.id.use_button_cardio_text_font)).setChecked(true);
         }
+
+        if (configuration.getSpannableSaveCardText() != null) {
+            mSaveCardText.setText(configuration.getSpannableSaveCardText());
+        }
+        if (configuration.getActionButtonLeftMargin() != null) {
+            ((SwitchCompat) findViewById(R.id.switch_action_button_left_margin)).setChecked(true);
+        } else {
+            ((SwitchCompat) findViewById(R.id.switch_action_button_left_margin)).setChecked(false);
+        }
+        if (configuration.getActionButtonRightMargin() != null) {
+            ((SwitchCompat) findViewById(R.id.switch_action_button_right_margin)).setChecked(true);
+        } else {
+            ((SwitchCompat) findViewById(R.id.switch_action_button_right_margin)).setChecked(false);
+        }
+        if (configuration.getActionButtonBottomMargin() != null) {
+            ((SwitchCompat) findViewById(R.id.switch_action_button_bottom_margin)).setChecked(true);
+        } else {
+            ((SwitchCompat) findViewById(R.id.switch_action_button_bottom_margin)).setChecked(false);
+        }
+
+        if (PiaInterfaceConfiguration.getInstance().getFieldRoundCorner() != null) {
+            ((SwitchCompat) findViewById(R.id.switch_field_rounded_corner)).setChecked(true);
+        } else {
+            ((SwitchCompat) findViewById(R.id.switch_field_rounded_corner)).setChecked(false);
+        }
+        if (configuration.getButtonRoundCorner() != null) {
+            ((SwitchCompat) findViewById(R.id.switch_sample_button_rounded_corner)).setChecked(true);
+        } else {
+            ((SwitchCompat) findViewById(R.id.switch_sample_button_rounded_corner)).setChecked(false);
+        }
+
+        if (configuration.getSwitchTurnOffColor() != null) {
+            onSwitchTurnOffDarkColor();
+        } else {
+            onSwitchTurnOffDefaultColor();
+        }
         //end section
     }
 
@@ -338,20 +462,7 @@ public class UICustomizationActivity extends AppCompatActivity {
         configuration.setToolbarActionButtonTextColor(mNavBarItemColor);
         configuration.setBodyBackgroundColor(mBackgroundColor);
         configuration.setButtonTextColor(mButtonTextColor);
-        if (mButtonBackground != null) {
-            Drawable backgroundSelector;
-            if (mButtonBackground == ((ColorDrawable) findViewById(R.id.nets_button_background).getBackground()).getColor()) {
-                //is nets drawable
-                backgroundSelector = ContextCompat.getDrawable(this, R.drawable.pia_save_card_button);
-            } else {
-                //is dark theme background
-                backgroundSelector = ContextCompat.getDrawable(this, R.drawable.pia_save_card_button);
-                backgroundSelector.setColorFilter(mButtonBackground, PorterDuff.Mode.SRC_IN);
-            }
-            configuration.setMainButtonBackgroundSelector(backgroundSelector);
-        } else {
-            configuration.setMainButtonBackgroundSelector(null);
-        }
+        configuration.setButtonBackgroundColor(mButtonBackground);
         configuration.setLabelTextColor(mLabelTextColor);
         configuration.setTokenCardCVCLayoutBackgroundColor(mTokenCardCvcAreaColor);
         configuration.setFieldTextColor(mTextFieldColor);
@@ -360,7 +471,6 @@ public class UICustomizationActivity extends AppCompatActivity {
         configuration.setErrorFieldBorderColor(mTextFieldErrorColor);
         configuration.setSwitchThumbColor(mSwitchThumbColor);
         configuration.setSwitchOnTrackColor(mSwitchOnTintColor);
-
         configuration.setLogoDrawable(mUseSampleImageForLogo ?
                 ContextCompat.getDrawable(this, R.drawable.ic_header) :
                 null
@@ -390,8 +500,13 @@ public class UICustomizationActivity extends AppCompatActivity {
         configuration.setCardIOTextFont(useCardIoTextFont ? Typeface.MONOSPACE : null);
         configuration.setCardIOButtonTextFont(useCardIoButtonTextFont ? Typeface.MONOSPACE : null);
         configuration.setSaveCardSwitchDefault(mTurnSaveCardSwitchOn);
-
-        //end section
+        PiaInterfaceConfiguration.getInstance().setInputTextBorderColor(mInputTextBorderColor);
+        configuration.setInputTextHintColor(mInputTextHintColor);
+        configuration.setSpannableSaveCardText(new SpannableString(mSaveCardText.getText().toString()));
+        if (configuration.getButtonRoundCorner() != null) {
+            configuration.setButtonRoundCorner((int) getResources().getDimension(R.dimen.custom_button_radius));
+        }
+        configuration.setSwitchTurnOffColor(mSwitchTurnOffColor);
     }
 
     private void setupToolbar() {
@@ -588,7 +703,6 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsSwitchThumbColor() {
         mSwitchThumbColor = ((ColorDrawable) findViewById(R.id.nets_switch_thumb_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.switch_thumb_color)).setTextColor(mSwitchThumbColor);
-        //for nets theme, save null on PiaInterfaceConfiguration
         mSwitchThumbColor = null;
     }
 
@@ -602,7 +716,6 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onNetsSwitchOnTintColor() {
         mSwitchOnTintColor = ((ColorDrawable) findViewById(R.id.nets_switch_on_tint_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.switch_on_tint_color)).setTextColor(mSwitchOnTintColor);
-        //for nets theme, save null on PiaInterfaceConfiguration
         mSwitchOnTintColor = null;
     }
 
@@ -612,6 +725,35 @@ public class UICustomizationActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.switch_on_tint_color)).setTextColor(mSwitchOnTintColor);
     }
 
+    /*Cardio text input hint*/
+    @OnClick(R.id.nets_text_on_hint_color)
+    public void onTextInputHintDefaultColor() {
+        mInputTextHintColor = ((ColorDrawable) findViewById(R.id.nets_text_on_hint_color).getBackground()).getColor();
+        ((TextView) findViewById(R.id.text_on_hint_color)).setTextColor(mInputTextHintColor);
+        //for nets theme, save null on PiaInterfaceConfiguration
+        mInputTextHintColor = null;
+    }
+
+    @OnClick(R.id.orange_text_on_hint_color)
+    public void onTextInputHintCustomColor() {
+        mInputTextHintColor = ((ColorDrawable) findViewById(R.id.orange_text_on_hint_color).getBackground()).getColor();
+        ((TextView) findViewById(R.id.text_on_hint_color)).setTextColor(mInputTextHintColor);
+
+    }
+    /*Cardio text input hint*/
+
+    @OnClick(R.id.customer_text_border_color)
+    public void onTextInputBorderCustomColor() {
+        mInputTextBorderColor = ((ColorDrawable) findViewById(R.id.customer_text_border_color).getBackground()).getColor();
+        ((TextView) findViewById(R.id.text_border_color)).setTextColor(mInputTextBorderColor);
+    }
+
+    @OnClick(R.id.default_text_border_color)
+    public void onTextInputBorderDefaultColor() {
+        mInputTextBorderColor = ((ColorDrawable) findViewById(R.id.default_text_border_color).getBackground()).getColor();
+        ((TextView) findViewById(R.id.text_border_color)).setTextColor(mInputTextBorderColor);
+        mInputTextBorderColor = null;
+    }
 
     //section card io customization
     @OnClick(R.id.nets_cardio_background_color)
@@ -682,6 +824,19 @@ public class UICustomizationActivity extends AppCompatActivity {
     public void onDarkCardIoButtonTextColor() {
         mCardIoButtonTextColor = ((ColorDrawable) findViewById(R.id.dark_cardio_button_text_color).getBackground()).getColor();
         ((TextView) findViewById(R.id.cardio_button_text_color)).setTextColor(mCardIoButtonTextColor);
+    }
+
+    @OnClick(R.id.nets_switch_turn_off_color)
+    public void onSwitchTurnOffDefaultColor() {
+        mSwitchTurnOffColor = ((ColorDrawable) findViewById(R.id.nets_switch_turn_off_color).getBackground()).getColor();
+        ((TextView) findViewById(R.id.text_switch_turn_off_color)).setTextColor(mSwitchTurnOffColor);
+        mSwitchTurnOffColor = null;
+    }
+
+    @OnClick(R.id.dark_switch_turn_off_color)
+    public void onSwitchTurnOffDarkColor() {
+        mSwitchTurnOffColor = ((ColorDrawable) findViewById(R.id.dark_switch_turn_off_color).getBackground()).getColor();
+        ((TextView) findViewById(R.id.text_switch_turn_off_color)).setTextColor(mSwitchTurnOffColor);
     }
     //end section
 

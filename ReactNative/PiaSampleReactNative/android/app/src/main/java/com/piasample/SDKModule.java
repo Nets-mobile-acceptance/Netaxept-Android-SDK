@@ -7,12 +7,13 @@ import android.os.Bundle;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
+import eu.nets.pia.PiaSDK;
+import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.data.model.MerchantInfo;
 import eu.nets.pia.data.model.OrderInfo;
 import eu.nets.pia.data.model.PiaResult;
@@ -20,8 +21,6 @@ import eu.nets.pia.data.model.SchemeType;
 import eu.nets.pia.data.model.TokenCardInfo;
 import eu.nets.pia.data.model.TransactionInfo;
 import eu.nets.pia.ui.main.PiaActivity;
-import eu.nets.pia.PiaSDK;
-import eu.nets.pia.RegisterPaymentHandler;
 
 /**
  * MIT License
@@ -45,7 +44,7 @@ import eu.nets.pia.RegisterPaymentHandler;
 /**
  * The React Native bridge between JavaScript and Java SDK
  */
-public class SDKModule extends ReactContextBaseJavaModule implements ActivityEventListener{
+public class SDKModule extends ReactContextBaseJavaModule implements ActivityEventListener {
 
     //local object required when calling the SDK
     private OrderInfo orderInfo;
@@ -70,7 +69,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
 
     /**
      * OnActivityResult method -- here you can handle the payment result and deliver through promise (paymentResult) the result
-     * 
+     *
      * @param activity
      * @param requestCode
      * @param resultCode
@@ -86,12 +85,12 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
                 if (result.isSuccess()) {
                     paymentResult.resolve(true);
                 } else {
-                    if(result.getError()!= null){
+                    if (result.getError() != null) {
                         paymentResult.reject(result.getError().getCode().getStatusCode(), result.getError().getMessage(getReactApplicationContext().getApplicationContext()));
-                    } else{
+                    } else {
                         paymentResult.reject("Unknown error");
                     }
-                   
+
                 }
             }
         }
@@ -100,10 +99,10 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
         clearCache();
     }
 
-    
+
     @Override
-    public void onNewIntent(Intent intent)  {
-        
+    public void onNewIntent(Intent intent) {
+
     }
 
     @Override
@@ -114,7 +113,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     /**
      * Method used to build the local Merchant info;
      * Call this method from JavaScript before calling #start() or #startPayPalProcess()
-     * 
+     *
      * @param merchantId - the id of the merchant
      */
     @ReactMethod
@@ -125,7 +124,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     /**
      * Method used to build the local Merchant info;
      * Call this method from JavaScript before calling #start() or #startPayPalProcess()
-     * 
+     *
      * @param merchantId - the id of the merchant
      * @param isTestMode - flag if test mode is used
      */
@@ -137,9 +136,9 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     /**
      * Method used to build the local MerchantInfo object;
      * Call this method from JavaScript  before calling #start() or #startPayPalProcess()
-     * 
-     * @param merchantId - the id of the merchant
-     * @param isTestMode - flag if test mode is used
+     *
+     * @param merchantId    - the id of the merchant
+     * @param isTestMode    - flag if test mode is used
      * @param isCvcRequired - flag if security code will be required in card entry view
      */
     @ReactMethod
@@ -150,8 +149,8 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     /**
      * Method used to build the local OrderInfo object
      * Call this method from JavaScript before calling #start() or #startPayPalProcess()
-     * 
-     * @param amount - the amount to be paid
+     *
+     * @param amount       - the amount to be paid
      * @param currencyCode - the currency code
      */
     @ReactMethod
@@ -162,11 +161,11 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     /**
      * Method used to build the local TokenCardInfo object
      * Call this method from JavaScript  before calling #start() or #startPayPalProcess()
-     * 
-     * @param tokenId - the card token number
-     * @param schemeId - the scheme id: "visa", "mastercard", etc.
-     * @param expiryDate - the expiraton date "0122" (MMYY format)
-     * @param cvcRequired - flag if security code will be asked when paying with a saved card
+     *
+     * @param tokenId            - the card token number
+     * @param schemeId           - the scheme id: "visa", "mastercard", etc.
+     * @param expiryDate         - the expiraton date "0122" (MMYY format)
+     * @param cvcRequired        - flag if security code will be asked when paying with a saved card
      * @param systemAuthRequired - flag to specify if the screen unlock feature should be used when cvcRequired = false
      */
     @ReactMethod
@@ -177,15 +176,15 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     /**
      * Method to build the local Transaction Info object.
      * Call this method from JavaScript after you made the register payment API call
-     * 
-     * @param transactionId - the id of the transaction
-     * @param redirectOK - the redirectOk case
+     *
+     * @param transactionId  - the id of the transaction
+     * @param redirectOK     - the redirectOk case
      * @param redirectCancel - the redirectCancel case
      */
     @ReactMethod
     public void buildTransactionInfo(String transactionId, String redirectOK) {
         synchronized (threadSynchronizator) {
-            if(transactionId == null){
+            if (transactionId == null) {
                 transactionInfo = null;
             } else {
                 transactionInfo = new TransactionInfo(transactionId, redirectOK);
@@ -218,6 +217,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     /**
      * Method to store here the paymentResult promise to be used inside the #onActivityResult method
      * Call this method from JavaScript before calling #start()
+     *
      * @param paymentResult
      */
     @ReactMethod
@@ -229,7 +229,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
      * This callback will notify you when the register payment API call is required to be done from your application.
      * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
-     * 
+     *
      * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
      */
     @ReactMethod
@@ -254,6 +254,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
                     return getTransactionInfo();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    threadSynchronizator.notify();
                     return null;
                 }
             }
@@ -264,27 +265,60 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
      * This callback will notify you when the register payment API call is required to be done from your application.
      * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
-     * 
+     *
      * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
      */
     @ReactMethod
-    public void startPayPalProcess(final Callback registerPaymentCallback){
-         Bundle bundle = new Bundle();
-         if (merchantInfo != null) {
-             bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
-         }
-         if (orderInfo != null) {
-             bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
-         }
-         PiaSDK.getInstance().startPayPalProcess(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
+    public void startPayPalProcess(final Callback registerPaymentCallback) {
+        Bundle bundle = new Bundle();
+        if (merchantInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
+        }
+        if (orderInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
+        }
+        PiaSDK.getInstance().startPayPalProcess(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
             @Override
             public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {
                 registerPaymentCallback.invoke(saveCard);
                 try {
-                
+
                     return getTransactionInfo();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    threadSynchronizator.notify();
+                    return null;
+                }
+            }
+        });
+    }
+
+    /**
+     * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
+     * This callback will notify you when the register payment API call is required to be done from your application.
+     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
+     *
+     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
+     */
+    @ReactMethod
+    public void startVippsProcess(final Callback registerPaymentCallback) {
+        Bundle bundle = new Bundle();
+        if (merchantInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
+        }
+        if (orderInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
+        }
+        PiaSDK.getInstance().startVippsProcess(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
+            @Override
+            public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {
+                registerPaymentCallback.invoke(saveCard);
+                try {
+
+                    return getTransactionInfo();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    threadSynchronizator.notify();
                     return null;
                 }
             }
@@ -295,14 +329,14 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * Method used to clear the local variabled after a payment process has ended (either success, error or cancel)
      * The payment process is usually ending in #OnActivityResult method
      */
-    private void clearCache(){
+    private void clearCache() {
         this.merchantInfo = null;
         this.orderInfo = null;
         this.tokenCardInfo = null;
     }
 
     /**
-     * This method is called inside the #RegisterPaymentHandler; 
+     * This method is called inside the #RegisterPaymentHandler;
      * The logic is:
      * - SDK notifies the Bridge that register call is required (doRegisterPaymentRequest method is called)
      * - the doRegisterPaymentRequest() notifies JS app through callback to do the register payment API call
@@ -310,6 +344,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * - the buildTransactionInfo() will set the TransactionInfo object locally, then release the thread
      * - the method getTransactionInfo() will return the transactionInfo object
      * - the doRegisterPaymentRequest() will return the transactionInfo object back to SDK to continue with the payment
+     *
      * @return
      * @throws InterruptedException
      */
@@ -319,7 +354,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
                 threadSynchronizator.wait();
             }
         }
-        System.out.println("onTransactionInfo:"+transactionInfo.getTransactionId() + " " + transactionInfo.getOkRedirectUrl() + " " + transactionInfo.getCancelRedirectUrl());
+        System.out.println("onTransactionInfo:" + transactionInfo.getTransactionId() + " " + transactionInfo.getOkRedirectUrl() + " " + transactionInfo.getCancelRedirectUrl());
         return transactionInfo;
     }
 }

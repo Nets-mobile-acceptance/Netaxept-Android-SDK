@@ -2,6 +2,8 @@ package eu.nets.pia.sample.utils;
 
 import java.util.Calendar;
 
+import eu.nets.pia.utils.StringUtils;
+
 /**
  * MIT License
  * <p>
@@ -23,19 +25,20 @@ import java.util.Calendar;
 
 public class DateUtils {
 
-    public static boolean isValidDate(int month, int year){
+    public static boolean isValidDate(int month, int year) {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
         return (year == currentYear && month - 1 >= currentMonth) || (year > currentYear && year <= currentYear + 10);
     }
 
     //date type mm/yy
-    public static boolean isValidDate(String date ){
-        int month = Integer.parseInt(date.substring(0, 2));
-        int year = Integer.parseInt(date.substring(3, date.length())) + 2000;
+    public static boolean isValidDate(String date) {
+        int month = Integer.parseInt(StringUtils.safeSubString(date, 0, 2));
+        int year = Integer.parseInt(StringUtils.safeSubString(date, 3,
+                date.length())) + 2000;
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
         //currentMonth value is between 0-11
-        return DateUtils.isValidDate(month,year);
+        return DateUtils.isValidDate(month, year);
     }
 }

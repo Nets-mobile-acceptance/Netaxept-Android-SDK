@@ -11,13 +11,15 @@ Read below for more information on how to use it.</p>
 <li><a href="#Getting_started_with_card_payment">Getting started with card payment</a></li>
 <li><a href="#Basic_payment_flow_description">Basic payment flow description</a></li>
 <li><a href="#Easy_payment_flow_description">Easy payment flow description</a></li>
-<li><a href="#Easy_oneclick_payment_without_Security_code_CVVCVC_flow_description">Easy (one-click) payment without Security code (CVV/CVC) flow description</a></li>
+<li><a href="#Recurring_payments">Recurring payments</a></li>
 <li><a href="#Register_flow_description">Register flow description</a></li>
 <li><a href="#PayPal_flow_description">PayPal flow description</a></li>
+<li><a href="#Vipps_payment_flow_description">Vipps Payment flow description</a></li>
 <li><a href="#UI_Customization_API">UI Customization API</a></li>
 <li><a href="#Permissions">Permissions</a></li>
 <li><a href="#Limitations">Limitations</a></li>
 <li><a href="#Error_Codes_Handling">Error Codes Handling</a></li>
+<li><a href="#Backend_Tips">Backend Tips</a></li>
 <li><a href="#Get_in_touch">Get in touch</a></li>
 <li><a href="#Licenses">Licenses</a></li>
 <li><a href="#Change_log">Change log</a></li>
@@ -28,8 +30,18 @@ Read below for more information on how to use it.</p>
 <ol>
 <li><strong>Nets PiA SDK</strong> - The SDK. From your reference, a compiled Android library AAR.</li>
 <li><strong>Netaxept</strong> - Netaxept is a comprehensive online payment service provided by Nets. It enables merchants to offer their customers different ways to pay purchases easily and securely in webshops, mobile environment and call centre services. When using Netaxept, it is easy to pay with broad range of payment methods and currencies, and still meet high security requirements set for online paying.</li>
-<li><strong>Easy Payment</strong> - After the initial transaction, the customer can initiate the following transaction by logging in to your webshop or mobile app and paying simply with one click and entering their card's CVV/CVC security code. Easy Payment is applicable especially for mobile applications where it significantly eases and accelerates the returning customer's purchase experience.</li>
-<li><strong>Recurring Payments</strong> - After the initial transaction, you as a merchant can charge the customer's preferred card at specific times based on the agreement you have made with th customer. Traditionally the concept of Recurring Payments is applicable especially for paying subscriptions, membership fees and other regular payments, without the need of customer interaction after the initial payment. However, in PiA SDK we use the Recurring Payments concept to allow you as a merchant to enable easy subsequent payment for returning customers, without the need to collect again their security code (CVV/CVC).</li>
+<li><strong>Easy Payment</strong> involve card details saved for faster checkout:
+    <ul>
+    <li>During initial transaction, customer saves card details for faster checkout next time. Transaction can be account verification or actual purchase.</li>
+    <li>Returning customer pays subsequent transactions with saved card and may be prompted to enter CVV/CVC (optional) to validate the transaction.</li>
+    </ul>
+</li>
+<li><strong>Recurring Payments</strong> involve card details saved for subscription payments done by merchant with same frequency, for example gym memberships:
+    <ul>
+    <li>Customer saves card details for subsequent charges. Transaction can be account verification or actual purchase.</li>
+    <li>Then merchant charges saved card on a regular basis according to agreement made with the customer.</li>
+    </ul>
+</li>
 </ol>
 
 <h1><a id="FAQs"></a>Frequently Asked Questions</h1>
@@ -43,7 +55,9 @@ If you encounter any blockers when integrating the <code>Netaxept - Android SDK<
 </ul>
 <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         ...
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.3.1'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.4.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+
         ...
     }
 </code></pre>
@@ -162,10 +176,10 @@ needs to add acknowledgement for Retrofit reference library also. You can find i
 
         MerchantRestClient.getInstance().registerPayment(paymentRegisterRequest);
 
-        <span class="hljs-keyword">if</span> (!paymentFlowCache.finishedWithError()) {
-            PaymentRegisterResponse registerResponse = paymentFlowCache.getPaymentRegisterResponse();
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TransactionInfo(registerResponse.getTransactionId(),
-                    registerResponse.getRedirectOK());
+        <span class="hljs-keyword">if</span> (!paymentFlowCache.isFinishedWithError()) {
+            PaymentRegisterResponse paymentRegisterResponse = paymentFlowCache.getPaymentRegisterResponse();
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TransactionInfo(paymentRegisterResponse.getTransactionId(),
+                    paymentRegisterResponse.getRedirectOK());
         }
 
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
@@ -210,7 +224,7 @@ needs to add acknowledgement for Retrofit reference library also. You can find i
     }
 }
 </code></pre>
-<p>After the transaction has been registered, an unique transaction identifier (transaction id) in <code>TransactionInfo</code> will be returned from Netaxept to <strong>PiA SDK</strong> and it will post it along with the card data to the Netaxept. In addition, two redirect URLs are required by <strong>PiA SDK</strong> so that the SDK can be notified by Netaxept after payment card data have been delivered to Netaxept successfully. During this phase, the 3DS authentication is performed as well unless it has been waived by you or your chosen card acquirer.</p>
+<p>After the transaction has been registered, an unique transaction identifier (transaction id) in <code>TransactionInfo</code> will be returned from Netaxept to <strong>PiA SDK</strong> and it will post it along with the card data to the Netaxept. In addition, one redirect URL is required by <strong>PiA SDK</strong> so that the SDK can be notified by Netaxept after payment card data have been delivered to Netaxept successfully. During this phase, the 3DS authentication is performed as well unless it has been waived by you or your chosen card acquirer.</p>
 <p>In the end, from your activity where <strong>PiA SDK</strong> is initialized, you need to override the <code>onActivityResult</code> callback to be notified when the SDK handling is completed. You can find the SDK result stored as Intent object.</p>
 <p>The code sample below indicates the example of how to override the callback to receive the SDK result:</p>
 <pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainActivity</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AppCompatActivity</span> </span>{
@@ -250,18 +264,26 @@ After the BankID authentication is complete, when returning back to the SDK, the
 the BankID app installed on his device, he will be prompted to <code>Play Store</code> to install it. After that, he can resume the 3DS process.</p>
 <h1><a id="Easy_payment_flow_description"></a>Easy payment flow description</h1>
 <hr>
-<p>After the initial transaction, the customer can initiate the following transaction by logging into your webshop or mobile  app and paying simply with one click and entering their card's CVV/CVC security code. Easy Payment is applicable especially  for mobile applications where it significantly eases and accelerates the returning customer's purchase experience.</p>
-<p>Below you can find the interaction between the application that uses the <strong>PiA SDK</strong> and the SDK for this transaction flow:</p>
+<p>Use this flow to allow users to save their card information during initial payment and skip card detail entry next time they pay with your app again. </p>
+<p>Note that for PSD2/SCA compliance reason, 3DSecure is activated and subsequent transactions can be made with or without security code entry (CVV/CVC) according to your preference. </p>
+<p>Below you can find the interactions between the application that uses the <strong>PiA SDK</strong> and the SDK for the <strong>Easy Payment flow:</strong></p>
 <p><img src="doc-files/easy_payment_flow.png" alt="Easy payment flow image"></p>
 <p><strong>Initial transaction of Easy Payment flow</strong><br>
 In the initial transaction of Easy Payment flow, <strong>PiA SDK</strong> should be started with the  the basic payment flow. Then, Easy payment can be triggered if the user selects the option to save the card for future usage during the card entry process. In this case, the SDK will pass the boolean parameter <code>saveCard</code> with <code>true</code>(by default, it is set to false to trigger the basic payment flow as mentioned above) in the <code>RegisterPaymentHandler</code>. This instructs the app to go ahead with the Easy payment flow and you need to make the transaction registration according to the sequence diagram above.</p>
 <p>After your app gets the successful result from <strong>PiA SDK</strong>, you can start Netaxept call(s) to proceed the transaction and fetch and store token in your backend which will be utilized for the subsequent transaction of Easy Payment.</p>
 <p><strong>Subsequent transaction of Easy Payment flow</strong><br>
-In the subsequent transaction of Easy payment, you can follow the same way as the initial transaction to start <strong>PiA SDK</strong> with just one extra data<code>TokenCardInfo</code> in the bundle to provide the token information for <strong>PiA SDK</strong> to present token card and convey it to Netaxept for charging the transaction. Depending  on your settings and your agreement with your chosen acquirer you may or may not have to ask the customer for the CVV/CVC security code for each transaction. Easy Payment on Netaxept side supports both variants. Certain industries have an exception from using the security code so please consult your chosen acquirer for further information if needed. You can set the boolean parameter <code>cvcRequired</code> from <code>TokenCardInfo</code> to notify <strong>PiA SDK</strong> to ask for the security code from the customer. If the security code is not required, another optional security method can be  used: the system authentication feature. With this feature, the user will use  the unlock screen functionality to confirm his identity (pin, password, pattern or fingerprint) for subsequent payments.</p>
-<p>The snippet below illustrates how to start the <strong>PiA SDK</strong> for subsequent transaction of Easy Payment with the extra data TokenCardInfo, and security code (CVV/CVC) required: (<code>systemAuthRequired</code> flag is configurable to  enable/disable the system authentication for the subsequent transaction. For the Easy payment,  the <code>systemAuthRequired</code> can be true to enable the system authentication if CVV/CVC is NOT required. However, if the CVV/CVC is required, the system authentication will be skipped anyway to avoid extra customer interaction)</p>
+
+In the subsequent transaction of Easy payment, you can follow the same way as the initial transaction to start PiA SDK and make sure:
+<ul>
+<li>you pass a non-nil <code>tokenCardInfo</code> when instantiating the <strong>PiA SDK</strong></li>
+<li>the register call from your backend contains the parameter  <code>recurringUse3DS = true</code> in order to trigger 3DSecure authentication as per PSD2/SCA requirements.</li>
+</ul>
+<p><strong>Setting the security code (CVV/CVC):</strong></p>
+You can set the boolean parameter <code>cvcRequired</code> on the <code>TokenCardInfo</code> instance to notify <strong>PiA SDK</strong> to ask for the CVV/CVC security code from the customer.
+<p>The snippet below illustrates how to start the <strong>PiA SDK</strong> for subsequent transaction of Easy Payment.</p>
+
 <pre><code class="language-java"><span class="hljs-comment">//region global params</span>
 <span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> cvcRequired = <span class="hljs-keyword">true</span>;
-<span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> systemAuthRequired = <span class="hljs-keyword">false</span>;
 <span class="hljs-comment">//end region</span>
             
 <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">callPiaSDK</span><span class="hljs-params">(PaymentMethod method)</span></span>{
@@ -277,81 +299,51 @@ In the subsequent transaction of Easy payment, you can follow the same way as th
 }
 
 <span class="hljs-function"><span class="hljs-keyword">private</span> TokenCardInfo <span class="hljs-title">getTokenizedCardInfo</span><span class="hljs-params">(DisplayedToken method)</span></span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TokenCardInfo(method.getTokenId(), SchemeType.VISA, method.getExpiryDate(), cvcRequired, systemAuthRequired);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TokenCardInfo(method.getTokenId(), SchemeType.VISA, method.getExpiryDate(), cvcRequired);
 }
 </code></pre>
-<h1><a id="Easy_oneclick_payment_without_Security_code_CVVCVC_flow_description"></a>Easy (one-click) payment without Security code (CVV/CVC) flow description</h1>
+<h1><a id="Recurring_payments"></a>Recurring payments</h1>
 <hr>
-<p>In PiA SDK, we use the Recurring Payments concept to allow you as a merchant to enable easy subsequent payment for returning customers, without the need to collect again their security code (CVV / CVC).</p>
-<p>Below you can find the interaction between the application that uses the <strong>PiA SDK</strong> and theSDK for this transaction flow:</p>
-<p><img src="doc-files/one_click_easy_payment_without_cvc.png" alt="Easy (one-click) payment without CVV flow image"></p>
-<p><strong>Initial transaction of Easy (one-click) payment without security code (CVV/CVC) flow</strong><br>
-In the initial transaction of Easy (one-click) payment without security code flow,<strong>PiA SDK</strong> should be started like the basic payment flow. Then, Easy payment can be triggered if the user chooses to save the card for the future usage during the card entry process. Then, the SDK will pass the boolean parameter <code>saveCard</code> with <code>true</code>(by default, it is set to false to trigger the basic payment flow as mentioned above) in the <code>RegisterPaymentHandler</code> to notify the app to go ahead with the Easy payment flow.  You shall make the transaction registration according to the sequence diagram above.</p>
-<p>After your app gets the successful result from <strong>PiA SDK</strong>, you can start Netaxept call(s) to proceed the transaction and fetch and store token in your backend which will be utilized for the subsequent transaction of Recurring Payment.</p>
-<p><strong>Subsequent transaction of Easy (one-click) payment without security code (CVV/CVC) flow</strong><br>
-In the subsequent transaction of Easy (one-click) payment without security code, you can follow the same way as the initial transaction to start <strong>PiA SDK</strong> with just one extra data <code>TokenCardInfo</code> in the bundle to provide the token information for <strong>PiA SDK</strong> to present token card and convey it to Netaxept for charging the transaction.</p>
-<p>Depending on your requirements, for subsequent payments you can customize the flow:</p>
-<ol>
-<li>Ask for System Authentication feature as security check (pin, password, pattern or fingerprint). You can set the boolean parameter <code>systemAuthRequired = true</code> from <code>TokenCardInfo</code>. To use this functionality, the <code>cvcRequired</code> flag must be false.<br>
-<strong>Sample:</strong></li>
-</ol>
-<pre><code class="language-java"><span class="hljs-comment">//region global params</span>
-<span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> cvcRequired = <span class="hljs-keyword">false</span>;
-<span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> systemAuthRequired = <span class="hljs-keyword">true</span>;
-<span class="hljs-comment">//end region</span>
+<p>Note: To be used only for recurring transactions as per PSD2/SCA requirements
+With this flow, customer saves card details during initial transaction for later subsequent charges by the merchant. Transaction can be account verification (using 2. Register flow) or actual purchase. Due to PSD2/SCA requirements the initial transaction must always be performed with 3D-Secure.</p>
 
-<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">callPiaSDK</span><span class="hljs-params">(PaymentMethod method)</span></span>{
-    Bundle bundle=<span class="hljs-keyword">new</span> Bundle();
-    bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO,getMerchantInfo());
-    bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO,getOrderInfo());
-    bundle.putParcelable(PiaActivity.BUNDLE_TOKEN_CARD_INFO,getTokenizedCardInfo((DisplayedToken)method));
+<p>The payment flow for recurring transactions is the same as the 1.2 easy payment flow, only a few parameters change as detailed below. You can refer to the sequence diagram presented in section 1.2 of this documentation.</p>
 
-    PiaSDK.getInstance().start(<span class="hljs-keyword">this</span>,bundle,mRegisterPaymentHandler);
-    overridePendingTransition(R.anim.slide_in_bottom,R.anim.slide_out_bottom);
+<p><strong>Initial transaction of recurring payment flow</strong></p>
 
-    mPaymentCache.setState(PaymentFlowState.CALL_PIA_SDK);
-}
+<p>In the initial transaction of a recurring payment, <strong>PiA SDK</strong> should be started as with the basic payment flow and include additional parameters related to recurring use, </p>
 
-<span class="hljs-function"><span class="hljs-keyword">private</span> TokenCardInfo <span class="hljs-title">getTokenizedCardInfo</span><span class="hljs-params">(DisplayedToken method)</span></span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TokenCardInfo(method.getTokenId(), SchemeType.VISA, method.getExpiryDate(), cvcRequired, systemAuthRequired);
-}
-</code></pre>
-<ol start="2">
-<li>The <strong>System Authentication</strong> feature is a native Android OS functionality, which is started from PiA SDK only if the flag <code>cvcRequired = fals</code> and the <code>systemAuthRequired = true</code>. Note that the SDK does not store any passwords or sensitive data. Hence the Android OS handles the unlock screen option  that the user has set.<br>
-When users click the <strong>PAY</strong> button, they will be asked to authenticate themselves by one of the following methods: Pin, Password, Pattern or Fingerprint.  In this case, there can be three scenarios:
+<p><strong>Important parameters for setting recurring payments:</strong></p>
+
 <ul>
-<li><strong>The user succeeds in authenticating himself:</strong> the payment flow will be similar to Easy Payment flow without security code.</li>
-<li><strong>The user fails to authenticate himself:</strong>  the <strong>PAY</strong> button will be disabled and he will be prompted with an alert mentioning that he cannot complete the transaction with with this saved card. He will need to proceed with another payment method.</li>
-<li><strong>The user does not have any system authentication methods (Pin, Password, Pattern or Fingerprint):</strong> an alert will be shown with the option to go to Lock Screen options to enable any of the available authentication methods.</li>
+<li><strong>Recurring Type</strong> = <q>R</q></li>
+<li><strong>Recurring frequency</strong> indicates how often the merchant may make subsequent payments on the card registered. A frequency of <q>1</q> will indicate that one payment is allowed each day, while <q>28</q> would be the recommended value for monthly subscriptions, to allow for the 28 days in February. If more than one payment should be possible daily, a recurring frequency of <q>0(Zero)</q> can be used.</li>
+<li><strong>Recurring expiry date</strong> is the date when the agreement between the merchant and the customer expires. This value must be registered on the format YYYYMMDD</li>
+<li><strong>updateStoredPaymentInfo = true</strong>, use this if the initial transaction is only a card registration</li>
+<li><strong>force3DS = true:</strong> For PSD2/SCA compliance, note that the initial transaction must always require 3D-Secure authentication.</li>
 </ul>
-</li>
-<li>One-click easy payment. No extra security check. You can set the boolean parameters <code>cvcRequired = false</code> and <code>systemAuthRequired = false</code> from <code>TokenCardInfo</code>.<br>
-<strong>Sample:</strong></li>
-</ol>
-<pre><code class="language-java"><span class="hljs-comment">//region global params</span>
-<span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> cvcRequired = <span class="hljs-keyword">false</span>;
-<span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> systemAuthRequired = <span class="hljs-keyword">false</span>;
-<span class="hljs-comment">//end region</span>
 
-<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">callPiaSDK</span><span class="hljs-params">(PaymentMethod method)</span></span>{
-    Bundle bundle=<span class="hljs-keyword">new</span> Bundle();
-    bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO,getMerchantInfo());
-    bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO,getOrderInfo());
-    bundle.putParcelable(PiaActivity.BUNDLE_TOKEN_CARD_INFO,getTokenizedCardInfo((DisplayedToken)method));
+<p>Then if you make the transaction registration according to the above parameters, the SDK will trigger the recurring flow.</p>
 
-    PiaSDK.getInstance().start(<span class="hljs-keyword">this</span>,bundle,mRegisterPaymentHandler);
-    overridePendingTransition(R.anim.slide_in_bottom,R.anim.slide_out_bottom);
+<p>After your app gets the successful result from <Strong><em> PiA SDK</em></strong>, you can start Netaxept call(s) to proceed the transaction and fetch and store the token in your backend which will be utilised for the subsequent recurring transaction.</p>
 
-    mPaymentCache.setState(PaymentFlowState.CALL_PIA_SDK);
-}
+<hr>
 
-<span class="hljs-function"><span class="hljs-keyword">private</span> TokenCardInfo <span class="hljs-title">getTokenizedCardInfo</span><span class="hljs-params">(DisplayedToken method)</span></span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TokenCardInfo(method.getTokenId(), SchemeType.VISA, method.getExpiryDate(), cvcRequired, systemAuthRequired);
-}
-</code></pre>
-<p>If the user has not set any secure unlock option, a dialog will be prompted asking him to set one. The payment transaction will not be processed until this requirement has been completed.<br>
-After the unlock screen has been presented, if the user refuses to confirm his unlock option, or after a certain number of attempts, returning back to the SDK will disable the pay button, with a custom pop-up message.<br>
-<strong>Note:</strong> Due to Android limitations, the Smart Lock feature is not accessible for this kind of identity verification. These unlock methods fall under the Smart Lock category and are not primitive security methods (they are not enclaved in a trusted place), hence cannot be used. So, the System Authentication restricts this use only to pin, password, pattern or fingerprint.</p>
+<p><strong>Subsequent recurring transactions</strong></p>
+
+<p>When performing the subsequent transaction, send the following parameters to Netaxept along the Register call.</p>
+
+<ul>
+<li>panHash = [stored token]</li>
+<li>recurringType = <q>R</q></li>
+<li>serviceType = <q>M</q></li>
+</ul>
+
+<p>After the successful Register call, skip the Terminal phase and continue directly with the Process call choosing either operation AUTH and CAPTURE or SALE as with a regular transaction.</p>
+
+<p>As per PSD2/SCA guidelines, 3D-Secure will be bypassed on all subsequent recurring transactions.</p>
+
+<p><strong>Deprecated:</strong> <em>system authentication</em> is no longer used.  </p>
 <h1><a id="Register_flow_description"></a>Register flow description</h1>
 <hr>
 <p>Below you can find the interaction between the application that uses the PiA SDK and the PiA SDK for the <strong>Register Flow</strong>:</p>
@@ -447,6 +439,98 @@ It is as simple as creating an instance of <strong>PiA SDK</strong> and calling 
 </tbody>
 </table>
 <p>The WebView which is hosting the PayPal checkout page is using cookies only during the transaction. After the transaction has ended, the cookies and cache are cleared. So, the user will need to authenticate each time he will use PayPal as payment method.</p>
+
+
+<h1><a id="Vipps_payment_flow_description"></a>Vipps Payment flow description</h1>
+<hr>
+<table class="table table-striped table-bordered" align="center">
+<thead>
+<tr>
+<th style="text-align:center">Vipps Flow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="doc-files/vipps_gif.gif" alt="Vipps Flow"></td>
+</tr>
+</tbody>
+</table>
+<p>Pia SDK supports Vipps transactions with similar implementation flow as other card schemes. Initialize a Vipps payment by registering the transaction using the SDK API <code>PiaSDK.startVippsProcess()</code></p>
+<p>The flow diagram of Vipps payment is as below :</p>
+
+<p><img src="doc-files/vipps_flow.png" alt="Vipps Payment Flow"></p>
+<strong>Vipps App Detection</strong>
+<p>The PiA SDK will perform a check for the Vipps app on your device in the below cases</p>
+<ul>
+	<li>Before registering the payment.</li>
+	<li>After registering the payment and before launching the Vipps app.</li>
+</ul>
+<p>This is done to check if Vipps app is installed and generate transaction id the first time and check if the app is not uninstalled after the transaction id is generated. In case Vipps app is not installed on your device the PiA SDK will cancel the transaction and return a  <code>Wallet app not installed  error</code>. We recommend you redirect the user to other payment methods.</p>
+<p><strong>Initializing a payment with Vipps: </strong></p>
+<ul>
+	<li> The RegisterPaymentHandler implementation is used to register the Vipps payment method via <code>registerVippsPayment(PaymentRegisterRequest paymentRegisterRequest)</code> with the parameters as shown in the above flow diagram with <code>paymentMethodActionList=[{"PaymentMethod":"Vipps"}]</code> and <code>redirectUrl</code> has to be the merchant app scheme url followed by <strong>piasdk</strong> as the host like <code>${applicationId}://piasdk</code></li>
+	<li> Provide customer's phone number in the following format: (Norwegian prefix):<code>phoneNumber=+4711111111</code> which must be URL encoded</li>
+	<li> Vipps supports <strong>AUTH+CAPTURE</strong> process. If <strong>autoSale</strong> is set to "true", Netaxept authorises and immediately capture the amount set in the <strong>REGISTER</strong> call. It is optional and default value is false (authorisation only and capture from the backend with additional process call).</li>
+</ul>
+<p><strong>Launching Vipps App: </strong> After registering the Vipps payment method and the transaction id and wallet URL has been successfully generated, the SDK will launch the Vipps app. Here you have two possible cases:</p>
+<ul>
+	<li>If user's device does not have Vipps app installed, cancel the transaction and preferably direct user to other payment options.</li>
+	<li>If Vipps app is installed on the device, launch it (see the code snippet below).</li>
+	
+	<p>Check the below code snippet for a full example:</p>
+	<pre><code class="language-java">
+	/*
+	* To initiate Vipps payment process
+	*/
+	<span class="hljs-keyword">private void <span class="hljs-title">callPiaSDK</span>(<span class="hljs-param">PaymentMethod method</span>) </span>{
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(<span class="hljs-string">PiaActivity.BUNDLE_MERCHANT_INFO</span>, getMerchantInfo(method.isCvcRequired()));
+		bundle.putParcelable(<span class="hljs-string">PiaActivity.BUNDLE_ORDER_INFO</span>, getOrderInfo());
+		PiaSDK.getInstance().startVippsProcess(this, bundle, mRegisterPaymentHandler);
+	}
+	</code></pre>
+	
+	<pre><code class="language-java">
+	<span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onActivityResult</span><span class="hljs-params">(<span class="hljs-keyword">int</span> requestCode, <span class="hljs-keyword">int</span> resultCode, Intent data)</span> </span>{
+
+        <span class="hljs-keyword">if</span> (requestCode != PiaSDK.PIA_SDK_REQUEST) {
+             <span class="hljs-keyword">super</span>.onActivityResult(requestCode, resultCode, data);
+        }
+
+        <span class="hljs-comment">//in case user cancelled</span>
+        Bundle bundle = <span class="hljs-keyword">new</span> Bundle();
+        <span class="hljs-keyword">if</span> (resultCode == RESULT_CANCELED) {
+            rollbackTransaction();
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-keyword">if</span> (resultCode == RESULT_OK) {
+            PiaResult result = data.getParcelableExtra(PiaActivity.BUNDLE_COMPLETE_RESULT);
+            <span class="hljs-keyword">if</span> (result.isSuccess()) {
+            <span class="hljs-comment">//in case of success, verify the payment</span>
+            if (requestCode == PIA_VIPPS_REQUEST) {
+                mRestClient.commitPayment(mPaymentCache.getPaymentRegisterResponse().getTransactionId());
+            } else {
+                //Handle other payment method differently.
+            }
+        } <span class="hljs-keyword">else</span> {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, false);
+            bundle.putParcelable(ConfirmationActivity.BUNDLE_ERROR_OBJECT, result);
+            displayConfirmationScreen(bundle);
+        }
+    }
+}
+	</code></pre>
+	
+</ul>
+<p><strong>Note:</strong> Vipps gives users 5 minutes to complete payment before the session expires. In case of a time-out, the merchant backend needs to make a Netaxept Query call to get the transaction status.</p>
+
+<p>Error code returned by Vipps is accessible using <code>getMobileWalletErrorCode</code>. You can further refer to <a href="https://github.com/vippsas/vipps-ecom-api/blob/master/vipps-ecom-api.md#error-codes">error codes</a> from the Vipps documentation.</p>
+</p>
+<p></p>
+
 <h1><a id="UI_Customization_API"></a>UI Customization API</h1>
 <hr>
 <p><img src="doc-files/Android_UI_customization_illustration.png" alt="Android UI customization illustration"></p>
@@ -527,8 +611,29 @@ When applying the configuration, please keep in mind the following:</p>
     PiaInterfaceConfiguration.getInstance().setCardIOTextFont(Typeface.MONOSPACE);
 	
     <span class="hljs-comment">//PiaSDK localization language</span>
-    PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.<span class="hljs-keyword">SWEDISH</span>);	
-}
+    PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.<span class="hljs-keyword">SWEDISH</span>);
+    
+    <span class="hljs-comment">//Manual entry text adjacent to save card switch</span>
+    String text = <span class="hljs-keyword">this</span>.getResources().getString(R.string.use_save_card_text);
+    TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(<span class="hljs-keyword">this</span>, R.style.UICustomizationTextViewStyle);
+    SpannableString spannableString = new SpannableString(text);
+    spannableString.setSpan(textAppearanceSpan, 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    PiaInterfaceConfiguration.getInstance().setSpannableSaveCardText(spannableString);
+
+    PiaInterfaceConfiguration.getInstance().setActionButtonLeftMargin(50);
+    PiaInterfaceConfiguration.getInstance().setActionButtonRightMargin(50);
+    PiaInterfaceConfiguration.getInstance().setActionButtonBottomMargin(50);
+    PiaInterfaceConfiguration.getInstance().setFieldRoundCorner(50);
+    PiaInterfaceConfiguration.getInstance().setSwitchTurnOffColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
+    PiaInterfaceConfiguration.getInstance().setButtonRoundCorner(R.drawable.custom_rounded_button);
+    GradientDrawable drawable = new GradientDrawable();
+    drawable.setColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
+    drawable.setCornerRadius(8);
+    PiaInterfaceConfiguration.getInstance().setCardIOButtonBackgroundSelector(drawable);
+    PiaInterfaceConfiguration.getInstance().setInputTextHintColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
+    PiaInterfaceConfiguration.getInstance().setSwitchOnTrackColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
+    
+    }
 </code></pre>
 <p>For further understanding, please check the sample code as well as these images below:</p>
 <table class="table table-striped table-bordered">
@@ -617,6 +722,19 @@ The error codes are returned back to the application, through the <code>onActivi
 <li>Conversion tips: suggest user to retry transaction with another card / payment method"</li>
 </ul>
 </li>
+<li><strong>VIPPS_ERROR, code 302:</strong> Payment with Vipps failed. May occur in the following cases:
+<ul>
+<li>User doesn't have Vipps profile</li>
+<li>Login failed (login max attempt reached)</li>
+<li>Vipps doesn't support this action, please update Vipps</li>
+<li>Request timed out or Token has expired</li>
+<li>The user was selected for fraud validation</li>
+</ul>
+<strong>NOTE TO DEVELOPER:</strong> 
+<ul>
+<li>Error code returned by Vipps is accessible using <code>getMobileWalletErrorCode</code>. You can further refer to <a href="https://github.com/vippsas/vipps-ecom-api/blob/master/vipps-ecom-api.md#error-codes">error codes</a> from the Vipps documentation.</li>
+</ul>
+</li>
 <li><strong>REQUEST_FAILED, code 200:</strong> May occur in the folowing cases:
 <ul>
 <li>internet connectivity issues</li>
@@ -625,6 +743,235 @@ The error codes are returned back to the application, through the <code>onActivi
 </ul>
 </li>
 </ul>
+<h1><a id="Backend_Tips"></a>Backend Tips</h1>
+<hr>
+<p>Netaxept offers <a href="https://shop.nets.eu/web/partners/appi"> REST API </a> to register, authorize and capture payments and query transaction status. This section provides backend tips of each API and some variations for different payment flows.</p>
+<p><strong>Register API</strong><br>
+Merchant backend registers payments with netaxept through the register API. This API is also used to register/store cards in Netaxept’s secure store (for cards that support this feature). The API retruns a transaction ID which the client SDK (Pia SDK) uses to make terminal call with Netaxept for most transaction flows.<br></p>
+<strong>Registering card for Easy Payment</strong><br>
+<strong>Note:</strong> See <a href="https://shop.nets.eu/web/partners/register">Netaxept</a> documentation for more details on this API.<br>
+<blockquote>
+<p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+Path:  <strong>/netaxept/register.aspx</strong>
+Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"S"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"force3DSecure"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"updateStoredPaymentInfo"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Netaxept returns transaction ID following the above register call. In order to store the card, make a verify API call to Netaxept with the given transaction ID.</p>
+
+<p>(Query the status of the register call with Netaxept to retreive and store the Pan-hash associated with the card)</p>
+
+<blockquote>
+<p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+Path:  <strong>/netaxept/process.aspx</strong>
+Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"operation"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"VERIFY"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Use the <em>query</em> API to fetch the Pan Hash associated with the card once process VERIFY is successful.</p>
+<h4 id='registering-em-easy-payment-em' class='heading'>Registering <em>Easy Payment</em></h4>
+<h5 id='initial-transaction' class='heading'>Initial transaction</h5><br>
+
+<blockquote>
+<p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+Path:  <strong>/netaxept/register.aspx</strong>
+Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"S"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"force3DSecure"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h5 id='subsequent-transaction' class='heading'>Subsequent transaction</h5>
+
+<p>Subsequent easy payment requires <code>recurringUse3DS = true</code> and the <code>panHash</code> additional fields.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"S"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"recurringUse3DS"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"panHash"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h4 id='registering-recurring-payment' class='heading'>Registering Recurring Payment</h4>
+<h5 id='initial-transaction' class='heading'>Initial transaction</h5><br>
+
+<blockquote>
+<p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+Path:  <strong>/netaxept/register.aspx</strong>
+Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"R"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"force3DSecure"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"recurringExpiryDate"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"YYYYMMDD"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"recurringFrequency"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>If the initial transaction is merely to store card for further payments, add <code>&quot;updateStoredPaymentInfo&quot; : &quot;true&quot;</code> field to the request body. </p>
+<h5 id='subsequent-transaction' class='heading'>Subsequent transaction</h5>
+
+<p>Subsequent recurring payment requires <code>&quot;recurringUse3DS&quot; : &quot;true&quot;</code> and the <code>&quot;panHash&quot; : &quot;string&quot;</code> additional fields.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"R"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"recurringUse3DS"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"panHash"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h5 id='request-body-pay-pal-payment-registration' class='heading'>Request body - Pay Pal payment registration:</h5><br>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"PayPal"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - Apple Pay payment registration:</h5><br>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"paymentData"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"ApplePay"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>The <em>paymentData</em> should contain th encrypted Payment Data from Apple pay of the following format: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"paymentData"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"version"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"data"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"signature"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"header"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"ephemeralPublicKey"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"publicKeyHash"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nt">"paymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"displayName"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"network"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nt">"transactionIdentifier"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h4 id='payment-authorization-with-netaxept' class='heading'>Payment authorization with Netaxept</h4>
+
+<p>Send authorization of payment to Netaxept following user&rsquo;s action (handled by the client Pia SDK)</p>
+
+<blockquote>
+<p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+Path:  <strong>/netaxept/process.aspx</strong>
+Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"operation"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"AUTH"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Note: See <a href="https://shop.nets.eu/web/partners/process" title="Netaxept">Netaxept</a> documentation for more details on this API. </p>
+<h3 id='capture-payment' class='heading'>Capture payment</h3>
+
+<blockquote>
+<p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+Path:  <strong>/netaxept/process.aspx</strong>
+Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"transactionAmount "</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"operation"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"CAPTURE "</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h3 id='query-transaction-status' class='heading'>Query transaction status</h3>
+
+<blockquote>
+<p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+Path:  <strong>/netaxept/query.aspx</strong>
+Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Note: See <a href="https://shop.nets.eu/web/partners/query" title="Netaxept">Netaxept</a> documentation for more details on this API. </p>
+
 <h1><a id="Get_in_touch"></a>Get in touch</h1>
 <hr>
 <p>If you have any questions, please contact us via email:</p>
@@ -703,5 +1050,40 @@ The above copyright notice and this permission notice shall be included in all c
 <ul>
 <li>Added support of app switch for the Swedish BankId verification on <strong>MasterCard ID Check</strong></li>
 </ul>
+<h4><a id="v131_Released_24JUN2019_660"></a>v1.3.2 Released: 12-Aug-2019</h4>
+<h4><a id="Release_notes_732"></a>Release notes:</h4>
+<ul>
+<li>Added support for Vipps Payment Method.</li>
+</ul>
+<h4><a id="v140_Released_20OCT2019_660"></a>v1.4.0 Released: 20-OCT-2019</h4>
+<h4><a id="Release_notes_733"></a>Release notes:</h4>
+<ul>
+<li>More UI customization</li>
+<li>Maestro card support</li>
+<li>Removed system authentication (according to PSD2/SCA regulation)</li>
+<li>General bugfixes</li>
+</ul>
 
+<p><strong>PSD2 requirements:</strong></p>
+
+<ul>
+<li>On September 14, 2019, a new requirement for all online payments is being introduced in the EU, stating that all transactions should be verified by the buyer, only a few types of payments are exempt. The verification of payments is made by the consumer, who has to approve the payment with two-factor authentication. For example, for Visa and Mastercard, this is done by using 3D Secure (3DS) authentication. More information can be found in Netaxept <a href="https://shop.nets.eu/web/partners/psd2" title="here">documentation</a>.</li>
+</ul>
+
+<p><strong>Guidelines for app merchants:</strong></p>
+
+<ul>
+<li>Please make sure 3D Secure is activated for your Netaxept Merchant account in production. Reach out to your Netaxept contact if this is not the case.</li>
+</ul>
+
+<p><strong>One click payments</strong></p>
+<li>When using the Easy payment flow, the below parameters should be added to the register call from your backend:</li>
+<ul>
+<li> Initital transaction: use <code>force3DSecure = true</code></li>
+<li>Subsequent transactions: <code>recurringUse3DS = true</code></li></ul>
+
+<p><strong>Note</strong></p>
+<li>System authentication for subsequent payment is now deprecated</li>
+<li>Please make sure Dynamic 3DS is not in use in your Netaxept implementation after the deadline.</li>
+</p>
 </body></html>

@@ -37,6 +37,7 @@ namespace PiaSampleXamarin
         Button btnPayWithSavedCard;
         Button btnSaveCard;
         Button btnPayPal;
+        Button btnVipps;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -47,11 +48,13 @@ namespace PiaSampleXamarin
             btnPayWithSavedCard = FindViewById<Button>(Resource.Id.paySavedCard); 
             btnSaveCard = FindViewById<Button>(Resource.Id.saveCard);
             btnPayPal = FindViewById<Button>(Resource.Id.paypal);
+            btnVipps = FindViewById<Button>(Resource.Id.vipps);
 
             btnPay.Click += onPayWithNewCard;
             btnPayWithSavedCard.Click += onPayWithSavedCard;
             btnSaveCard.Click += onSaveCard;
             btnPayPal.Click += onPayWithPaypal;
+            btnVipps.Click += onPayWithVipps;
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
@@ -66,6 +69,25 @@ namespace PiaSampleXamarin
 
             if (requestCode == PiaSDK.PiaSdkRequest)
             {
+                if (resultCode == Result.Ok)
+                {
+                    PiaResult result = (PiaResult)data.GetParcelableExtra(PiaSDK.BundleCompleteResult);
+                    if (result.Success)
+                    {
+                        Toast.MakeText(this, "SUCCESS", ToastLength.Short).Show();
+                        //call commitPayment/storeCard on your backend
+                    }
+                    else
+                    {
+                        Toast.MakeText(this, "ERROR", ToastLength.Short).Show();
+                        //call rollbackTransaction on your backend
+                    }
+                }
+                else
+                {
+                    Toast.MakeText(this, "CANCELED", ToastLength.Short).Show();
+                }
+            } else if (requestCode == PiaSDK.PiaVippsRequest) {
                 if (resultCode == Result.Ok)
                 {
                     PiaResult result = (PiaResult)data.GetParcelableExtra(PiaSDK.BundleCompleteResult);
@@ -208,6 +230,30 @@ namespace PiaSampleXamarin
 
             PiaSDK.Instance.StartPayPalProcess(this, bundle, new Handler());
         }
+
+        private void onPayWithVipps(object sender, EventArgs eventArgs)
+        {
+            /**
+                Build the MerchantInfo object with the following parameters:
+                -merchantId 
+                -testMode
+            */
+            MerchantInfo merchant = new MerchantInfo("merchant_id", false);
+            /**
+             *   Build the OrderInfo object with the following parameters:
+             *  -amount 
+             *  -currencyCode
+             */
+            OrderInfo order = new OrderInfo(1, "NOK");
+            /**
+            * Put the objects in the bundle; access the keys in the PiaSDK class
+            */
+
+            Bundle bundle = new Bundle();
+            bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
+            bundle.PutParcelable(PiaSDK.BundleOrderInfo, order);
+            PiaSDK.Instance.StartVippsProcess(this, bundle, new VippsHandler());
+        }
     }
 
     public class Handler : Java.Lang.Object, IRegisterPaymentHandler
@@ -221,6 +267,20 @@ namespace PiaSampleXamarin
         {
             //make register payment request synchronous to your backend and return the Transaction info
             return new TransactionInfo("transaction_id", "redirect_ok");
+        }
+    }
+
+    public class VippsHandler : Java.Lang.Object, IRegisterPaymentHandler
+    {
+        public void Dispose()
+        {
+            //do nothing
+        }
+
+        TransactionInfo IRegisterPaymentHandler.DoRegisterPaymentRequest(bool p0)
+        {
+            //make register payment request synchronous to your backend and return the Transaction info
+            return new TransactionInfo("walletUrl");
         }
     }
 }

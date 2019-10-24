@@ -36,6 +36,25 @@ public class PaymentRegisterRequest {
     @SerializedName("storeCard")
     private Boolean storeCard = null;
 
+    /*Vipps wallet*/
+    @SerializedName("merchantId")
+    private String merchantId = null;
+    @SerializedName("token")
+    private String token = null;
+    @SerializedName("serviceType")
+    private String serviceType = null;
+    @SerializedName("paymentMethodActionList")
+    private String paymentMethodActionList = null;
+    @SerializedName("phoneNumber")
+    private String phoneNumber = null;
+    @SerializedName("currencyCode")
+    private String currencyCode = null;
+    @SerializedName("redirectUrl")
+    private String redirectUrl = null;
+    @SerializedName("language")
+    private String language = null;
+    /*Vipps wallet*/
+
     /**
      * Customer Id
      */
@@ -104,6 +123,72 @@ public class PaymentRegisterRequest {
     }
 
 
+    /*Vipps wallet*/
+    public String getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(String merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public String getPaymentMethodActionList() {
+        return paymentMethodActionList;
+    }
+
+    public void setPaymentMethodActionList(String paymentMethodActionList) {
+        this.paymentMethodActionList = paymentMethodActionList;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+    /*Vipps wallet*/
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -114,6 +199,16 @@ public class PaymentRegisterRequest {
         sb.append(",method='").append(method).append("'");
         sb.append(",cardId='").append(cardId).append("'");
         sb.append(",storeCard='").append(storeCard).append("'");
+        sb.append("merchantId='").append(merchantId).append("'");
+        sb.append(",token='").append(token).append("'");
+        sb.append(",serviceType='").append(serviceType).append("'");
+        sb.append(",paymentMethodActionList='").append(paymentMethodActionList).append("'");
+        sb.append(",phoneNumber='").append(phoneNumber).append("'");
+        sb.append(",orderNumber='").append(orderNumber).append("'");
+        sb.append(",currencyCode='").append(currencyCode).append("'");
+        sb.append(",amount='").append(amount).append("'");
+        sb.append(",redirectUrl='").append(redirectUrl).append("'");
+        sb.append(",language='").append(language).append("'");
         sb.append("}");
         return sb.toString();
     }

@@ -113,6 +113,7 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         @BindView(R.id.card_scheme_digits)
         TextView mCardSchemeDigits;
 
+
         public TokenMethodViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -246,17 +247,14 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 case PAY_PAL:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.paypal));
                     break;
-                case SWISH:
-                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.swish));
-                    break;
                 case KLARNA:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.klarna));
                     break;
-                case MOBILE_PAY:
-                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.mobilepay));
-                    break;
                 case VIPPS:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.vipps));
+                    break;
+                case SWISH:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.swish));
                     break;
             }
             itemView.setOnClickListener(new View.OnClickListener() {

@@ -71,6 +71,7 @@
     <string name="netaxept_merchant_id">Netaxept Merchant ID</string>
     <string name="test_merchant_id">Test Merchant ID</string>
     <string name="production_merchant_id">Production Merchant ID</string>
+    <string name="customer_phone_number">Phone Number</string>
     <string name="test">Test</string>
     <string name="production">Production</string>
     <string name="new_configuration">New Configuration</string>
@@ -85,16 +86,16 @@
     <string name="navigation_bar_item_color">Navigation Bar button Color</string>
     <string name="navigation_bar_title_color">Navigation Bar title Color</string>
     <string name="background_color">SDK Background Color</string>
-    <string name="button_text_color">Buy Button text Color</string>
-    <string name="main_button_background_drawable">Buy Button Background</string>
+    <string name="button_text_color">Pay Button text Color</string>
+    <string name="main_button_background_drawable">Pay Button Background</string>
     <string name="label_text_color">Text Color</string>
     <string name="token_card_cvc_area_color">Saved Card CVC area color</string>
     <string name="text_field_color">Text entry text color</string>
     <string name="text_field_background_color">Text entry background color</string>
     <string name="text_field_success_color">Text entry success Color</string>
     <string name="text_field_error_color">Text entry error color</string>
-    <string name="switch_thumb_color">Switch Color</string>
-    <string name="switch_on_tint_color">Switch turn on color</string>
+    <string name="switch_thumb_color">Switch thumb Color</string>
+    <string name="switch_on_tint_color">Switch track turn on color</string>
     <string name="use_sample_font_and_weight">Use sample font and weight</string>
     <string name="use_sample_image_for_logo">Use sample image for logo</string>
     <string name="turn_on_save_card_option">Turn save card switch on</string>
@@ -108,6 +109,18 @@
     <string name="cardio_button_text_color">Card scanner Button Text color</string>
     <string name="cardio_text_font">Card scanner Text Font</string>
     <string name="cardio_button_text_font">Card scanner Button Text Font</string>
+    <string name="text_on_hint_color">Text input hint color</string>
+    <string name="input_text_border_color">Text input border color</string>
+    <string name="save_card_text">Save Card Text</string>
+    <string name="securely_save_card_text">Securely save my card for later use</string>
+    <string name="use_action_button_left_margin">Use action button left margin</string>
+    <string name="use_action_button_right_margin">Use action button right margin</string>
+    <string name="use_action_button_bottom_margin">Use action button bottom margin</string>
+    <string name="use_save_card_text">Use my card for future payment use</string>
+    <string name="use_rounded_corner_field">Use rounded corner for fields</string>
+    <string name="use_rounded_corner_button">Use rounded corner for button</string>
+    <string name="switch_turn_on_color_text">Switch turn on color</string>
+    <string name="switch_turn_off_color_text">Switch track turn off color</string>
     <!-- end CardIO customization related strings -->
 
 

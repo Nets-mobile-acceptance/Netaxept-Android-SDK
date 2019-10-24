@@ -1,10 +1,10 @@
 package eu.nets.pia.sample.ui.activity;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;

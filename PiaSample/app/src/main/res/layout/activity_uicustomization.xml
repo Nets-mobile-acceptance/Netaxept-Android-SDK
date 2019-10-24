@@ -269,9 +269,33 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/holder_text_field_success_color"
+                android:id="@+id/holder_text_on_hint_color"
                 style="@style/UICustomizationHolderSectionStyle"
                 android:layout_below="@+id/holder_text_field_background_color">
+
+                <TextView
+                    android:id="@+id/text_on_hint_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/text_on_hint_color" />
+
+                <ImageView
+                    android:id="@+id/nets_text_on_hint_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/light_gray"
+                    android:contentDescription="@string/text_on_hint_color" />
+
+                <ImageView
+                    android:id="@+id/orange_text_on_hint_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/custom_orange_color"
+                    android:contentDescription="@string/text_on_hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_text_field_success_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_text_on_hint_color">
 
                 <TextView
                     android:id="@+id/text_field_success_color"
@@ -305,21 +329,45 @@
                 <ImageView
                     android:id="@+id/nets_text_field_error_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/pia_red_color"
+                    android:background="@android:color/holo_red_light"
                     android:contentDescription="@string/text_field_error_color" />
 
                 <ImageView
                     android:id="@+id/dark_text_field_error_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@android:color/holo_red_light"
+                    android:background="@color/custom_orange_color"
                     android:contentDescription="@string/text_field_error_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_text_border_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_text_field_error_color">
+
+                <TextView
+                    android:id="@+id/text_border_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/input_text_border_color" />
+
+                <ImageView
+                    android:id="@+id/default_text_border_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/light_gray"
+                    android:contentDescription="@string/input_text_border_color" />
+
+                <ImageView
+                    android:id="@+id/customer_text_border_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/custom_blue_color"
+                    android:contentDescription="@string/input_text_border_color" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/holder_switch_thumb_color"
                 style="@style/UICustomizationHolderSectionStyle"
-                android:layout_below="@+id/holder_text_field_error_color">
+                android:layout_below="@+id/holder_text_border_color">
 
                 <TextView
                     android:id="@+id/switch_thumb_color"
@@ -329,13 +377,13 @@
                 <ImageView
                     android:id="@+id/nets_switch_thumb_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/pia_custom_blue_color"
+                    android:background="@color/icons"
                     android:contentDescription="@string/switch_thumb_color" />
 
                 <ImageView
                     android:id="@+id/dark_switch_thumb_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/primary"
+                    android:background="@color/pia_light_blue_color"
                     android:contentDescription="@string/switch_thumb_color" />
 
             </LinearLayout>
@@ -353,21 +401,66 @@
                 <ImageView
                     android:id="@+id/nets_switch_on_tint_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/pia_custom_blue_tint_color"
+                    android:background="@color/primary_light"
                     android:contentDescription="@string/switch_on_tint_color" />
 
                 <ImageView
                     android:id="@+id/dark_switch_on_tint_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/primary_light"
+                    android:background="@color/pia_custom_blue_tint_color"
                     android:contentDescription="@string/switch_on_tint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/holder_switch_turn_off_color"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_switch_on_tint_color">
+
+                <TextView
+                    android:id="@+id/text_switch_turn_off_color"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/switch_turn_off_color_text" />
+
+                <ImageView
+                    android:id="@+id/nets_switch_turn_off_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@color/accent"
+                    android:contentDescription="@string/switch_turn_off_color_text" />
+
+                <ImageView
+                    android:id="@+id/dark_switch_turn_off_color"
+                    style="@style/UICustomizationColorItemStyle"
+                    android:background="@android:color/holo_red_light"
+                    android:contentDescription="@string/switch_turn_off_color_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/save_card_text"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_switch_turn_off_color"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/save_card_text_placeholder"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/save_card_text" />
+
+                <EditText
+                    android:id="@+id/nets_save_card_text"
+                    style="@style/MerchantSettingsEditText"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/pia_form_input_normal"
+                    android:imeOptions="actionNext"
+                    android:text="@string/securely_save_card_text" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/holder_sample_font"
                 style="@style/UICustomizationHolderSectionStyle"
-                android:layout_below="@+id/holder_switch_on_tint_color">
+                android:layout_below="@+id/save_card_text">
 
                 <TextView
                     android:id="@+id/sample_font"
@@ -432,12 +525,97 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/sample_action_left_margin"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/holder_turn_on_save_card_option">
+
+                <TextView
+                    android:id="@+id/text_action_button_left_margin"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/use_action_button_left_margin" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_action_button_left_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/action_button_right_margin"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/sample_action_left_margin">
+
+                <TextView
+                    android:id="@+id/text_action_button_right_margin"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/use_action_button_right_margin" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_action_button_right_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/action_button_bottom_margin"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/action_button_right_margin">
+
+                <TextView
+                    android:id="@+id/text_action_button_bottom_margin"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/use_action_button_bottom_margin" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_action_button_bottom_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/field_rounded_corner_container"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/action_button_bottom_margin">
+
+                <TextView
+                    android:id="@+id/text_field_rounded_corner"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/use_rounded_corner_field" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_field_rounded_corner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sample_button_rounded_corner_container"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/field_rounded_corner_container">
+
+                <TextView
+                    android:id="@+id/text_sample_button_rounded_corner"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/use_rounded_corner_button" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_sample_button_rounded_corner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
             <!-- section start card io customization -->
             <RelativeLayout
                 android:id="@+id/cardio_related_customization"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/holder_turn_on_save_card_option"
+                android:layout_below="@+id/sample_button_rounded_corner_container"
                 android:layout_marginTop="10dp">
 
                 <TextView
@@ -600,7 +778,6 @@
                         android:layout_height="wrap_content" />
 
                 </LinearLayout>
-
 
             </RelativeLayout>
             <!-- end section card io customization -->

@@ -23,8 +23,7 @@ public enum PaymentMethodType {
     CREDIT_CARDS,
     TOKEN,
     PAY_PAL,
-    MOBILE_PAY,
     KLARNA,
-    SWISH,
-    VIPPS
+    VIPPS,
+    SWISH
 }
