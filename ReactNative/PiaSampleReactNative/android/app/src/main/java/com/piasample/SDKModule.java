@@ -22,6 +22,7 @@ import eu.nets.pia.data.model.TokenCardInfo;
 import eu.nets.pia.data.model.TransactionInfo;
 import eu.nets.pia.ui.main.PiaActivity;
 
+
 /**
  * MIT License
  * <p>
@@ -162,24 +163,22 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * Method used to build the local TokenCardInfo object
      * Call this method from JavaScript  before calling #start() or #startPayPalProcess()
      *
-     * @param tokenId            - the card token number
-     * @param schemeId           - the scheme id: "visa", "mastercard", etc.
-     * @param expiryDate         - the expiraton date "0122" (MMYY format)
-     * @param cvcRequired        - flag if security code will be asked when paying with a saved card
-     * @param systemAuthRequired - flag to specify if the screen unlock feature should be used when cvcRequired = false
+     * @param tokenId     - the card token number
+     * @param schemeId    - the scheme id: "visa", "mastercard", etc.
+     * @param expiryDate  - the expiraton date "0122" (MMYY format)
+     * @param cvcRequired - flag if security code will be asked when paying with a saved card
      */
     @ReactMethod
-    public void buildTokenCardInfo(String tokenId, String schemeId, String expiryDate, boolean cvcRequired, boolean systemAuthRequired) {
-        tokenCardInfo = new TokenCardInfo(tokenId, mapToSchemeIdFromPaymentResponse(schemeId), expiryDate, cvcRequired, systemAuthRequired);
+    public void buildTokenCardInfo(String tokenId, String schemeId, String expiryDate, boolean cvcRequired) {
+        tokenCardInfo = new TokenCardInfo(tokenId, mapToSchemeIdFromPaymentResponse(schemeId), expiryDate, cvcRequired);
     }
 
     /**
      * Method to build the local Transaction Info object.
      * Call this method from JavaScript after you made the register payment API call
      *
-     * @param transactionId  - the id of the transaction
-     * @param redirectOK     - the redirectOk case
-     * @param redirectCancel - the redirectCancel case
+     * @param transactionId - the id of the transaction
+     * @param redirectOK    - the redirectOk case
      */
     @ReactMethod
     public void buildTransactionInfo(String transactionId, String redirectOK) {
@@ -326,6 +325,38 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     }
 
     /**
+     * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
+     * This callback will notify you when the register payment API call is required to be done from your application.
+     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
+     *
+     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
+     */
+    @ReactMethod
+    public void startSwishProcess(final Callback registerPaymentCallback) {
+        Bundle bundle = new Bundle();
+        if (merchantInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
+        }
+        if (orderInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
+        }
+        PiaSDK.getInstance().startSwishProcess(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
+            @Override
+            public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {
+                registerPaymentCallback.invoke(saveCard);
+                try {
+
+                    return getTransactionInfo();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    threadSynchronizator.notify();
+                    return null;
+                }
+            }
+        });
+    }
+
+    /**
      * Method used to clear the local variabled after a payment process has ended (either success, error or cancel)
      * The payment process is usually ending in #OnActivityResult method
      */
@@ -354,7 +385,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
                 threadSynchronizator.wait();
             }
         }
-        System.out.println("onTransactionInfo:" + transactionInfo.getTransactionId() + " " + transactionInfo.getOkRedirectUrl() + " " + transactionInfo.getCancelRedirectUrl());
+        System.out.println("onTransactionInfo:" + transactionInfo.getTransactionId() + " " + transactionInfo.getRedirectUrl() + " " + transactionInfo.getCancelRedirectUrl());
         return transactionInfo;
     }
 }

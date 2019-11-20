@@ -13,35 +13,42 @@
 		android:id="@+id/pay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:layout_marginTop="40dp"
+		android:layout_marginTop="30dp"
         android:text="Pay" />
 
 	 <Button
 		android:id="@+id/paySavedCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:layout_marginTop="40dp"
+		android:layout_marginTop="30dp"
         android:text="Pay wih Saved Card" />
 
 	 <Button
 		android:id="@+id/saveCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:layout_marginTop="40dp"
+		android:layout_marginTop="30dp"
         android:text="Save Card" />
 
 	 <Button
 		android:id="@+id/paypal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:layout_marginTop="40dp"
+		android:layout_marginTop="30dp"
         android:text="PayPal" />
 
 	 <Button
 		android:id="@+id/vipps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:layout_marginTop="40dp"
+		android:layout_marginTop="30dp"
         android:text="Vipps" />
+
+	<Button
+		android:id="@+id/swishBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_marginTop="30dp"
+        android:text="Swish" />
 
 </LinearLayout>

@@ -215,7 +215,7 @@ public class PaymentMethodsFragment extends Fragment {
 
         PaymentMethod swish = new PaymentMethod();
         swish.setType(PaymentMethodType.SWISH);
-        swish.setId(ID_SWISH);
+        swish.setId("SwishM");
         methods.add(swish);
 
         return methods;

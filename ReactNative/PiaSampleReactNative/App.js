@@ -47,10 +47,13 @@ export default class App extends Component<Props> {
           <Button style={styles.button} onPress={this.saveCard} title="Save Card" />
         </View>
         <View style={styles.button}>
-          <Button  onPress={this.paypal} title="Paypal" />
+          <Button style={styles.button} onPress={this.paypal} title="Paypal" />
         </View>
         <View style={styles.button}>
-          <Button  onPress={this.vipps} title="Vipps" />
+          <Button style={styles.button} onPress={this.vipps} title="Vipps" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.swish} title="Swish" />
         </View>
       </View>
     );
@@ -180,6 +183,36 @@ export default class App extends Component<Props> {
     });
   }
 
+  swish = () => {
+  
+    NativeModules.PiaSDK.buildMerchantInfo(merchantIdProd, false, false);
+    NativeModules.PiaSDK.buildOrderInfo(1,"SEK");
+    //set the payment result promise
+    NativeModules.PiaSDK.handleSDKResult().then(()=>{
+         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) =>{
+         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    });
+     
+    NativeModules.PiaSDK.startSwishProcess((saveCardBool) => {
+        fetch(backendUrlProd + "v2/payment/"+ merchantIdProd +"/register", {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json;charset=utf-8;version=2.0',
+              'Content-Type': 'application/json;charset=utf-8;version=2.0'
+            },
+           body: '{"amount":{"currencyCode":"SEK","totalAmount":100,"vatAmount":0},"customerId":"000013","method":{"id":"Swish"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:SwishM}]","redirectUrl":"eu.nets.pia.sample://piasdk","storeCard":false}'
+          }).then((response) => response.json())
+              .then((responseJson) => {
+                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.walletUrl);
+              })
+              .catch((error) => {
+                console.error(error);
+                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
+              });
+    });
+  }
+
 }
 
 
@@ -198,12 +231,12 @@ const styles = StyleSheet.create({
   instructions: {
     textAlign: 'center',
     color: '#333333',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   button: {
     textAlign: 'center',
     color: '#333333',
-    marginBottom: 10,
-    marginTop: 10
+    marginBottom: 5,
+    marginTop: 5
   },
 });

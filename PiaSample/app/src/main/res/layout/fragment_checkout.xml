@@ -92,13 +92,13 @@
                             android:textStyle="bold" />
 
                         <Spinner
+                            android:id="@+id/currency_dropdown"
+                            style="@android:style/Widget.DeviceDefault.Light.Spinner"
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginStart="10dp"
-                            android:padding="2dp"
-                            style="@android:style/Widget.DeviceDefault.Light.Spinner"
-                            android:id="@+id/currency_dropdown"
-                            android:layout_height="wrap_content"/>
+                            android:padding="2dp" />
 
                     </LinearLayout>
 
@@ -108,7 +108,6 @@
             </LinearLayout>
 
         </ScrollView>
-
 
         <Button
             android:id="@+id/payment_btn"

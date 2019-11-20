@@ -54,7 +54,8 @@ public class RegisterPaymentHandlerImpl implements RegisterPaymentHandler {
         MerchantRestClient.getInstance().registerPayment(paymentRegisterRequest);
         if (!paymentFlowCache.isFinishedWithError() && paymentFlowCache.getPaymentRegisterResponse() != null) {
             PaymentRegisterResponse paymentRegisterResponse = paymentFlowCache.getPaymentRegisterResponse();
-            if (paymentFlowCache.getPaymentMethodSelected() == PaymentMethodSelected.VIPPS) {
+            if (paymentFlowCache.getPaymentMethodSelected() == PaymentMethodSelected.VIPPS
+                    || paymentFlowCache.getPaymentMethodSelected() == PaymentMethodSelected.SWISH) {
                 return new TransactionInfo(paymentRegisterResponse.getWalletUrl());
             } else {
                 return new TransactionInfo(paymentRegisterResponse.getTransactionId(),

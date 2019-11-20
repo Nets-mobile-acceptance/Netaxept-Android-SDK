@@ -15,6 +15,7 @@ Read below for more information on how to use it.</p>
 <li><a href="#Register_flow_description">Register flow description</a></li>
 <li><a href="#PayPal_flow_description">PayPal flow description</a></li>
 <li><a href="#Vipps_payment_flow_description">Vipps Payment flow description</a></li>
+<li><a href="#Swish_m_commerce_integration">Swish m-commerce integration</a></li>
 <li><a href="#UI_Customization_API">UI Customization API</a></li>
 <li><a href="#Permissions">Permissions</a></li>
 <li><a href="#Limitations">Limitations</a></li>
@@ -56,7 +57,7 @@ If you encounter any blockers when integrating the <code>Netaxept - Android SDK<
 <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         ...
 
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.4.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.5.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
 
         ...
     }
@@ -224,7 +225,7 @@ needs to add acknowledgement for Retrofit reference library also. You can find i
     }
 }
 </code></pre>
-<p>After the transaction has been registered, an unique transaction identifier (transaction id) in <code>TransactionInfo</code> will be returned from Netaxept to <strong>PiA SDK</strong> and it will post it along with the card data to the Netaxept. In addition, one redirect URL is required by <strong>PiA SDK</strong> so that the SDK can be notified by Netaxept after payment card data have been delivered to Netaxept successfully. During this phase, the 3DS authentication is performed as well unless it has been waived by you or your chosen card acquirer.</p>
+<p>After the transaction has been registered, an unique transaction identifier (transaction id) in <code>TransactionInfo</code> will be returned from Netaxept to <strong>PiA SDK</strong> and it will post it along with the card data to the Netaxept. In addition, one <code>redirectUrl</code> is required by <strong>PiA SDK</strong> so that the SDK can be notified by Netaxept after payment card data have been delivered to Netaxept successfully. During this phase, the 3DS authentication is performed as well unless it has been waived by you or your chosen card acquirer.</p>
 <p>In the end, from your activity where <strong>PiA SDK</strong> is initialized, you need to override the <code>onActivityResult</code> callback to be notified when the SDK handling is completed. You can find the SDK result stored as Intent object.</p>
 <p>The code sample below indicates the example of how to override the callback to receive the SDK result:</p>
 <pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainActivity</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AppCompatActivity</span> </span>{
@@ -465,7 +466,7 @@ It is as simple as creating an instance of <strong>PiA SDK</strong> and calling 
 	<li>Before registering the payment.</li>
 	<li>After registering the payment and before launching the Vipps app.</li>
 </ul>
-<p>This is done to check if Vipps app is installed and generate transaction id the first time and check if the app is not uninstalled after the transaction id is generated. In case Vipps app is not installed on your device the PiA SDK will cancel the transaction and return a  <code>Wallet app not installed  error</code>. We recommend you redirect the user to other payment methods.</p>
+<p>This is done to check if Vipps app is installed and generate transaction id the first time and check if the app is not uninstalled after the transaction id is generated. In case Vipps app is not installed on your device the PiA SDK will cancel the transaction and return a  <code>Wallet app not installed  error</code>. We recommend you to redirect the user to other payment methods.</p>
 <p><strong>Initializing a payment with Vipps: </strong></p>
 <ul>
 	<li> The RegisterPaymentHandler implementation is used to register the Vipps payment method via <code>registerVippsPayment(PaymentRegisterRequest paymentRegisterRequest)</code> with the parameters as shown in the above flow diagram with <code>paymentMethodActionList=[{"PaymentMethod":"Vipps"}]</code> and <code>redirectUrl</code> has to be the merchant app scheme url followed by <strong>piasdk</strong> as the host like <code>${applicationId}://piasdk</code></li>
@@ -528,6 +529,95 @@ It is as simple as creating an instance of <strong>PiA SDK</strong> and calling 
 <p><strong>Note:</strong> Vipps gives users 5 minutes to complete payment before the session expires. In case of a time-out, the merchant backend needs to make a Netaxept Query call to get the transaction status.</p>
 
 <p>Error code returned by Vipps is accessible using <code>getMobileWalletErrorCode</code>. You can further refer to <a href="https://github.com/vippsas/vipps-ecom-api/blob/master/vipps-ecom-api.md#error-codes">error codes</a> from the Vipps documentation.</p>
+</p>
+<p></p>
+
+<h1><a id="Swish_m_commerce_integration"></a>Swish m-commerce integration</h1>
+<hr>
+<table class="table table-striped table-bordered" align="center">
+<thead>
+<tr>
+<th style="text-align:center">Swish Flow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="doc-files/swish_gif.gif" alt="Vipps Flow"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pre-requisite: </strong>Make sure Swish m-commerce agreement and certificate are defined in your Netaxept merchant configuration. Check the admin portal.</p>
+<p>Pia SDK supports Swish transactions with similar implementation flow as other card schemes. Initialize a Swish payment by registering the transaction using the SDK API <code>PiaSDK.startSwishProcess()</code></p>
+<p>The flow diagram of Swish payment is as below :</p>
+
+<p><img src="doc-files/swish_flow.png" alt="Swish Payment Flow"></p>
+<strong>Swish App Detection</strong>
+<p>The PiA SDK will perform a check for the Swish app on your device in the below cases</p>
+<ul>
+	<li>Before registering the payment.</li>
+	<li>After registering the payment and before launching the Swish app.</li>
+</ul>
+<p>This is done to check if Swish app is installed and generate transaction ID the first time and check if the app is not uninstalled after the transaction ID is generated. In case Swish app is not installed on your device the PiA SDK will cancel the transaction and return a  <code>Wallet app not installed  error</code>. We recommend you to redirect the user to other payment methods.</p>
+<p><strong>Initializing a payment with Swish: </strong></p>
+<ul>
+	<li> The RegisterPaymentHandler implementation is used to register the Swish payment method via <code>registerSwishPayment(PaymentRegisterRequest paymentRegisterRequest)</code> with the parameters as shown in the above flow diagram with <code>paymentMethodActionList=[{"PaymentMethod":"SwishM"}]</code> and <code>redirectUrl</code> has to be the merchant app scheme url followed by <strong>piasdk</strong> as the host like <code>${applicationId}://piasdk</code></li>
+	<li> Swish supports <strong>AUTH+CAPTURE</strong> process. If <strong>autoSale</strong> is set to "true", Netaxept authorises and immediately capture the amount set in the <strong>REGISTER</strong> call. It is optional and default value is false (authorisation only and capture from the backend with additional process call).</li>
+</ul>
+<p><strong>Launching Swish App: </strong> After registering the Swish payment method and the transaction ID and wallet URL has been successfully generated, the SDK will launch the Swish app. Here you have two possible cases:</p>
+<ul>
+	<li>If user's device does not have Swish app installed, cancel the transaction and preferably direct user to other payment options.</li>
+	<li>If Swish app is installed on the device, launch it (see the code snippet below).</li>
+	
+	<p>Check the below code snippet for a full example:</p>
+	<pre><code class="language-java">
+	/*
+	* To initiate Swish payment process
+	*/
+	<span class="hljs-keyword">private void <span class="hljs-title">callPiaSDK</span>(<span class="hljs-param">PaymentMethod method</span>) </span>{
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(<span class="hljs-string">PiaActivity.BUNDLE_MERCHANT_INFO</span>, getMerchantInfo(method.isCvcRequired()));
+		bundle.putParcelable(<span class="hljs-string">PiaActivity.BUNDLE_ORDER_INFO</span>, getOrderInfo());
+		PiaSDK.getInstance().startSwishProcess(this, bundle, mRegisterPaymentHandler);
+	}
+	</code></pre>
+	
+	<pre><code class="language-java">
+	<span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onActivityResult</span><span class="hljs-params">(<span class="hljs-keyword">int</span> requestCode, <span class="hljs-keyword">int</span> resultCode, Intent data)</span> </span>{
+
+        <span class="hljs-keyword">if</span> (requestCode != PiaSDK.PIA_SDK_REQUEST) {
+             <span class="hljs-keyword">super</span>.onActivityResult(requestCode, resultCode, data);
+        }
+
+        <span class="hljs-comment">//in case user cancelled</span>
+        Bundle bundle = <span class="hljs-keyword">new</span> Bundle();
+        <span class="hljs-keyword">if</span> (resultCode == RESULT_CANCELED) {
+            rollbackTransaction();
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-keyword">if</span> (resultCode == RESULT_OK) {
+            PiaResult result = data.getParcelableExtra(PiaActivity.BUNDLE_COMPLETE_RESULT);
+            <span class="hljs-keyword">if</span> (result.isSuccess()) {
+            <span class="hljs-comment">//in case of success, verify the payment</span>
+            if (requestCode == PIA_Swish_REQUEST) {
+                mRestClient.commitPayment(mPaymentCache.getPaymentRegisterResponse().getTransactionId());
+            } else {
+                //Handle other payment method differently.
+            }
+        } <span class="hljs-keyword">else</span> {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, false);
+            bundle.putParcelable(ConfirmationActivity.BUNDLE_ERROR_OBJECT, result);
+            displayConfirmationScreen(bundle);
+        }
+    }
+}
+	</code></pre>
+	
+</ul>
+<p><strong>Note:</strong> Swish gives users 3 minutes to complete payment before the session expires. In case of a time-out, the merchant backend needs to make a Netaxept Query call to get the transaction status. Refunds of Swish transactions are available via API call (credit operation) or via the Netaxept admin portal.</p>
+
 </p>
 <p></p>
 
@@ -735,6 +825,17 @@ The error codes are returned back to the application, through the <code>onActivi
 <li>Error code returned by Vipps is accessible using <code>getMobileWalletErrorCode</code>. You can further refer to <a href="https://github.com/vippsas/vipps-ecom-api/blob/master/vipps-ecom-api.md#error-codes">error codes</a> from the Vipps documentation.</li>
 </ul>
 </li>
+<li><strong>WALLET_APP_NOT_FOUND, code 303:</strong> Mobile wallet application not installed in the device. May occur if the required wallet app is not installed on the device.
+</li>
+<li><strong>SWISH_ERROR, code 304:</strong> Payment with Swish failed. May occur in the following cases:
+<ul>
+<li>User doesn't have Swish profile</li>
+<li>Login failed (login max attempt reached)</li>
+<li>Swish doesn't support this action, please update Swish</li>
+<li>Request timed out or Token has expired</li>
+<li>The user was selected for fraud validation</li>
+</ul>
+</li>
 <li><strong>REQUEST_FAILED, code 200:</strong> May occur in the folowing cases:
 <ul>
 <li>internet connectivity issues</li>
@@ -914,6 +1015,24 @@ Method: <strong><em>POST</em></strong></p>
     </span><span class="nt">"transactionIdentifier"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
+
+<h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - Vipps payment registration:</h5><br>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"customerPhoneNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Vipps"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - Swish payment registration:</h5><br>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"SwishM"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
 <h4 id='payment-authorization-with-netaxept' class='heading'>Payment authorization with Netaxept</h4>
 
 <p>Send authorization of payment to Netaxept following user&rsquo;s action (handled by the client Pia SDK)</p>

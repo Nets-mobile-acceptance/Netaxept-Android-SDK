@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
     private MerchantRestClient mRestClient = MerchantRestClient.getInstance();
     private PaymentMethodsResponse paymentMethodsResponse;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -318,6 +319,8 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
             if (method.getType() == PaymentMethodType.VIPPS) {
                 mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.VIPPS);
+            } else if (method.getType() == PaymentMethodType.SWISH) {
+                mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.SWISH);
             } else {
                 mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.OTHERS);
             }
@@ -336,7 +339,8 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
     private boolean isPaymentMethodSupported(PaymentMethod method) {
         if (method.getType() == PaymentMethodType.TOKEN || method.getType() == PaymentMethodType.CREDIT_CARDS
-                || method.getType() == PaymentMethodType.VIPPS || method.getType() != PaymentMethodType.SWISH) {
+                || method.getType() == PaymentMethodType.VIPPS || method.getType() == PaymentMethodType.SWISH
+                || method.getType() == PaymentMethodType.PAY_PAL) {
             //these are enabled by default
             return true;
         }
@@ -344,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         if (paymentMethodsResponse != null && paymentMethodsResponse.getMethods() != null) {
             for (Method supportedMethod : paymentMethodsResponse.getMethods()) {
                 //allow only if the selected method is found in the payment methods response
-                if (method.getId().equals(supportedMethod.getId()) && !method.getId().contains(ID_SWISH)) {
+                if (method.getId().equals(supportedMethod.getId()) && method.getId().contains(ID_SWISH)) {
                     isSupported = true;
                 }
             }
@@ -459,6 +463,9 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
             case VIPPS:
                 PiaSDK.getInstance().startVippsProcess(this, bundle, mRegisterPaymentHandler);
                 break;
+            case SWISH:
+                PiaSDK.getInstance().startSwishProcess(this, bundle, mRegisterPaymentHandler);
+                break;
             default:
                 PiaSDK.getInstance().start(this, bundle, mRegisterPaymentHandler);
         }
@@ -481,12 +488,12 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (requestCode != PiaSDK.PIA_SDK_REQUEST) {
             super.onActivityResult(requestCode, resultCode, data);
         }
         LogUtils.logD(TAG, "[onActivityResult] result from Pia SDK: " +
                 "[requestCode=" + requestCode + "]");
+
         //in case user canceled
         Bundle bundle = new Bundle();
 
@@ -694,6 +701,14 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                     eu.nets.pia.sample.BuildConfig.APPLICATION_ID));
         }
 
+        if (method.getType() == PaymentMethodType.SWISH) {
+            paymentRequest.setMethod(new Method(method.getId()));
+            paymentRequest.setPaymentMethodActionList("[{PaymentMethod:Swish}]");
+            paymentRequest.setRedirectUrl(String.format("%1$s://piasdk",
+                    eu.nets.pia.sample.BuildConfig.APPLICATION_ID));
+        }
+
         return paymentRequest;
     }
+
 }
