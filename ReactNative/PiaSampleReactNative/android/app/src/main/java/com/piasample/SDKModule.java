@@ -21,6 +21,7 @@ import eu.nets.pia.data.model.SchemeType;
 import eu.nets.pia.data.model.TokenCardInfo;
 import eu.nets.pia.data.model.TransactionInfo;
 import eu.nets.pia.ui.main.PiaActivity;
+import eu.nets.pia.PiaInterfaceConfiguration;
 
 
 /**
@@ -245,6 +246,42 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
         }
 
 
+        PiaSDK.getInstance().start(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
+            @Override
+            public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {
+                registerPaymentCallback.invoke(saveCard);
+                try {
+                    return getTransactionInfo();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    threadSynchronizator.notify();
+                    return null;
+                }
+            }
+        });
+    }
+
+    /**
+     * After you set all required local object through above setters, call this method to skip the confirmation and instantiate the Callback Parameter
+     * This callback will notify you when the register payment API call is required to be done from your application.
+     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
+     *
+     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
+     */
+    @ReactMethod
+    public void startSkipConfirmation(final Callback registerPaymentCallback) {
+        Bundle bundle = new Bundle();
+        if (merchantInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
+        }
+        if (orderInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
+        }
+        if (tokenCardInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_TOKEN_CARD_INFO, tokenCardInfo);
+        }
+
+        PiaInterfaceConfiguration.getInstance().setSkipConfirmationSelected(true);
         PiaSDK.getInstance().start(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
             @Override
             public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {

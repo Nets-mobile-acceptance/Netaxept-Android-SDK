@@ -27,10 +27,44 @@ const instructions = Platform.select({
     'Double tap R on your keyboard to reload,\n' +
     'Shake or press menu button for dev menu',
 });
-const backendUrlProd = "YOUR BACKEND PROD URL HERE";
-const backendUrlTest = "YOUR BACKEND TEST URL HERE";
-const merchantIdProd = "YOUR PROD MERCHANT ID HERE";
-const merchantIdTest = "YOUR TEST MERCHANT ID HERE";
+
+const netsProduction = {
+
+/*#external_code_section_start
+    static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
+    static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
+    static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
+    static let merchantIdTest: String = "YOUR TEST NETAXEPT MERCHANT ID HERE"
+    static let tokenIdTest: String = "YOUR TEST TOKED ID"
+    static let schemeIdTest: String = "YOUR TEST CARD PROVIDER NAME"
+    static let expiryDateTest: String = "YOUR TEST CARD EXPIRY DATE"
+#external_code_section_end*/
+
+//#internal_code_section_start
+    backendUrlProd: "https://api-gateway-pp.nets.eu/pia/merchantdemo/",
+    merchantIdProd: "493809",
+//#internal_code_section_end
+};
+
+
+const netsTest = {
+/*#external_code_section_start
+    static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
+    static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
+    static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
+    static let merchantIdTest: String = "YOUR TEST NETAXEPT MERCHANT ID HERE"
+    static let tokenIdTest: String = "YOUR TEST TOKED ID"
+    static let schemeIdTest: String = "YOUR TEST CARD PROVIDER NAME"
+    static let expiryDateTest: String = "YOUR TEST CARD EXPIRY DATE"
+#external_code_section_end*/
+  //#internal_code_section_start
+  backendUrlTest: "https://api-gateway-pp.nets.eu/pia/test/merchantdemo/",
+  merchantIdTest: "12002835",
+  tokenIdTest: "492500******0004",
+  schemeIdTest: "Visa",
+  expiryDateTest: "12/22"
+  //#internal_code_section_end
+};
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -55,15 +89,21 @@ export default class App extends Component<Props> {
         <View style={styles.button}>
           <Button style={styles.button} onPress={this.swish} title="Swish" />
         </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.skipConfirm} title="Pay 10 EUR - Saved Card(Skip Confirmation)" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.unskipConfirm} title="Pay 10 EUR - Saved Card" />
+        </View>
       </View>
     );
   }
 
-  
+
 
   pay = () => {
     //for pay with new card, set only the MechantInfo and Order info objects
-    NativeModules.PiaSDK.buildMerchantInfo(merchantIdTest, true, true);
+    NativeModules.PiaSDK.buildMerchantInfo(netsTest.merchantIdTest, true, true);
     NativeModules.PiaSDK.buildOrderInfo(1,"EUR");
 
     //set the payment result promise
@@ -74,7 +114,7 @@ export default class App extends Component<Props> {
     });
    
     NativeModules.PiaSDK.start((saveCardBool) => {
-        fetch(backendUrlTest + "v2/payment/"+ merchantIdTest +"/register", {
+        fetch(netsTest.backendUrlTest + "v2/payment/"+ netsTest.merchantIdTest +"/register", {
             method: 'POST',
             headers: {
               'Accept': 'application/json;charset=utf-8;version=2.0',
@@ -95,7 +135,7 @@ export default class App extends Component<Props> {
 
   saveCard = () => {
     //for save card only MerchantInfo object is required
-    NativeModules.PiaSDK.buildMerchantInfo(merchantIdTest, true, true);
+    NativeModules.PiaSDK.buildMerchantInfo(netsTest.merchantIdTest, true, true);
 
     //set the payment result promise
     NativeModules.PiaSDK.handleSDKResult().then(()=>{
@@ -105,7 +145,7 @@ export default class App extends Component<Props> {
     });
 
     NativeModules.PiaSDK.start((saveCardBool) => {
-        fetch(backendUrlTest + "v2/payment/"+ merchantIdTest +"/register", {
+        fetch(netsTest.backendUrlTest + "v2/payment/"+ netsTest.merchantIdTest +"/register", {
             method: 'POST',
             headers: {
               'Accept': 'application/json;charset=utf-8;version=2.0',
@@ -125,7 +165,7 @@ export default class App extends Component<Props> {
 
   paypal = () => {
     //for PayPal set only the MerchantInfo object
-    NativeModules.PiaSDK.buildMerchantInfo(merchantIdProd, false, true);
+    NativeModules.PiaSDK.buildMerchantInfo(netsProduction.merchantIdProd, false, true);
 
     //set the payment result promise
     NativeModules.PiaSDK.handleSDKResult().then(()=>{
@@ -135,7 +175,7 @@ export default class App extends Component<Props> {
     });
      
     NativeModules.PiaSDK.startPayPalProcess((saveCardBool) => {
-        fetch(backendUrlProd + "v2/payment/"+ merchantIdProd +"/register", {
+        fetch(netsProduction.backendUrlProd + "v2/payment/"+ netsProduction.merchantIdProd +"/register", {
             method: 'POST',
             headers: {
               'Accept': 'application/json;charset=utf-8;version=2.0',
@@ -155,7 +195,7 @@ export default class App extends Component<Props> {
 
   vipps = () => {
   
-    NativeModules.PiaSDK.buildMerchantInfo(merchantIdProd, false, false);
+    NativeModules.PiaSDK.buildMerchantInfo(netsProduction.merchantIdProd, false, false);
     NativeModules.PiaSDK.buildOrderInfo(1,"NOK");
     //set the payment result promise
     NativeModules.PiaSDK.handleSDKResult().then(()=>{
@@ -165,7 +205,7 @@ export default class App extends Component<Props> {
     });
      
     NativeModules.PiaSDK.startVippsProcess((saveCardBool) => {
-        fetch(backendUrlProd + "v2/payment/"+ merchantIdProd +"/register", {
+        fetch(netsProduction.backendUrlProd + "v2/payment/"+ netsProduction.merchantIdProd +"/register", {
             method: 'POST',
             headers: {
               'Accept': 'application/json;charset=utf-8;version=2.0',
@@ -185,7 +225,7 @@ export default class App extends Component<Props> {
 
   swish = () => {
   
-    NativeModules.PiaSDK.buildMerchantInfo(merchantIdProd, false, false);
+    NativeModules.PiaSDK.buildMerchantInfo(netsProduction.merchantIdProd, false, false);
     NativeModules.PiaSDK.buildOrderInfo(1,"SEK");
     //set the payment result promise
     NativeModules.PiaSDK.handleSDKResult().then(()=>{
@@ -195,7 +235,7 @@ export default class App extends Component<Props> {
     });
      
     NativeModules.PiaSDK.startSwishProcess((saveCardBool) => {
-        fetch(backendUrlProd + "v2/payment/"+ merchantIdProd +"/register", {
+        fetch(netsProduction.backendUrlProd + "v2/payment/"+ netsProduction.merchantIdProd +"/register", {
             method: 'POST',
             headers: {
               'Accept': 'application/json;charset=utf-8;version=2.0',
@@ -213,6 +253,71 @@ export default class App extends Component<Props> {
     });
   }
 
+  skipConfirm = () => {
+    NativeModules.PiaSDK.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+    NativeModules.PiaSDK.buildOrderInfo(1,"EUR");
+    NativeModules.PiaSDK.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, false);
+    //set the payment result promise
+    NativeModules.PiaSDK.handleSDKResult().then(()=>{
+         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) =>{
+         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    });
+   
+    NativeModules.PiaSDK.startSkipConfirmation((saveCardBool) => {
+        fetch(netsTest.backendUrlTest + "v2/payment/"+ netsTest.merchantIdTest +"/register", {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json;charset=utf-8;version=2.0',
+              'Content-Type': 'application/json;charset=utf-8;version=2.0'
+            },
+            body:'{"customerId":"000012","orderNumber":"PiaSDK-Android","amount": {"currencyCode": "EUR", "vatAmount":0, "totalAmount":"1000"},"method": {"id":"EasyPayment","displayName":"","fee":""},"cardId":"492500******0004","storeCard": true,"merchantId":"","token":"","serviceTyp":"","paymentMethodActionList":"","phoneNumber":"","currencyCode":"","redirectUrl":"","language":""}'
+
+          }).then((response) => response.json())
+              .then((responseJson) => {
+                console.log('onResponse: '+responseJson)
+                console.log('onResponse'+responseJson.transactionId)
+                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
+              })
+              .catch((error) => {
+                console.error(error);
+                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
+              });
+    });
+  }
+
+  unskipConfirm = () => {
+  
+    NativeModules.PiaSDK.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+    NativeModules.PiaSDK.buildOrderInfo(10,"EUR");
+    NativeModules.PiaSDK.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, true);
+    //set the payment result promise
+    NativeModules.PiaSDK.handleSDKResult().then(()=>{
+         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) =>{
+         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    });
+   
+    NativeModules.PiaSDK.start((saveCardBool) => {
+        fetch(netsTest.backendUrlTest + "v2/payment/"+ netsTest.merchantIdTest +"/register", {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json;charset=utf-8;version=2.0',
+              'Content-Type': 'application/json;charset=utf-8;version=2.0'
+            },
+            body:'{"customerId":"000012","orderNumber":"PiaSDK-Android","amount": {"currencyCode": "EUR", "vatAmount":0, "totalAmount":"1000"},"method": {"id":"EasyPayment","displayName":"","fee":""},"cardId":"492500******0004","storeCard": true,"merchantId":"","token":"","serviceTyp":"","paymentMethodActionList":"","phoneNumber":"","currencyCode":"","redirectUrl":"","language":""}'
+          }).then((response) => response.json())
+              .then((responseJson) => {
+                console.log('onResponse: '+responseJson)
+                console.log('onResponse'+responseJson.transactionId)
+                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
+              })
+              .catch((error) => {
+                console.error(error);
+                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
+              });
+    });
+  }
 }
 
 

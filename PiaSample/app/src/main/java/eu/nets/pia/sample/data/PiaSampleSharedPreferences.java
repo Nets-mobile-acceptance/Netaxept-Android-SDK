@@ -8,7 +8,7 @@ import eu.nets.pia.sample.BuildConfig;
 /**
  * MIT License
  * <p>
- * Copyright (c) 2019 Nets Denmark A/S
+ * Copyright (c) 2020 Nets Denmark A/S
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
@@ -32,6 +32,7 @@ public class PiaSampleSharedPreferences {
     private static final String CUSTOMER_CURRENCY = "customer_currency";
     private static final String USE_SYSTEM_AUTH = "use_system_auth";
     private static final String DISABLE_CARD_IO = "disable_card_io";
+    private static final String ENABLE_SKIP_CONFIRMATION = "enable_skip_confirmation";
     private static final String MERCHANT_ENV_TEST = "merchant_env_test";
     private static final String MERCHANT_ENV_PROD = "merchant_env_prod";
     private static final String MERCHANT_ID_TEST = "merchant_id_test";
@@ -85,6 +86,17 @@ public class PiaSampleSharedPreferences {
 
     public static boolean isDisableCardIo() {
         return mSharedPrefs.getBoolean(DISABLE_CARD_IO, false);
+    }
+
+    public static void setEnableSkipConfirmation(boolean enableSkipConfirmation) {
+        SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
+        prefsEditor.putBoolean(ENABLE_SKIP_CONFIRMATION, enableSkipConfirmation);
+        prefsEditor.commit();
+    }
+
+    public static boolean getEnableSkipConfirmation() {
+        //Default value is set to true to keep the default flow as Skip Confirmation.
+        return mSharedPrefs.getBoolean(ENABLE_SKIP_CONFIRMATION, true);
     }
 
     public static void setDisableSaveCardOption(boolean disableSaveCardOption) {

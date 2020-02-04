@@ -11,7 +11,7 @@ import eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment;
 /**
  * MIT License
  * <p>
- * Copyright (c) 2019 Nets Denmark A/S
+ * Copyright (c) 2020 Nets Denmark A/S
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
@@ -38,32 +38,6 @@ public class Method implements Parcelable {
 
     public Method() {
     }
-
-    public Method(String id) {
-        this.id = id;
-    }
-
-    protected Method(Parcel in) {
-        id = in.readString();
-        displayName = in.readString();
-        if (in.readByte() == 0) {
-            fee = null;
-        } else {
-            fee = in.readLong();
-        }
-    }
-
-    public static final Creator<Method> CREATOR = new Creator<Method>() {
-        @Override
-        public Method createFromParcel(Parcel in) {
-            return new Method(in);
-        }
-
-        @Override
-        public Method[] newArray(int size) {
-            return new Method[size];
-        }
-    };
 
     /**
      * Payment ID
@@ -146,4 +120,30 @@ public class Method implements Parcelable {
             parcel.writeLong(fee);
         }
     }
+
+    public Method(String id) {
+        this.id = id;
+    }
+
+    protected Method(Parcel in) {
+        id = in.readString();
+        displayName = in.readString();
+        if (in.readByte() == 0) {
+            fee = null;
+        } else {
+            fee = in.readLong();
+        }
+    }
+
+    public static final Creator<Method> CREATOR = new Creator<Method>() {
+        @Override
+        public Method createFromParcel(Parcel in) {
+            return new Method(in);
+        }
+
+        @Override
+        public Method[] newArray(int size) {
+            return new Method[size];
+        }
+    };
 }

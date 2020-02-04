@@ -39,6 +39,7 @@ namespace PiaSampleXamarin
         Button btnPayPal;
         Button btnVipps;
         Button btnSwish;
+        Button btnSkipConfirmation;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -46,11 +47,12 @@ namespace PiaSampleXamarin
             SetContentView(Resource.Layout.activity_main);
 
             btnPay = FindViewById<Button>(Resource.Id.pay);
-            btnPayWithSavedCard = FindViewById<Button>(Resource.Id.paySavedCard); 
+            btnPayWithSavedCard = FindViewById<Button>(Resource.Id.paySavedCard);
             btnSaveCard = FindViewById<Button>(Resource.Id.saveCard);
             btnPayPal = FindViewById<Button>(Resource.Id.paypal);
             btnVipps = FindViewById<Button>(Resource.Id.vipps);
             btnSwish = FindViewById<Button>(Resource.Id.swishBtn);
+            btnSkipConfirmation = FindViewById<Button>(Resource.Id.skipConfirmationBtn);
 
             btnPay.Click += onPayWithNewCard;
             btnPayWithSavedCard.Click += onPayWithSavedCard;
@@ -58,6 +60,7 @@ namespace PiaSampleXamarin
             btnPayPal.Click += onPayWithPaypal;
             btnVipps.Click += onPayWithVipps;
             btnSwish.Click += onPayWithSwish;
+            btnSkipConfirmation.Click += onSkipConfirmation;
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
@@ -90,7 +93,9 @@ namespace PiaSampleXamarin
                 {
                     Toast.MakeText(this, "CANCELED", ToastLength.Short).Show();
                 }
-            } else if (requestCode == PiaSDK.PiaVippsRequest) {
+            }
+            else if (requestCode == PiaSDK.PiaVippsRequest)
+            {
                 if (resultCode == Result.Ok)
                 {
                     PiaResult result = (PiaResult)data.GetParcelableExtra(PiaSDK.BundleCompleteResult);
@@ -109,7 +114,9 @@ namespace PiaSampleXamarin
                 {
                     Toast.MakeText(this, "CANCELED", ToastLength.Short).Show();
                 }
-            } else if (requestCode == PiaSDK.PiaSwishRequest) {
+            }
+            else if (requestCode == PiaSDK.PiaSwishRequest)
+            {
                 if (resultCode == Result.Ok)
                 {
                     PiaResult result = (PiaResult)data.GetParcelableExtra(PiaSDK.BundleCompleteResult);
@@ -150,7 +157,7 @@ namespace PiaSampleXamarin
 
         private void FabOnClick(object sender, EventArgs eventArgs)
         {
-            View view = (View) sender;
+            View view = (View)sender;
             Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
                 .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
         }
@@ -174,7 +181,7 @@ namespace PiaSampleXamarin
             /**
             * Put the objects in the bundle; access the keys in the PiaSDK class
             */
-            Bundle bundle = new Bundle(); 
+            Bundle bundle = new Bundle();
             bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
             bundle.PutParcelable(PiaSDK.BundleOrderInfo, order);
 
@@ -204,7 +211,9 @@ namespace PiaSampleXamarin
             *  -cardVerificationRequired (if CVV/CVC will be asked)
             *  -useSystemAuth (if CVV/CVC is not required, the option to confirm payment with unlock screen will be prompted if this flag is true) 
             */
-            TokenCardInfo tokenCardInfo = new TokenCardInfo("4925********0004", SchemeType.Visa, "0822", true);
+            TokenCardInfo tokenCardInfo = new TokenCardInfo("4925********0004", SchemeType.Visa, "08/22", true);
+
+            PiaInterfaceConfiguration.Instance.SkipConfirmationSelected = false;
 
             /**
             * Put the objects in the bundle; access the keys in the PiaSDK class
@@ -300,6 +309,45 @@ namespace PiaSampleXamarin
             bundle.PutParcelable(PiaSDK.BundleOrderInfo, order);
             PiaSDK.Instance.StartSwishProcess(this, bundle, new SwishHandler());
         }
+
+        private void onSkipConfirmation(object sender, EventArgs eventArgs)
+        {
+            /**
+                Build the MerchantInfo object with the following parameters:
+                -merchantId 
+                -testMode
+                -cvcRequired
+            */
+            MerchantInfo merchant = new MerchantInfo("merchant_id", false);
+            /**
+             *   Build the OrderInfo object with the following parameters:
+             *  -amount 
+             *  -currencyCode
+             */
+            OrderInfo order = new OrderInfo(1, "DKK");
+            /**
+            *   Build the TokenCardInfo object with the following parameters:
+            *  -card token pan 
+            *  -Scheme type
+            *  -expiration date
+            *  -cardVerificationRequired (if CVV/CVC will be asked)
+            *  -useSystemAuth (if CVV/CVC is not required, the option to confirm payment with unlock screen will be prompted if this flag is true) 
+            */
+            TokenCardInfo tokenCardInfo = new TokenCardInfo("4925********0004", SchemeType.Visa, "08/22", false);
+
+            PiaInterfaceConfiguration.Instance.SkipConfirmationSelected = true;
+
+            /**
+            * Put the objects in the bundle; access the keys in the PiaSDK class
+            */
+            Bundle bundle = new Bundle();
+            bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
+            bundle.PutParcelable(PiaSDK.BundleOrderInfo, order);
+            bundle.PutParcelable(PiaSDK.BundleTokenCardInfo, tokenCardInfo);
+
+            PiaSDK.Instance.Start(this, bundle, new Handler());
+        }
+        
     }
 
     public class Handler : Java.Lang.Object, IRegisterPaymentHandler

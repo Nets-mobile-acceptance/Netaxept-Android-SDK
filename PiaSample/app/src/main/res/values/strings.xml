@@ -119,6 +119,7 @@
     <string name="use_save_card_text">Use my card for future payment use</string>
     <string name="use_rounded_corner_field">Use rounded corner for fields</string>
     <string name="use_rounded_corner_button">Use rounded corner for button</string>
+    <string name="use_skip_confirmation_switch">Use Skip Confirmation</string>
     <string name="switch_turn_on_color_text">Switch turn on color</string>
     <string name="switch_turn_off_color_text">Switch track turn off color</string>
     <!-- end CardIO customization related strings -->

@@ -7,7 +7,7 @@ import eu.nets.pia.utils.StringUtils;
 /**
  * MIT License
  * <p>
- * Copyright (c) 2019 Nets Denmark A/S
+ * Copyright (c) 2020 Nets Denmark A/S
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
@@ -41,7 +41,7 @@ public class DisplayedToken extends PaymentMethod {
 
     public String getIssuer() {
         if (issuer.toLowerCase().equals(PaymentMethodsFragment.ID_DINERS.toLowerCase())) {
-            return "Diners"; //return just "Diners" since "DinersClubInternational" is too large
+            return "Diners Club"; //return just "Diners Club" since "DinersClubInternational" is too large
         }
         return issuer;
     }

@@ -63,7 +63,7 @@ import eu.nets.pia.ui.main.PiaActivity;
 /**
  * MIT License
  * <p>
- * Copyright (c) 2019 Nets Denmark A/S
+ * Copyright (c) 2020 Nets Denmark A/S
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
@@ -104,8 +104,12 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     SwitchCompat mUrlSwitch;
     @BindView(R.id.switch_sistem_auth)
     SwitchCompat mSystemAuthSwitch;
+    //section-start-to-remove-by-script
     @BindView(R.id.switch_disable_cardio)
     SwitchCompat mDisableCardIOSwitch;
+    //section-end-to-remove-by-script
+    @BindView(R.id.switch_sample_skip_confirmation)
+    SwitchCompat mSkipConfirmationSwitch;
     @BindView(R.id.language_dropdown)
     Spinner mLanguageSpinner;
 
@@ -197,6 +201,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                 }
             });
 
+            //section-start-to-remove-by-script
             mDisableCardIOSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -205,10 +210,25 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                     PiaInterfaceConfiguration.getInstance().setDisableCardIO(isChecked);
                 }
             });
+            //section-end-to-remove-by-script
+
+            mSkipConfirmationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    PiaSampleSharedPreferences.setEnableSkipConfirmation(isChecked);
+                    //also, update the flag inside the SDK
+                    PiaInterfaceConfiguration.getInstance().setSkipConfirmationSelected(isChecked);
+                }
+            });
 
             mSystemAuthSwitch.setChecked(PiaSampleSharedPreferences.isUseSystemAuth());
             mUrlSwitch.setChecked(PiaSampleSharedPreferences.isPiaTestMode());
+
+            //section-start-to-remove-by-script
             mDisableCardIOSwitch.setChecked(PiaSampleSharedPreferences.isDisableCardIo());
+            //section-end-to-remove-by-script
+
+            mSkipConfirmationSwitch.setChecked(PiaSampleSharedPreferences.getEnableSkipConfirmation());
 
             setupLanguageSpinner();
         }
@@ -501,7 +521,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
      * 1. Which merchant is requesting the payments to be processed (your merchant ID)
      * 2. Which base URL should be used: TEST or PRODUCTION
      * 3. Always show the CVC entry.
-     * 
      *
      * @return MerchantInfo object
      */

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.data.model.MerchantInfo;
@@ -56,8 +57,8 @@ import static eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment.ID_SWISH;
 /**
  * MIT License
  * <p>
- * Copyright (c) 2019 Nets Denmark A/S
- * <p>
+ * Copyright (c) 2020 Nets Denmark A/S
+ * <p>ō
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -125,6 +126,9 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         //first time activity is created show checkout
         changeFragment(new CheckoutFragment());
 
+
+        //This is need to be set so that the SDK remember that what was the Skip Confirmation status.
+        PiaInterfaceConfiguration.getInstance().setSkipConfirmationSelected(PiaSampleSharedPreferences.getEnableSkipConfirmation());
     }
 
     /**
@@ -651,7 +655,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         if (issuer.equals("dankort")) {
             return SchemeType.DANKORT;
         }
-        if (issuer.equals("diners")) {
+        if (issuer.equals("diners club")) {
             return SchemeType.DINERS_CLUB_INTERNATIONAL;
         }
         if (issuer.equals("amex") || issuer.equals("americanexpress")) {

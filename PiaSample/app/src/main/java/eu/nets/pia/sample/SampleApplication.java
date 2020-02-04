@@ -4,8 +4,6 @@ import android.app.Application;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RoundRectShape;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -20,7 +18,7 @@ import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 /**
  * MIT License
  * <p>
- * Copyright (c) 2019 Nets Denmark A/S
+ * Copyright (c) 2020 Nets Denmark A/S
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
