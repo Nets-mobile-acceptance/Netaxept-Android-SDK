@@ -17,9 +17,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, ToastAndroid} from 'react-native';
+import React, { Component } from 'react';
+import { Platform, StyleSheet, Text, View, Button, ToastAndroid} from 'react-native';
 import { NativeModules } from 'react-native';
+
+const piaSDKModule = NativeModules.PiaSDK;
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -29,8 +31,7 @@ const instructions = Platform.select({
 });
 
 const netsProduction = {
-
-/*#external_code_section_start
+  /*#external_code_section_start
     static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
     static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
     static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
@@ -40,23 +41,23 @@ const netsProduction = {
     static let expiryDateTest: String = "YOUR TEST CARD EXPIRY DATE"
 #external_code_section_end*/
 
-//#internal_code_section_start
-    backendUrlProd: "https://api-gateway-pp.nets.eu/pia/merchantdemo/",
-    merchantIdProd: "493809",
-//#internal_code_section_end
+  //#internal_code_section_start
+  backendUrlProd: "https://api-gateway-pp.nets.eu/pia/merchantdemo/",
+  merchantIdProd: "733255",
+  //#internal_code_section_end
 };
 
 
 const netsTest = {
-/*#external_code_section_start
-    static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
-    static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
-    static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
-    static let merchantIdTest: String = "YOUR TEST NETAXEPT MERCHANT ID HERE"
-    static let tokenIdTest: String = "YOUR TEST TOKED ID"
-    static let schemeIdTest: String = "YOUR TEST CARD PROVIDER NAME"
-    static let expiryDateTest: String = "YOUR TEST CARD EXPIRY DATE"
-#external_code_section_end*/
+  /*#external_code_section_start
+      static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
+      static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
+      static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
+      static let merchantIdTest: String = "YOUR TEST NETAXEPT MERCHANT ID HERE"
+      static let tokenIdTest: String = "YOUR TEST TOKED ID"
+      static let schemeIdTest: String = "YOUR TEST CARD PROVIDER NAME"
+      static let expiryDateTest: String = "YOUR TEST CARD EXPIRY DATE"
+  #external_code_section_end*/
   //#internal_code_section_start
   backendUrlTest: "https://api-gateway-pp.nets.eu/pia/test/merchantdemo/",
   merchantIdTest: "12002835",
@@ -71,255 +72,317 @@ export default class App extends Component<Props> {
   render() {
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to Pia Sample app React Native!</Text>
-        <Text style={styles.instructions}>Check our basic implementation here!</Text>
-        <View style={styles.button}>
-          <Button style={styles.button} onPress={this.pay} title="Buy" />
+        <View style={styles.container}>
+          <Text style={styles.welcome}>Welcome to Pia Sample app React Native!</Text>
+          <Text style={styles.instructions}>Check our basic implementation here!</Text>
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.pay} title="Buy  " />
+          </View>
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.saveCard} title="Save Card" />
+          </View>
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.payViaPaypal} title="Paypal" />
+          </View>
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.payViaVipps} title="Vipps" />
+          </View>
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.payViaSwish} title="Swish" />
+          </View>
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.paySavedCardWithSkipConfirm} title="Pay 10 EUR - Saved Card(Skip Confirmation)" />
+          </View>
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.paySavedCardWithoutSkipConfirm} title="Pay 10 EUR - Saved Card" />
+          </View>
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.payViaPaytrailNordea} title="Paytrail Nordea" />
+          </View>
         </View>
-        <View style={styles.button}>
-          <Button style={styles.button} onPress={this.saveCard} title="Save Card" />
-        </View>
-        <View style={styles.button}>
-          <Button style={styles.button} onPress={this.paypal} title="Paypal" />
-        </View>
-        <View style={styles.button}>
-          <Button style={styles.button} onPress={this.vipps} title="Vipps" />
-        </View>
-        <View style={styles.button}>
-          <Button style={styles.button} onPress={this.swish} title="Swish" />
-        </View>
-        <View style={styles.button}>
-          <Button style={styles.button} onPress={this.skipConfirm} title="Pay 10 EUR - Saved Card(Skip Confirmation)" />
-        </View>
-        <View style={styles.button}>
-          <Button style={styles.button} onPress={this.unskipConfirm} title="Pay 10 EUR - Saved Card" />
-        </View>
-      </View>
     );
   }
 
-
-
   pay = () => {
     //for pay with new card, set only the MechantInfo and Order info objects
-    NativeModules.PiaSDK.buildMerchantInfo(netsTest.merchantIdTest, true, true);
-    NativeModules.PiaSDK.buildOrderInfo(1,"EUR");
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+    piaSDKModule.buildOrderInfo(1, "EUR");
 
     //set the payment result promise
-    NativeModules.PiaSDK.handleSDKResult().then(()=>{
-         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
-    }).catch((error) =>{
-         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then(() => {
+      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
-   
-    NativeModules.PiaSDK.start((saveCardBool) => {
-        fetch(netsTest.backendUrlTest + "v2/payment/"+ netsTest.merchantIdTest +"/register", {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json;charset=utf-8;version=2.0',
-              'Content-Type': 'application/json;charset=utf-8;version=2.0'
-            },
-            body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
-          }).then((response) => response.json())
-              .then((responseJson) => {
-                console.log('onResponse'+responseJson.transactionId)
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
-              })
-              .catch((error) => {
-                console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
-              });
+
+    piaSDKModule.start((saveCardBool) => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          console.log('onResponse' + responseJson.transactionId)
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
     });
   }
 
   saveCard = () => {
     //for save card only MerchantInfo object is required
-    NativeModules.PiaSDK.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, true);
 
     //set the payment result promise
-    NativeModules.PiaSDK.handleSDKResult().then(()=>{
-         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
-    }).catch((error) =>{
-         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then(() => {
+      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
 
-    NativeModules.PiaSDK.start((saveCardBool) => {
-        fetch(netsTest.backendUrlTest + "v2/payment/"+ netsTest.merchantIdTest +"/register", {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json;charset=utf-8;version=2.0',
-              'Content-Type': 'application/json;charset=utf-8;version=2.0'
-            },
-            body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "1","vatAmount": 0}}'
-          }).then((response) => response.json())
-              .then((responseJson) => {
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
-              })
-              .catch((error) => {
-                console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
-              });
+    piaSDKModule.start((saveCardBool) => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "1","vatAmount": 0}}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
     });
   }
 
-  paypal = () => {
+  payViaPaypal = () => {
     //for PayPal set only the MerchantInfo object
-    NativeModules.PiaSDK.buildMerchantInfo(netsProduction.merchantIdProd, false, true);
+    piaSDKModule.buildMerchantInfo(netsProduction.merchantIdProd, false, true);
 
     //set the payment result promise
-    NativeModules.PiaSDK.handleSDKResult().then(()=>{
-         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
-    }).catch((error) =>{
-         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then(() => {
+      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
-     
-    NativeModules.PiaSDK.startPayPalProcess((saveCardBool) => {
-        fetch(netsProduction.backendUrlProd + "v2/payment/"+ netsProduction.merchantIdProd +"/register", {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json;charset=utf-8;version=2.0',
-              'Content-Type': 'application/json;charset=utf-8;version=2.0'
-            },
-           body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "DKK", "totalAmount": "100","vatAmount": 0}, "method": {"id":"PayPal"}}'
-          }).then((response) => response.json())
-              .then((responseJson) => {
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
-              })
-              .catch((error) => {
-                console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
-              });
+
+    piaSDKModule.startPayPalProcess((saveCardBool) => {
+      fetch(netsProduction.backendUrlProd + "v2/payment/" + netsProduction.merchantIdProd + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "DKK", "totalAmount": "100","vatAmount": 0}, "method": {"id":"PayPal"}}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
     });
   }
 
-  vipps = () => {
-  
-    NativeModules.PiaSDK.buildMerchantInfo(netsProduction.merchantIdProd, false, false);
-    NativeModules.PiaSDK.buildOrderInfo(1,"NOK");
+  payViaVipps = () => {
+
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, false);
+    piaSDKModule.buildOrderInfo(1, "NOK");
     //set the payment result promise
-    NativeModules.PiaSDK.handleSDKResult().then(()=>{
-         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
-    }).catch((error) =>{
-         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then(() => {
+      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
-     
-    NativeModules.PiaSDK.startVippsProcess((saveCardBool) => {
-        fetch(netsProduction.backendUrlProd + "v2/payment/"+ netsProduction.merchantIdProd +"/register", {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json;charset=utf-8;version=2.0',
-              'Content-Type': 'application/json;charset=utf-8;version=2.0'
-            },
-           body: '{"amount":{"currencyCode":"NOK","totalAmount":100,"vatAmount":0},"customerId":"000013","method":{"id":"Vipps"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:Vipps}]","phoneNumber":"+4748059560","redirectUrl":"eu.nets.pia.sample://piasdk","storeCard":false}'
-          }).then((response) => response.json())
-              .then((responseJson) => {
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.walletUrl);
-              })
-              .catch((error) => {
-                console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
-              });
+
+    piaSDKModule.startVippsProcess((saveCardBool) => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"amount":{"currencyCode":"NOK","totalAmount":100,"vatAmount":0},"customerId":"000013","method":{"id":"Vipps"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:Vipps}]","phoneNumber":"+4748059560","redirectUrl":"eu.nets.pia.sample://piasdk","storeCard":false}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, null, responseJson.walletUrl);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
     });
   }
 
-  swish = () => {
-  
-    NativeModules.PiaSDK.buildMerchantInfo(netsProduction.merchantIdProd, false, false);
-    NativeModules.PiaSDK.buildOrderInfo(1,"SEK");
+  payViaSwish = () => {
+
+    piaSDKModule.buildMerchantInfo(netsProduction.merchantIdProd, false, false);
+    piaSDKModule.buildOrderInfo(1, "SEK");
     //set the payment result promise
-    NativeModules.PiaSDK.handleSDKResult().then(()=>{
-         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
-    }).catch((error) =>{
-         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then(() => {
+      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
-     
-    NativeModules.PiaSDK.startSwishProcess((saveCardBool) => {
-        fetch(netsProduction.backendUrlProd + "v2/payment/"+ netsProduction.merchantIdProd +"/register", {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json;charset=utf-8;version=2.0',
-              'Content-Type': 'application/json;charset=utf-8;version=2.0'
-            },
-           body: '{"amount":{"currencyCode":"SEK","totalAmount":100,"vatAmount":0},"customerId":"000013","method":{"id":"Swish"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:SwishM}]","redirectUrl":"eu.nets.pia.sample://piasdk","storeCard":false}'
-          }).then((response) => response.json())
-              .then((responseJson) => {
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.walletUrl);
-              })
-              .catch((error) => {
-                console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
-              });
+
+    piaSDKModule.startSwishProcess((saveCardBool) => {
+      fetch(netsProduction.backendUrlProd + "v2/payment/" + netsProduction.merchantIdProd + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"amount":{"currencyCode":"SEK","totalAmount":100,"vatAmount":0},"customerId":"000013","method":{"id":"SwishM"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:SwishM}]","redirectUrl":"eu.nets.pia.sample://piasdk","storeCard":false}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, null, responseJson.walletUrl);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
     });
   }
 
-  skipConfirm = () => {
-    NativeModules.PiaSDK.buildMerchantInfo(netsTest.merchantIdTest, true, true);
-    NativeModules.PiaSDK.buildOrderInfo(1,"EUR");
-    NativeModules.PiaSDK.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, false);
+  paySavedCardWithSkipConfirm = () => {
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+    piaSDKModule.buildOrderInfo(1, "EUR");
+    piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, false);
     //set the payment result promise
-    NativeModules.PiaSDK.handleSDKResult().then(()=>{
-         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
-    }).catch((error) =>{
-         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then(() => {
+      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
-   
-    NativeModules.PiaSDK.startSkipConfirmation((saveCardBool) => {
-        fetch(netsTest.backendUrlTest + "v2/payment/"+ netsTest.merchantIdTest +"/register", {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json;charset=utf-8;version=2.0',
-              'Content-Type': 'application/json;charset=utf-8;version=2.0'
-            },
-            body:'{"customerId":"000012","orderNumber":"PiaSDK-Android","amount": {"currencyCode": "EUR", "vatAmount":0, "totalAmount":"1000"},"method": {"id":"EasyPayment","displayName":"","fee":""},"cardId":"492500******0004","storeCard": true,"merchantId":"","token":"","serviceTyp":"","paymentMethodActionList":"","phoneNumber":"","currencyCode":"","redirectUrl":"","language":""}'
 
-          }).then((response) => response.json())
-              .then((responseJson) => {
-                console.log('onResponse: '+responseJson)
-                console.log('onResponse'+responseJson.transactionId)
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
-              })
-              .catch((error) => {
-                console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
-              });
+    piaSDKModule.startSkipConfirmation((saveCardBool) => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"customerId":"000012","orderNumber":"PiaSDK-Android","amount": {"currencyCode": "EUR", "vatAmount":0, "totalAmount":"1000"},"method": {"id":"EasyPayment","displayName":"","fee":""},"cardId":"492500******0004","storeCard": true,"merchantId":"","token":"","serviceTyp":"","paymentMethodActionList":"","phoneNumber":"","currencyCode":"","redirectUrl":"","language":""}'
+
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          console.log('onResponse: ' + responseJson)
+          console.log('onResponse' + responseJson.transactionId)
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
     });
   }
 
-  unskipConfirm = () => {
-  
-    NativeModules.PiaSDK.buildMerchantInfo(netsTest.merchantIdTest, true, true);
-    NativeModules.PiaSDK.buildOrderInfo(10,"EUR");
-    NativeModules.PiaSDK.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, true);
+  paySavedCardWithoutSkipConfirm = () => {
+
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+    piaSDKModule.buildOrderInfo(10, "EUR");
+    piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, true);
     //set the payment result promise
-    NativeModules.PiaSDK.handleSDKResult().then(()=>{
-         ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
-    }).catch((error) =>{
-         ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then(() => {
+      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
-   
-    NativeModules.PiaSDK.start((saveCardBool) => {
-        fetch(netsTest.backendUrlTest + "v2/payment/"+ netsTest.merchantIdTest +"/register", {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json;charset=utf-8;version=2.0',
-              'Content-Type': 'application/json;charset=utf-8;version=2.0'
-            },
-            body:'{"customerId":"000012","orderNumber":"PiaSDK-Android","amount": {"currencyCode": "EUR", "vatAmount":0, "totalAmount":"1000"},"method": {"id":"EasyPayment","displayName":"","fee":""},"cardId":"492500******0004","storeCard": true,"merchantId":"","token":"","serviceTyp":"","paymentMethodActionList":"","phoneNumber":"","currencyCode":"","redirectUrl":"","language":""}'
-          }).then((response) => response.json())
-              .then((responseJson) => {
-                console.log('onResponse: '+responseJson)
-                console.log('onResponse'+responseJson.transactionId)
-                  NativeModules.PiaSDK.buildTransactionInfo(responseJson.transactionId ,responseJson.redirectOK);
-              })
-              .catch((error) => {
-                console.error(error);
-                 NativeModules.PiaSDK.buildTransactionInfo(null ,null);
-              });
+
+    piaSDKModule.start((saveCardBool) => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"customerId":"000012","orderNumber":"PiaSDK-Android","amount": {"currencyCode": "EUR", "vatAmount":0, "totalAmount":"1000"},"method": {"id":"EasyPayment","displayName":"","fee":""},"cardId":"492500******0004","storeCard": true,"merchantId":"","token":"","serviceTyp":"","paymentMethodActionList":"","phoneNumber":"","currencyCode":"","redirectUrl":"","language":""}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
     });
   }
+
+  payViaPaytrailNordea = () => {
+    piaSDKModule.buildOrderInfo(10, "EUR");
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, false);
+    //set the payment result promise
+    piaSDKModule.handleSDKResult().then(() => {
+      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    });
+
+    var orderId = this.getOrderId();
+    console.log('orderId ' + orderId);
+
+    fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json;charset=utf-8;version=2.0',
+        'Content-Type': 'application/json;charset=utf-8;version=2.0'
+      },
+      body: '{"amount":{"currencyCode":"EUR","totalAmount":1000,"vatAmount":0},"customerTown":"Helsinki","customerPostCode":"00510","customerLastName":"Buyer","customerId":"000012","customerAddress1":"Testaddress","customerCountry":"FI","customerEmail":"bill.buyer@nets.eu","customerFirstName":"Bill","customerId":"000013","method":{"id":"PaytrailNordea"},"orderNumber":' + orderId + ',"storeCard":false}'
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        piaSDKModule.startPaytrailProcess();
+      })
+      .catch((error) => {
+        console.error(error);
+        piaSDKModule.buildTransactionInfo(null, null, null);
+      });
+  }
+
+  getOrderId() {
+    var checkDigit = -1;
+    var multipliers = [7, 3, 1];
+    var multiplierIndex = 0;
+    var sum = 0;
+
+    // Storing random positive integers in an array. '1' is appended in the beginning of the
+    // order number in order to differentiate between Android and iOS (0 for iOS and 1 for Android)
+    var ds = (new Date()).toISOString().replace(/[^0-9]/g, "")
+    console.log('dateTime ' + ds);
+
+    var orderNumber = "1" + ds;
+
+    //Sum of the product of each element of randomNumber and multipliers in right to left manner
+    for (var i = orderNumber.length - 1; i >= 0; i--) {
+      if (multiplierIndex == 3) {
+        multiplierIndex = 0;
+      }
+      var value = orderNumber.charAt(i);
+      sum += value * multipliers[multiplierIndex];
+      multiplierIndex++;
+    }
+
+    //The sum is then subtracted from the next highest ten
+    checkDigit = 10 - sum % 10;
+
+    if (checkDigit == 10) {
+      checkDigit = 0;
+    }
+    return orderNumber + checkDigit;
+  }
+
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -331,17 +394,17 @@ const styles = StyleSheet.create({
   welcome: {
     fontSize: 20,
     textAlign: 'center',
-    margin: 10,
+    marginTop: 5,
   },
   instructions: {
     textAlign: 'center',
     color: '#333333',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   button: {
     textAlign: 'center',
     color: '#333333',
-    marginBottom: 5,
-    marginTop: 5
+    marginBottom: 10,
+    marginTop: 10
   },
 });

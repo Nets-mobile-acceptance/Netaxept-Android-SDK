@@ -12,6 +12,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
+import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.data.model.MerchantInfo;
@@ -21,7 +22,6 @@ import eu.nets.pia.data.model.SchemeType;
 import eu.nets.pia.data.model.TokenCardInfo;
 import eu.nets.pia.data.model.TransactionInfo;
 import eu.nets.pia.ui.main.PiaActivity;
-import eu.nets.pia.PiaInterfaceConfiguration;
 
 
 /**
@@ -180,12 +180,15 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      *
      * @param transactionId - the id of the transaction
      * @param redirectOK    - the redirectOk case
+     * @param walletUrl     - the walletUrl in case of Wallet Payment like Vipps, Swish etc.
      */
     @ReactMethod
-    public void buildTransactionInfo(String transactionId, String redirectOK) {
+    public void buildTransactionInfo(String transactionId, String redirectOK, String walletUrl) {
         synchronized (threadSynchronizator) {
             if (transactionId == null) {
                 transactionInfo = null;
+            } else if (walletUrl != null) {
+                transactionInfo = new TransactionInfo(walletUrl);
             } else {
                 transactionInfo = new TransactionInfo(transactionId, redirectOK);
             }
@@ -391,6 +394,26 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
                 }
             }
         });
+    }
+
+    /**
+     * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
+     * This callback will notify you when the register payment API call is required to be done from your application.
+     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
+     */
+    @ReactMethod
+    public void startPaytrailProcess() {
+        Bundle bundle = new Bundle();
+        if (merchantInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
+        }
+        if (orderInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
+        }
+        if (transactionInfo != null) {
+            bundle.putParcelable(PiaActivity.BUNDLE_TRANSACTION_INFO, transactionInfo);
+        }
+        PiaSDK.getInstance().startPaytrailProcess(getCurrentActivity(), bundle);
     }
 
     /**

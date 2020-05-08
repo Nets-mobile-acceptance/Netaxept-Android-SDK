@@ -13,8 +13,6 @@ import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.data.model.PiaLanguage;
 import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 
-
-
 /**
  * MIT License
  * <p>
@@ -41,7 +39,6 @@ public class SampleApplication extends Application {
         super.onCreate();
         //init the preference file from Application Class
         PiaSampleSharedPreferences.initPrefs(this);
-
 
         //set the SDK configuration related to CardIo at runtime
         PiaInterfaceConfiguration.getInstance().setDisableCardIO(PiaSampleSharedPreferences.isDisableCardIo());

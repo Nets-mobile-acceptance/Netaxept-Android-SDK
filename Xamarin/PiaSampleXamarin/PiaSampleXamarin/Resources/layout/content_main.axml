@@ -51,11 +51,18 @@
 		android:layout_marginTop="20dp"
         android:text="Swish" />
 
-			<Button
+	<Button
 		android:id="@+id/skipConfirmationBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 		android:layout_marginTop="20dp"
         android:text="Pay wih Saved Card (Skip Confirmation)" />
+
+	<Button
+		android:id="@+id/paytrailNordea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_marginTop="20dp"
+        android:text="Paytrail" />
 
 </LinearLayout>

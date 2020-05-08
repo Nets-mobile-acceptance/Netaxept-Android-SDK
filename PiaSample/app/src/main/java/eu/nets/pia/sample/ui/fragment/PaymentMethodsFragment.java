@@ -57,6 +57,16 @@ public class PaymentMethodsFragment extends Fragment {
     public static final String ID_EASY_PAYMENT = "EasyPayment";
     public static final String ID_JCB = "JCB";
     public static final String ID_MAESTRO = "Maestro";
+    public static final String ID_PAYTRAILAKTIA = "PaytrailAktia";
+    public static final String ID_PAYTRAILALANDSBANKEN = "PaytrailAlandsbanken";
+    public static final String ID_PAYTRAILDANSKEBANK = "PaytrailDanskeBank";
+    public static final String ID_PAYTRAILHANDELSBANKEN = "PaytrailHandelsbanken";
+    public static final String ID_PAYTRAILNORDEA = "PaytrailNordea";
+    public static final String ID_PAYTRAILOMASAASTOPOPANKKI = "PaytrailOmaSaastopankki";
+    public static final String ID_PAYTRAILOP = "PaytrailOP";
+    public static final String ID_PAYTRAILPOP = "PaytrailPOP";
+    public static final String ID_PAYTRAILSAASTOPANKKI = "PaytrailSaastopankki";
+    public static final String ID_PAYTRAILSPANKKI = "PaytrailSPankki";
 
     @BindView(R.id.toolbar)
     CustomToolbar mToolbar;
@@ -144,7 +154,17 @@ public class PaymentMethodsFragment extends Fragment {
             if (!method.getId().equals(ID_APPLE_PAY) && !method.getId().equals(ID_EASY_PAYMENT)
                     && !method.getId().equals(ID_PAY_PAL)
                     && !method.getId().equals(ID_VIPPS)
-                    && !method.getId().contains(ID_SWISH)) {
+                    && !method.getId().contains(ID_SWISH)
+                    && !method.getId().contains(ID_PAYTRAILAKTIA)
+                    && !method.getId().contains(ID_PAYTRAILALANDSBANKEN)
+                    && !method.getId().contains(ID_PAYTRAILDANSKEBANK)
+                    && !method.getId().contains(ID_PAYTRAILHANDELSBANKEN)
+                    && !method.getId().contains(ID_PAYTRAILNORDEA)
+                    && !method.getId().contains(ID_PAYTRAILOMASAASTOPOPANKKI)
+                    && !method.getId().contains(ID_PAYTRAILOP)
+                    && !method.getId().contains(ID_PAYTRAILPOP)
+                    && !method.getId().contains(ID_PAYTRAILSAASTOPANKKI)
+                    && !method.getId().contains(ID_PAYTRAILSPANKKI)) {
                 supportedMethods.add(method);
             }
         }
@@ -217,6 +237,56 @@ public class PaymentMethodsFragment extends Fragment {
         swish.setType(PaymentMethodType.SWISH);
         swish.setId("SwishM");
         methods.add(swish);
+
+        PaymentMethod aktia = new PaymentMethod();
+        aktia.setType(PaymentMethodType.AKTIA);
+        aktia.setId(ID_PAYTRAILAKTIA);
+        methods.add(aktia);
+
+        PaymentMethod alandsbanken = new PaymentMethod();
+        alandsbanken.setType(PaymentMethodType.ALANDSBANKEN);
+        alandsbanken.setId(ID_PAYTRAILALANDSBANKEN);
+        methods.add(alandsbanken);
+
+        PaymentMethod danske = new PaymentMethod();
+        danske.setType(PaymentMethodType.DANSKEBANK);
+        danske.setId(ID_PAYTRAILDANSKEBANK);
+        methods.add(danske);
+
+        PaymentMethod handelsbanken = new PaymentMethod();
+        handelsbanken.setType(PaymentMethodType.HANDELSBANKEN);
+        handelsbanken.setId(ID_PAYTRAILHANDELSBANKEN);
+        methods.add(handelsbanken);
+
+        PaymentMethod nordea = new PaymentMethod();
+        nordea.setType(PaymentMethodType.NORDEA);
+        nordea.setId(ID_PAYTRAILNORDEA);
+        methods.add(nordea);
+
+        PaymentMethod omaSaastopankki = new PaymentMethod();
+        omaSaastopankki.setType(PaymentMethodType.OMA_SAASTOPANKKI);
+        omaSaastopankki.setId(ID_PAYTRAILOMASAASTOPOPANKKI);
+        methods.add(omaSaastopankki);
+
+        PaymentMethod opFinland = new PaymentMethod();
+        opFinland.setType(PaymentMethodType.OP_FINLAND);
+        opFinland.setId(ID_PAYTRAILOP);
+        methods.add(opFinland);
+
+        PaymentMethod popPankkiFinland = new PaymentMethod();
+        popPankkiFinland.setType(PaymentMethodType.POP_PANKKI_FINLAND);
+        popPankkiFinland.setId(ID_PAYTRAILPOP);
+        methods.add(popPankkiFinland);
+
+        PaymentMethod sPankki = new PaymentMethod();
+        sPankki.setType(PaymentMethodType.S_PANKKI);
+        sPankki.setId(ID_PAYTRAILSPANKKI);
+        methods.add(sPankki);
+
+        PaymentMethod saastopankkiFinland = new PaymentMethod();
+        saastopankkiFinland.setType(PaymentMethodType.SAASTOPANKKI_FINLAND);
+        saastopankkiFinland.setId(ID_PAYTRAILSAASTOPANKKI);
+        methods.add(saastopankkiFinland);
 
         return methods;
     }

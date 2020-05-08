@@ -25,5 +25,15 @@ public enum PaymentMethodType {
     PAY_PAL,
     KLARNA,
     VIPPS,
-    SWISH
+    SWISH,
+    AKTIA,
+    ALANDSBANKEN,
+    DANSKEBANK,
+    HANDELSBANKEN,
+    NORDEA,
+    OMA_SAASTOPANKKI,
+    OP_FINLAND,
+    POP_PANKKI_FINLAND,
+    S_PANKKI,
+    SAASTOPANKKI_FINLAND
 }

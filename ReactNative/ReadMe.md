@@ -19,7 +19,7 @@ We have provided a `PiaSampleReactNative` application which integrates the `PiAS
 1. Add dependency for **PiaSDK**
     + In your **android** folder, in `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:1.6.0') { transitive = true; }
+implementation('eu.nets.pia:pia-sdk:1.7.0') { transitive = true; }
 ```
 2. Create a _.java_ class in your Android folder which extends `ReactContextBaseJavaModule`. Make sure to override the `getName()` method, and return a proper String
 3. Create a _.java_ class in your Android folder which extends `ReactPackage`. In the array returned by the `createNativeModules()` method add a new instance of the class created at the previous step

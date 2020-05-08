@@ -55,6 +55,79 @@ public class PaymentRegisterRequest {
     private String language = null;
     /*Vipps wallet*/
 
+    /*Paytrail start*/
+    @SerializedName("customerEmail")
+    private String customerEmail = null;
+    @SerializedName("customerFirstName")
+    private String customerFirstName = null;
+    @SerializedName("customerLastName")
+    private String customerLastName = null;
+    @SerializedName("customerAddress1")
+    private String customerAddress1 = null;
+    @SerializedName("customerPostCode")
+    private String customerPostCode = null;
+    @SerializedName("customerTown")
+    private String customerTown = null;
+    @SerializedName("customerCountry")
+    private String customerCountry = null;
+
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
+
+    public String getCustomerFirstName() {
+        return customerFirstName;
+    }
+
+    public void setCustomerFirstName(String customerFirstName) {
+        this.customerFirstName = customerFirstName;
+    }
+
+    public String getCustomerLastName() {
+        return customerLastName;
+    }
+
+    public void setCustomerLastName(String customerLastName) {
+        this.customerLastName = customerLastName;
+    }
+
+    public String getCustomerAddress1() {
+        return customerAddress1;
+    }
+
+    public void setCustomerAddress1(String customerAddress1) {
+        this.customerAddress1 = customerAddress1;
+    }
+
+    public String getCustomerPostCode() {
+        return customerPostCode;
+    }
+
+    public void setCustomerPostCode(String customerPostCode) {
+        this.customerPostCode = customerPostCode;
+    }
+
+    public String getCustomerTown() {
+        return customerTown;
+    }
+
+    public void setCustomerTown(String customerTown) {
+        this.customerTown = customerTown;
+    }
+
+    public String getCustomerCountry() {
+        return customerCountry;
+    }
+
+    public void setCustomerCountry(String customerCountry) {
+        this.customerCountry = customerCountry;
+    }
+    /*Paytrail end*/
+
     /**
      * Customer Id
      */

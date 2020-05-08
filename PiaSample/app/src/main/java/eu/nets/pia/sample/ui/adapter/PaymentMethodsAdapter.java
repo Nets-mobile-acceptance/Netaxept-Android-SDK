@@ -256,6 +256,36 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 case SWISH:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.swish));
                     break;
+                case AKTIA:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.aktia_finalnd));
+                    break;
+                case ALANDSBANKEN:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.alandsbanken_finland));
+                    break;
+                case DANSKEBANK:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.danske_bank));
+                    break;
+                case HANDELSBANKEN:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.handelsbanken));
+                    break;
+                case NORDEA:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.nordea));
+                    break;
+                case OMA_SAASTOPANKKI:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.oma_saastopankki));
+                    break;
+                case OP_FINLAND:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.op_finland));
+                    break;
+                case POP_PANKKI_FINLAND:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.pop_pankki_finland));
+                    break;
+                case S_PANKKI:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.s_pankki));
+                    break;
+                case SAASTOPANKKI_FINLAND:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.saastopankki_finland));
+                    break;
             }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -17,6 +17,7 @@
         <li><a href="#PayPal_flow_description">PayPal flow description</a></li>
         <li><a href="#Vipps_payment_flow_description">Vipps Payment flow description</a></li>
         <li><a href="#Swish_m_commerce_integration">Swish m-commerce integration</a></li>
+        <li><a href="#Direct_bank_payment_via_paytrail">Finland - Direct bank payment (via Paytrail)</a></li>
         <li><a href="#UI_Customization_API">UI Customization API</a></li>
         <li><a href="#Permissions">Permissions</a></li>
         <li><a href="#Limitations">Limitations</a></li>
@@ -58,7 +59,7 @@
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         ...
         
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.6.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.7.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         
         ...
         }
@@ -107,7 +108,7 @@
                 * <span class="hljs-doctag">@param</span> merchantId Merchant id
                 */</span>
             <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MerchantInfo</span><span class="hljs-params">(String merchantId)</span> </span>{
-            <span class="hljs-keyword">this</span>.id = merchantId;
+				<span class="hljs-keyword">this</span>.id = merchantId;
             }
             </code></pre>
         </li>
@@ -119,8 +120,8 @@
                 * <span class="hljs-doctag">@param</span> testMode   Flag to specify if test/production environment should be used
                 */</span>
             <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MerchantInfo</span><span class="hljs-params">(String merchantId, <span class="hljs-keyword">boolean</span> testMode)</span> </span>{
-            <span class="hljs-keyword">this</span>.id = merchantId;
-            <span class="hljs-keyword">this</span>.testMode = testMode;
+				<span class="hljs-keyword">this</span>.id = merchantId;
+				<span class="hljs-keyword">this</span>.testMode = testMode;
             }
             </code></pre>
         </li>
@@ -136,19 +137,20 @@
                 * <span class="hljs-doctag">@param</span> cvcRequired Flag to specify if CVC/CVV field will be required
                 */</span>
             <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MerchantInfo</span><span class="hljs-params">(String merchantId, <span class="hljs-keyword">boolean</span> testMode, <span class="hljs-keyword">boolean</span> cvcRequired)</span> </span>{
-            <span class="hljs-keyword">this</span>.id = merchantId;
-            <span class="hljs-keyword">this</span>.testMode = testMode;
-            <span class="hljs-keyword">this</span>.cvcRequired = cvcRequired;
+				<span class="hljs-keyword">this</span>.id = merchantId;
+				<span class="hljs-keyword">this</span>.testMode = testMode;
+				<span class="hljs-keyword">this</span>.cvcRequired = cvcRequired;
             }
             </code></pre>
         </li>
     </ul>
     <p><strong>Note:</strong> For <strong>Xamarin</strong> integration, due to obfuscation in closed-source library, the Xamarin Bindings cannot convert the Keys from <code>PiaActivity</code> to be public. In order to have this library fully compatible with Xamarin, we added these properties in <code>PiaSDK</code> class:</p>
     <ul>
-        <li><code>PiaSDK.BundleMerchantInfo</code></li>
-        <li><code>PiaSDK.BundleOrderInfo</code></li>
-        <li><code>PiaSDK.BundleTokenCardInfo</code></li>
-        <li><code>PiaSDK.BundleCompleteResult</code></li>
+        <li><code>PiaSDK.BUNDLE_MERCHANT_INFO</code></li>
+        <li><code>PiaSDK.BUNDLE_ORDER_INFO</code></li>
+        <li><code>PiaSDK.BUNDLE_TOKEN_CARD_INFO</code></li>
+        <li><code>PiaSDK.BUNDLE_COMPLETE_RESULT</code></li>
+        <li><code>PiaSDK.BUNDLE_TRANSACTION_INFO</code></li>
     </ul>
     <p>After this step, the SDK will interact with the user to post payment sensitive data to Netaxept to process the transaction. As a consequence, you will be notified by the SDK about the <code>PiaResult</code> as Intent object <code>Intent</code> in the <code>onActivityResult</code> callback from your activity where the SDK is started.</p>
     <p>If you receive the successful result <code>PiaResult</code>, you could follow the sequence diagram to proceed the corresponding Netaxept call(s) to finalize the transaction. Otherwise, you need to handle the cancellation or failure case accordingly.</p>
@@ -640,7 +642,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td style="text-align:center"><img src="doc-files/swish_gif.gif" alt="Vipps Flow"></td>
+                                <td style="text-align:center"><img src="doc-files/swish_gif.gif" alt="Swish Flow"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -718,606 +720,736 @@
                         
                         </p>
                         <p></p>
-                        
-                        <h1><a id="UI_Customization_API"></a>UI Customization API</h1>
-                        <hr>
-                        <p><img src="doc-files/Android_UI_customization_illustration.png" alt="Android UI customization illustration"></p>
-                            <p><strong>PiA SDK</strong> provides a set of options to modify UI elements and match your graphical preferences. The UI customization can be done by simply assigning your customized values to the singleton object fields <code>PiaInterfaceConfiguration</code>.<br>
-                            By using this API, you can easily change/customize the <strong>background color, text color, text font</strong> and also trigger the switch to Save card for later use before calling the PiA SDK. Besides, you can also customize the Card scanning view to be different from the rest of the UI by referencing to Card IO specific options.<br>
-                            When applying the configuration, please keep in mind the following:</p>
-                            <ul>
-                                <li>For colors, pass resolved colors only (e.g. <code>Color.Red</code>, or <code>ContextCompat.getColor()</code>)</li>
-                                <li>For the fonts, you can use the assets files to create <code>TypeFace</code> object (e.g. <code>Typeface.createFromAsset()</code>)</li>
-                                <li>For drawable selectors, you can create your custom XML selectors, for different button states: normal, pressed, disabled</li>
-                            </ul>
-                            
-                            <p><strong>Note:</strong> The SDK now supports dynamic language configuration. Through <code>PiaInterfaceConfiguration</code>, the SDK can ignore the device's locale, and use only the specified one. The possible values are found in the <code>PiaLanguage</code> enum:
-                            </p>
-                            <pre><code class="language-java">
-                                /**
-                                * Available Translation for English
-                                */
-                                <span class="hljs-keyword">ENGLISH("en", "English")</span>,
-                                /**
-                                * Available Translation for Swedish
-                                */
-                                <span class="hljs-keyword">SWEDISH("sv", "Swedish")</span>,
-                                /**
-                                * Available Translation for Danish
-                                */
-                                <span class="hljs-keyword">DANISH("da", "Danish")</span>,
-                                /**
-                                * Available Translation for Norwegian
-                                */
-                                <span class="hljs-keyword">NORWEGIAN("nb", "Norwegian")</span>,
-                                /**
-                                * Available Translation for Finnish
-                                */
-                                <span class="hljs-keyword">FINNISH("fi", "Finnish")</span>;
-                            </code></pre>
-                            <p>Use cases for language configuration:</p>
-                            <ul>
-                                <li>Set valid language by providing <code>PiaLanguage</code> enum item. Please note that this configuration applies only for the SDK Activities. It does not affect any Locale configuration that you set in your own application:
-                                    <pre><code class="language-java">PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.<span class="hljs-keyword">SWEDISH</span>);</code></pre>
-                                </li>
-                                <li>Notify SDK to use the device's default Locale when providing translation:
-                                    <pre><code class="language-java">PiaInterfaceConfiguration.getInstance().setPiaLanguage(<span class="hljs-keyword">null</span>);</code></pre>
-                                </li>
-                            </ul>
-                            <p><strong>Note:</strong> It is recommended to apply the customization in the Application class, to have the SDK configured at runtime. Any field that is not configured, will be using the default value. Check the snippet below for reference:</p>
-                            <pre><code class="language-java"><span class="hljs-comment">/**
-                                * As colors, pass only resolved colors (ColorInt): ContextCompat.getColor() or Color objects, as below
-                                */</span>
-                            <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">customizeSDK</span><span class="hljs-params">()</span> </span>{
-                            <span class="hljs-comment">//SDK Configuration</span>
-                            PiaInterfaceConfiguration.getInstance().setLabelTextColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
-                            PiaInterfaceConfiguration.getInstance().setFieldTextColor(Color.BLUE);
-                            PiaInterfaceConfiguration.getInstance().setFieldBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
-                            PiaInterfaceConfiguration.getInstance().setButtonTextColor(Color.WHITE);
-                            PiaInterfaceConfiguration.getInstance().setSwitchThumbColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.pia_green_color));
-                            PiaInterfaceConfiguration.getInstance().setMainButtonBackgroundSelector(ContextCompat.getDrawable(<span class="hljs-keyword">this</span>, R.drawable.pia_save_card_button));
-                            PiaInterfaceConfiguration.getInstance().setToolbarActionButtonTextColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.colorAccent));
-                            PiaInterfaceConfiguration.getInstance().setLabelFont(Typeface.SANS_SERIF);
-                            PiaInterfaceConfiguration.getInstance().setButtonFont(Typeface.SERIF);
-                            PiaInterfaceConfiguration.getInstance().setFieldFont(Typeface.MONOSPACE);
-                            PiaInterfaceConfiguration.getInstance().setSaveCardSwitchDefault(<span class="hljs-keyword">true</span>);
-                            PiaInterfaceConfiguration.getInstance().setLogoDrawable(ContextCompat.getDrawable(<span class="hljs-keyword">this</span>, R.drawable.digital_payment_by_nets));
-                            PiaInterfaceConfiguration.getInstance().setErrorFieldBorderColor(Color.YELLOW);
-                            PiaInterfaceConfiguration.getInstance().setValidFieldBorderColor(Color.BLUE);
-                            PiaInterfaceConfiguration.getInstance().setToolbarBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
-                            PiaInterfaceConfiguration.getInstance().setToolbarTitleColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.pia_black_color));
-                            PiaInterfaceConfiguration.getInstance().setBodyBackgroundColor(Color.WHITE);
-                            PiaInterfaceConfiguration.getInstance().setTokenCardCVCLayoutBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
-                            PiaInterfaceConfiguration.getInstance().setDisableSaveCardOption(true);
-                            
-                            <span class="hljs-comment">//Scan Card UI configuration</span>
-                            PiaInterfaceConfiguration.getInstance().setCardIOBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
-                            PiaInterfaceConfiguration.getInstance().setCardIOButtonTextColor(Color.RED);
-                            PiaInterfaceConfiguration.getInstance().setCardIOButtonTextFont(Typeface.SERIF);
-                            PiaInterfaceConfiguration.getInstance().setCardIOTextColor(Color.YELLOW);
-                            PiaInterfaceConfiguration.getInstance().setCardIOPreviewFrameColor(Color.RED);
-                            PiaInterfaceConfiguration.getInstance().setCardIOTextFont(Typeface.MONOSPACE);
-                            
-                            <span class="hljs-comment">//PiaSDK localization language</span>
-                            PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.<span class="hljs-keyword">SWEDISH</span>);
-                            
-                            <span class="hljs-comment">//Manual entry text adjacent to save card switch</span>
-                            String text = <span class="hljs-keyword">this</span>.getResources().getString(R.string.use_save_card_text);
-                            TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(<span class="hljs-keyword">this</span>, R.style.UICustomizationTextViewStyle);
-                            SpannableString spannableString = new SpannableString(text);
-                            spannableString.setSpan(textAppearanceSpan, 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            PiaInterfaceConfiguration.getInstance().setSpannableSaveCardText(spannableString);
-                            
-                            PiaInterfaceConfiguration.getInstance().setActionButtonLeftMargin(50);
-                            PiaInterfaceConfiguration.getInstance().setActionButtonRightMargin(50);
-                            PiaInterfaceConfiguration.getInstance().setActionButtonBottomMargin(50);
-                            PiaInterfaceConfiguration.getInstance().setFieldRoundCorner(50);
-                            PiaInterfaceConfiguration.getInstance().setSwitchTurnOffColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
-                            PiaInterfaceConfiguration.getInstance().setButtonRoundCorner(R.drawable.custom_rounded_button);
-                            GradientDrawable drawable = new GradientDrawable();
-                            drawable.setColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
-                            drawable.setCornerRadius(8);
-                            PiaInterfaceConfiguration.getInstance().setCardIOButtonBackgroundSelector(drawable);
-                            PiaInterfaceConfiguration.getInstance().setInputTextHintColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
-                            PiaInterfaceConfiguration.getInstance().setSwitchOnTrackColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
-                            
-                            }
-                            </code></pre>
-                            <p>For further understanding, please check the sample code as well as these images below:</p>
-                            <table class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align:center">Card IO</th>
-                                        <th style="text-align:center">Card IO dark</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="text-align:center"><img src="doc-files/Android_UI_Customization_for_CardIOView.png" width="90%" height="auto" alt=""></td>
-                                        <td style="text-align:center"><img src="doc-files/Android_UI_Customization_dark_theme_for_CardIOView.png" width="90%" height="auto" alt=""></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <table class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align:center">Card entry</th>
-                                        <th style="text-align:center">Card entry dark</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="text-align:center"><img src="doc-files/Android_UI_Customization_for_SaveCardView.png" width="90%" height="auto" alt=""></td>
-                                        <td style="text-align:center"><img src="doc-files/Android_UI_Customization_dark_theme_for_SaveCardView.png" width="90%" height="auto" alt=""></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <table class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align:center">Token card</th>
-                                        <th style="text-align:center">Token card dark</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="text-align:center"><img src="doc-files/Android_UI_Customization_for_TokenCardView.png" width="90%" height="auto" alt=""></td>
-                                        <td style="text-align:center"><img src="doc-files/Android_UI_Customization_dark_theme_for_TokenCardView.png" width="90%" height="auto" alt=""></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                          
-                            <h1><a id="Permissions"></a>Permissions</h1>
-                            <hr>
-                            <p><strong>PiA SDK</strong> will require the following permissions to be fully operational.</p>
-                            <pre><code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">uses-permission</span> <span class="hljs-attribute">android:name</span>=<span class="hljs-value">"android.permission.INTERNET"</span>/&gt;</span>
-                            </code></pre>
-                            <h1><a id="Limitations"></a>Limitations</h1>
-                            <hr>
-                            <p>Known limitations in the SDK:</p>
-                            <p><strong>Card IO Library - Scanner</strong></p>
-                            <ul>
-                                <li>Non-embossed cards cannot be scanned</li>
-                                <li>Expiry Date cannot always be scanned</li>
-                                <li>Supported card schemes: Visa, MasterCard, American Express (15 digits)</li>
-                                <li>Scanner preview is only supported in 640x480 resolution. In any other, the scanner fails to detect the card</li>
-                            </ul>
-                            <p><strong>Supported TLS versions</strong></p>
-                            <ul>
-                                <li>Due  to PCI DSS requirements and known vulnerabilities in secure protocols less than TLS 1.2, TLS 1.2 is the only secure protocol available when connecting towards Netaxept. For this reason, we don't support the Android versions lower than 5.0 which are NOT enabled/supported TLS 1.2<br>
-                                    by default. For more information, you can check the details from <a href="https://shop.nets.eu/web/partners/communication">Netaxept</a>.</li>
-                            </ul>
-                            <h1><a id="Disable_card_scanner"></a>Disable card scanner</h1>
-                            <hr>
-                            <p>If you wish to disable card scanning functionality, you can toggle the following parameter within <code>PiaInterfaceConfiguration</code> API.</p>
-                            <pre><code class="language-java">  PiaInterfaceConfiguration.getInstance().setDisableCardIO(true);</code></pre>
-                            <h1><a id="Error_Codes_Handling"></a>Error Codes Handling</h1>
-                            <hr>
-                            <p>In the following link, you can find the Microsoft Excel document with the error codes handled inside the <strong>PiA SDK</strong>, along with further description on how they are used. <a href="error-codes/PiA_SDK-Netaxept_-_Response_codes.xlsx">PiA SDK - Netaxept - Response codes</a></p>
-                            <p><strong>Note:</strong>*<br>
-                            The error codes are returned back to the application, through the <code>onActivityResult()</code> method, inside the <code>PiaResult</code>. If is error case, this object will contain the<code>PiaError</code>, which has getters for error code and error message. The error codes are mapped inside an enum <code>PiaErrorCode</code>, but each explanation message is stored in the strings file. If you want custom error messages, you can create your custom map based on the codes.<br>
-                            <strong>Note:</strong>** We recommend that you keep all error codes internal without showing them to your users. Instead, you should provide generic messages encouraging them to retry the transaction, to select another payment method, or to contact your customer service. Beside the Netaxept error codes, there are handled internal SDK errors, such as:</p>
-                            <ul>
-                                <li><strong>GENERIC_ERROR, code 300:</strong> Terminal call has completed with an unexpected error. Please make the Netaxept Query call to get more detailed information.</li>
-                                <li><strong>TERMINAL_VALIDATION_ERROR, code 301:</strong> Operation denied by transaction filter. May occur in the following cases:
-                                    <ul>
-                                        <li>Credit card type denied</li>
-                                        <li>Velocity filter</li>
-                                        <li>Blocked IP</li>
-                                    </ul>
-                                    <strong>NOTE TO DEVELOPER:</strong>
-                                    <ul>
-                                        <li>Check transaction filter parameters on Netaxept Admin</li>
-                                        <li>Conversion tips: suggest user to retry transaction with another card / payment method"</li>
-                                    </ul>
-                                </li>
-                                <li><strong>VIPPS_ERROR, code 302:</strong> Payment with Vipps failed. May occur in the following cases:
-                                    <ul>
-                                        <li>User doesn't have Vipps profile</li>
-                                        <li>Login failed (login max attempt reached)</li>
-                                        <li>Vipps doesn't support this action, please update Vipps</li>
-                                        <li>Request timed out or Token has expired</li>
-                                        <li>The user was selected for fraud validation</li>
-                                    </ul>
-                                    <strong>NOTE TO DEVELOPER:</strong>
-                                    <ul>
-                                        <li>Error code returned by Vipps is accessible using <code>getMobileWalletErrorCode</code>. You can further refer to <a href="https://github.com/vippsas/vipps-ecom-api/blob/master/vipps-ecom-api.md#error-codes">error codes</a> from the Vipps documentation.</li>
-                                    </ul>
-                                </li>
-                                <li><strong>WALLET_APP_NOT_FOUND, code 303:</strong> Mobile wallet application not installed in the device. May occur if the required wallet app is not installed on the device.
-                                </li>
-                                <li><strong>SWISH_ERROR, code 304:</strong> Payment with Swish failed. May occur in the following cases:
-                                    <ul>
-                                        <li>User doesn't have Swish profile</li>
-                                        <li>Login failed (login max attempt reached)</li>
-                                        <li>Swish doesn't support this action, please update Swish</li>
-                                        <li>Request timed out or Token has expired</li>
-                                        <li>The user was selected for fraud validation</li>
-                                    </ul>
-                                </li>
-                                <li><strong>REQUEST_FAILED, code 200:</strong> May occur in the folowing cases:
-                                    <ul>
-                                        <li>internet connectivity issues</li>
-                                        <li>timeout error</li>
-                                        <li>failed serialisation in models</li>
-                                    </ul>
-                                </li>
-                            </ul>
-                            <h1><a id="Backend_Tips"></a>Backend Tips</h1>
-                            <hr>
-                            <p>Netaxept offers <a href="https://shop.nets.eu/web/partners/appi"> REST API </a> to register, authorize and capture payments and query transaction status. This section provides backend tips of each API and some variations for different payment flows.</p>
-                            <p><strong>Register API</strong><br>
-                            Merchant backend registers payments with netaxept through the register API. This API is also used to register/store cards in Netaxept’s secure store (for cards that support this feature). The API retruns a transaction ID which the client SDK (Pia SDK) uses to make terminal call with Netaxept for most transaction flows.<br></p>
-                            <strong>Registering card for Easy Payment</strong><br>
-                            <strong>Note:</strong> See <a href="https://shop.nets.eu/web/partners/register">Netaxept</a> documentation for more details on this API.<br>
-                            <blockquote>
-                                <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
-                                Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
-                                Path:  <strong>/netaxept/register.aspx</strong>
-                                Method: <strong><em>POST</em></strong></p>
-                            </blockquote>
-                            
-                            <p>Request body:</p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"S"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"force3DSecure"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"updateStoredPaymentInfo"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            
-                            <p>Netaxept returns transaction ID following the above register call. In order to store the card, make a verify API call to Netaxept with the given transaction ID.</p>
-                            
-                            <p>(Query the status of the register call with Netaxept to retreive and store the Pan-hash associated with the card)</p>
-                            
-                            <blockquote>
-                                <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
-                                Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
-                                Path:  <strong>/netaxept/process.aspx</strong>
-                                Method: <strong><em>POST</em></strong></p>
-                            </blockquote>
-                            
-                            <p>Request body: </p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"operation"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"VERIFY"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            
-                            <p>Use the <em>query</em> API to fetch the Pan Hash associated with the card once process VERIFY is successful.</p>
-                            <h4 id='registering-em-easy-payment-em' class='heading'>Registering <em>Easy Payment</em></h4>
-                            <h5 id='initial-transaction' class='heading'>Initial transaction</h5><br>
-                            
-                            <blockquote>
-                                <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
-                                Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
-                                Path:  <strong>/netaxept/register.aspx</strong>
-                                Method: <strong><em>POST</em></strong></p>
-                            </blockquote>
-                            
-                            <p>Request body:</p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"S"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"force3DSecure"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            <h5 id='subsequent-transaction' class='heading'>Subsequent transaction</h5>
-                            
-                            <p>Subsequent easy payment requires <code>recurringUse3DS = true</code> and the <code>panHash</code> additional fields.</p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"S"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"recurringUse3DS"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"panHash"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            <h4 id='registering-recurring-payment' class='heading'>Registering Recurring Payment</h4>
-                            <h5 id='initial-transaction' class='heading'>Initial transaction</h5><br>
-                            
-                            <blockquote>
-                                <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
-                                Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
-                                Path:  <strong>/netaxept/register.aspx</strong>
-                                Method: <strong><em>POST</em></strong></p>
-                            </blockquote>
-                            
-                            <p>Request body:</p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"R"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"force3DSecure"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"recurringExpiryDate"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"YYYYMMDD"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"recurringFrequency"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            
-                            <p>If the initial transaction is merely to store card for further payments, add <code>&quot;updateStoredPaymentInfo&quot; : &quot;true&quot;</code> field to the request body. </p>
-                            <h5 id='subsequent-transaction' class='heading'>Subsequent transaction</h5>
-                            
-                            <p>Subsequent recurring payment requires <code>&quot;recurringUse3DS&quot; : &quot;true&quot;</code> and the <code>&quot;panHash&quot; : &quot;string&quot;</code> additional fields.</p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"R"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"recurringUse3DS"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"panHash"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            <h5 id='request-body-pay-pal-payment-registration' class='heading'>Request body - Pay Pal payment registration:</h5><br>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                            </span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"PayPal"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            <h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - Apple Pay payment registration:</h5><br>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"paymentData"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                            </span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"ApplePay"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            
-                            <p>The <em>paymentData</em> should contain th encrypted Payment Data from Apple pay of the following format: </p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"paymentData"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                            </span><span class="nt">"version"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"data"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"signature"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"header"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                            </span><span class="nt">"ephemeralPublicKey"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"publicKeyHash"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span><span class="p">},</span><span class="w">
-                            </span><span class="nt">"paymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                            </span><span class="nt">"displayName"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"network"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
-                            </span><span class="p">},</span><span class="w">
-                            </span><span class="nt">"transactionIdentifier"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            
-                            <h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - Vipps payment registration:</h5><br>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"customerPhoneNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                            </span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Vipps"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            
-                            <h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - Swish payment registration:</h5><br>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                            </span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"SwishM"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            
-                            <h4 id='payment-authorization-with-netaxept' class='heading'>Payment authorization with Netaxept</h4>
-                            
-                            <p>Send authorization of payment to Netaxept following user&rsquo;s action (handled by the client Pia SDK)</p>
-                            
-                            <blockquote>
-                                <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
-                                Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
-                                Path:  <strong>/netaxept/process.aspx</strong>
-                                Method: <strong><em>POST</em></strong></p>
-                            </blockquote>
-                            
-                            <p>Request body: </p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"operation"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"AUTH"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            
-                            <p>Note: See <a href="https://shop.nets.eu/web/partners/process" title="Netaxept">Netaxept</a> documentation for more details on this API. </p>
-                            <h3 id='capture-payment' class='heading'>Capture payment</h3>
-                            
-                            <blockquote>
-                                <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
-                                Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
-                                Path:  <strong>/netaxept/process.aspx</strong>
-                                Method: <strong><em>POST</em></strong></p>
-                            </blockquote>
-                            
-                            <p>Request body: </p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"transactionAmount "</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"operation"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"CAPTURE "</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            <h3 id='query-transaction-status' class='heading'>Query transaction status</h3>
-                            
-                            <blockquote>
-                                <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
-                                Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
-                                Path:  <strong>/netaxept/query.aspx</strong>
-                                Method: <strong><em>POST</em></strong></p>
-                            </blockquote>
-                            
-                            <p>Request body: </p>
-                            <pre class="highlight json"><code><span class="p">{</span><span class="w">
-                            </span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-                            </span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
-                            </span><span class="p">}</span><span class="w">
-                            </span></code></pre>
-                            
-                            <p>Note: See <a href="https://shop.nets.eu/web/partners/query" title="Netaxept">Netaxept</a> documentation for more details on this API. </p>
-                            
-                            <h1><a id="Get_in_touch"></a>Get in touch</h1>
-                            <hr>
-                            <p>If you have any questions, please contact us via email:</p>
-                            <ul>
-                                <li><a href="mailto:mobile-acceptance@nets.eu">mobile-acceptance@nets.eu</a></li>
-                            </ul>
-                            <h1><a id="Licenses"></a>Licenses</h1>
-                            <hr>
-                            <ul>
-                                <li><strong>PiA - Netaxept Android SDK</strong></li>
-                            </ul>
-                            <p><strong><code>Copyright (c) 2020 Nets Denmark A/S</code></strong></p>
-                            <p>NETS DENMARK A/S, ("NETS"), FOR AND ON BEHALF OF ITSELF AND ITS SUBSIDIARIES AND AFFILIATES UNDER COMMON CONTROL, IS WILLING TO LICENSE THE SOFTWARE TO YOU ONLY UPON THE CONDITION THAT YOU ACCEPT ALL OF THE TERMS CONTAINED IN THIS BINARY CODE LICENSE AGREEMENT. BY USING THE SOFTWARE YOU ACKNOWLEDGE THAT YOU HAVE READ THE TERMS AND AGREE TO THEM. IF YOU ARE AGREEING TO THESE TERMS ON BEHALF OF A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT THAT YOU HAVE THE LEGAL AUTHORITY TO BIND THE LEGAL ENTITY TO THESE TERMS. IF YOU DO NOT HAVE SUCH AUTHORITY, OR IF YOU DO NOT WISH TO BE BOUND BY THE TERMS, YOU MUST NOT USE THE SOFTWARE ON THIS SITE OR ANY OTHER MEDIA ON WHICH THE SOFTWARE IS CONTAINED.</p>
-                            <p>Software is copyrighted. Title to Software and all associated intellectual property rights is retained by NETS and/or its licensors. Unless enforcement is prohibited by applicable law, you may not modify, decompile, or reverse engineer Software.</p>
-                            <p>No right, title or interest in or to any trademark, service mark, logo or trade name of NETS or its licensors is granted under this Agreement.</p>
-                            <p>Permission is hereby granted, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software, including without limitation the rights to use, copy, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
-                            <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
-                            <p>Software may only be used for commercial or production purpose together with Netaxept services provided from NETS, its subsidiaries or affiliates under common control.</p>
-                            <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-                            <ul>
-                                <li><strong>CardIo</strong></li>
-                            </ul>
-                            <p><strong><code>MIT License</code></strong></p>
-                            <p><strong><code>Copyright (c) 2013-2016 PayPal Holdings, Inc.</code></strong></p>
-                            <p>Permission is hereby granted, free of charge, to any person obtaining a copy  of this software and associated documentation files (the "Software"), to deal  in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is  furnished to do so, subject to the following conditions:<br>
-                            The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
-                            <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-                            <h1><a id="Change_log"></a>Change log</h1>
-                            <hr>
-                            <h4><a id="v100_Released_20Nov2018_564"></a>v1.0.0 Released: 20-Nov-2018</h4>
-                            <h4><a id="Release_notes_597"></a>Release notes:</h4>
-                            <ul>
-                                <li>First official release</li>
-                            </ul>
-                            <h4><a id="v110_Released_14Dec2018_580"></a>v1.1.0 Released: 18-Dec-2018</h4>
-                            <h4><a id="Release_notes_5581"></a>Release notes:</h4>
-                            <ul>
-                                <li><strong>Security improvement:</strong> Payment parameters passed by the SDK to the backend are now sent through a <strong>POST</strong>. The <strong>GET</strong> request is discontinued</li>
-                                <li><strong>Xamarin</strong> and <strong>React Native</strong> support</li>
-                                <li>Fixed logo issue for <i>DinersClubInternational</i> recurring payments</li>
-                                <li>Improved <i>PiaSDK.start()</i> to accept Fragment parameter</li>
-                                <li>New configuration to disable card scanner</li>
-                            </ul>
-                            <h4><a id="v111_Released_25Jan2019_580"></a>v1.1.1 Released: 25-Jan-2019</h4>
-                            <h4><a id="Release_notes_5581"></a>Release notes:</h4>
-                            <ul>
-                                <li>Improvements for UI Customization:</li>
-                                <ul>
-                                    <li>added new flag for hiding the "Save card for later use" functionality from payment screen</li>
-                                    <li>added new option for setting custom background color for input fields</li>
-                                    <li>updated card logos</li>
-                                </ul>
-                                <li>Improvements in WebView navigation bar: replaced text with specific icons</li>
-                            </ul>
-                            
-                            <h4><a id="v120_Released_5MAR2019_660"></a>v1.2.0 Released: 5-Mar-2019</h4>
-                            <h4><a id="Release_notes_667"></a>Release notes:</h4>
-                            <ul>
-                                <li>New language customization settings: it is now possible to set SDK's language according to locale (default) or based on a different language selected by application's users</li>
-                                <li>New <strong>FAQs</strong> appendix</li>
-                                <li>New error code (301) handling for operations restricted by transaction filter (credit card, country filter, ...) as set in Netaxept admin</li>
-                                <li>Availability of <code>Light PiA SDK</code> a new version of the SDK without <strong>Card.IO</strong>. Available upon request on Android and iOS.</li>
-                                <li>Improved expiration date verification for Tokenized Card payments</li>
-                            </ul>
-                            <h4><a id="v130_Released_23MAY2019_660"></a>v1.3.0 Released: 29-May-2019</h4>
-                            <h4><a id="Release_notes_670"></a>Release notes:</h4>
-                            <ul>
-                                <li><strong>Flutter</strong> support</li>
-                                <li><strong>PiA-Xamarin-Android</strong> library available on Nuget</li>
-                                <li>Added support for Google Wallet prefill functionality</li>
-                                <li>Card scanner UI improvements</li>
-                                <li>The constructor <code>TransactionInfo("transactionId", "redirectOk", "RedirectCancel")</code> has been <strong>Deprecated</strong>. Use a secondary constructor <code>TransactionInfo("transactionId", "redirectOk")</code> in place of it</li>
-                            </ul>
-                            <h4><a id="v131_Released_24JUN2019_660"></a>v1.3.1 Released: 24-Jun-2019</h4>
-                            <h4><a id="Release_notes_731"></a>Release notes:</h4>
-                            <ul>
-                                <li>Added support of app switch for the Swedish BankId verification on <strong>MasterCard ID Check</strong></li>
-                            </ul>
-                            <h4><a id="v131_Released_24JUN2019_660"></a>v1.3.2 Released: 12-Aug-2019</h4>
-                            <h4><a id="Release_notes_732"></a>Release notes:</h4>
-                            <ul>
-                                <li>Added support for Vipps Payment Method.</li>
-                            </ul>
-                            <h4><a id="v140_Released_20OCT2019_660"></a>v1.4.0 Released: 20-OCT-2019</h4>
-                            <h4><a id="Release_notes_733"></a>Release notes:</h4>
-                            <ul>
-                                <li>More UI customization</li>
-                                <li>Maestro card support</li>
-                                <li>Removed system authentication (according to PSD2/SCA regulation)</li>
-                                <li>General bug fixes.</li>
-                            </ul>
-                        
+				
+<h1><a id="Direct_bank_payment_via_paytrail"></a>Finland - Direct bank payment (via Paytrail)</h1>
+<p>With the PiA SDK, you can allow Finnish customers to pay with Paytrail direct bank transfers. It supports through 1 integration, the 10 main banks which are part of this direct payment scheme.</p>
+<p>You can get more information about Paytrail via Netaxept from the <a href="https://shop.nets.eu/documents/535922/545797/Netaxept_Paytrail_GetStartedGuide_EN_v1.7.pdf/182ad7e8-ad0d-4c6f-9a74-bd8508300177">Paytrail Getting Started Guide</a>.</p>
+<p><strong>Pre-requisite to accept direct bank payments via Paytrail :</strong></p>
+<ul>
+<li>The merchant needs to sign a direct bank payments agreement with Netaxept and make sure these agreements are added in the Netaxept account.</li>
+<li>App design: Bank icons are available in the resources folder (optional).</li>
+</ul>
+<p><strong>Specific information to initiate direct bank payments via Paytrail :</strong></p>
+<ul>
+<li>Merchant needs to use <code>ServiceType = B</code> while making the register call.</li>
+<li>Paytrail requires a set of customer details that need to be sent in the register call to Netaxpet. Merchants can use dummy data for this. Check the <a href="https://shop.nets.eu/documents/535922/545797/Netaxept_Paytrail_GetStartedGuide_EN_v1.7.pdf/182ad7e8-ad0d-4c6f-9a74-bd8508300177">Netaxept Paytrail Integration Guide</a> for more details.</li>
+<li>Paytrail requires a unique reference number which is formulated according to Finnish reference number standard <a href="www.fkl.fi">www.fkl.fi</a>. For more information click <a href="https://shop.nets.eu/web/partners/transaction-reference">here</a>.</li>
+</ul>
+<table class="table table-striped table-bordered" align="center" >
+    <thead>
+        <tr>
+            <th style="text-align:center">Paytrail Flow</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align:center"><img src="doc-files/paytrail_flow.gif" width="60%" height="60%" alt="Paytrail Flow"></td>
+        </tr>
+    </tbody>
+</table>
+<p>Here is the flow diagram for Paytrail payment:</p>
+
+<p><img src="doc-files/paytrail_payment_flow.png" alt="Paytrail Payment Flow"></p>
+
+<p><strong>Initializing a payment with Paytrail</strong></p>
+
+<ul>
+<li>The merchant app needs to make a register call to Netaxept which will return <code>TransactionInfo</code> object which needs to be passed to the SDK along with the <code>merchantId</code> and <code>testMode</code> to initiate Paytrail payment.</li>
+</ul>
+    <ul>
+        <li><strong>Bank Payment Bundle:</strong> - Bundle containing:
+            <ul>
+                <li><code>MerchantInfo</code> under key <code>PiaActivity.BUNDLE_MERCHANT_INFO</code></li>
+                <li><code>OrderInfo</code> under key <code>PiaActivity.BUNDLE_ORDER_INFO</code></li>
+                <li><code>TransactionInfo</code> under key <code>PiaActivity.BUNDLE_TRANSACTION_INFO</code></li>
+            </ul>
+        </li>
+    </ul>
+
+<p>Check the below code snippet for a full example:</p>
+<pre><code class="language-java">
+/*
+* To initiate Paytrail payment process
+*/
+<span class="hljs-keyword">private void <span class="hljs-title">callPiaSDK</span>(<span class="hljs-param">PaymentMethod method</span>) </span>{
+	Bundle bundle = new Bundle();
+	bundle.putParcelable(<span class="hljs-string">PiaActivity.BUNDLE_MERCHANT_INFO</span>, getMerchantInfo(method.isCvcRequired()));
+	bundle.putParcelable(<span class="hljs-string">PiaActivity.BUNDLE_ORDER_INFO</span>, getOrderInfo());
+	bundle.putParcelable(<span class="hljs-string">PiaActivity.BUNDLE_TRANSACTION_INFO</span>, transactionInfo);
+	PiaSDK.getInstance().startPaytrailProcess(this, bundle);
+}
+</code></pre>
+<p>After the transaction has been registered, PiA SDK will send to Netaxept the <code>merchantId</code> and the <code>transactionId</code> and Netaxept will send back the url for performing the Paytrail payment which will be loaded inside a webView.</p>
+ <pre><code class="language-java">
+<span class="hljs-annotation">@Override</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onActivityResult</span><span class="hljs-params">(<span class="hljs-keyword">int</span> requestCode, <span class="hljs-keyword">int</span> resultCode, Intent data)</span> </span>{
+	<span class="hljs-keyword">if</span> (requestCode != PiaSDK.PIA_SDK_REQUEST) {
+		<span class="hljs-keyword">super</span>.onActivityResult(requestCode, resultCode, data);
+	}
+
+	<span class="hljs-comment">//in case user cancelled</span>
+	Bundle bundle = <span class="hljs-keyword">new</span> Bundle();
+	<span class="hljs-keyword">if</span> (resultCode == RESULT_CANCELED) {
+		rollbackTransaction();
+		<span class="hljs-keyword">return</span>;
+	}
+                                
+	<span class="hljs-keyword">if</span> (resultCode == RESULT_OK) {
+		PiaResult result = data.getParcelableExtra(PiaActivity.BUNDLE_COMPLETE_RESULT);
+		<span class="hljs-keyword">if</span> (result.isSuccess()) { 
+		<span class="hljs-comment">//in case of success, verify the payment</span>
+			if (requestCode == PIA_PAYTRAIL_REQUEST) {
+				mRestClient.commitPayment(mPaymentCache.getPaymentRegisterResponse().getTransactionId());
+			} else {
+			//Handle other payment method differently.
+			}
+		} <span class="hljs-keyword">else</span> {
+			Bundle bundle = new Bundle();
+			bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, false);
+			bundle.putParcelable(ConfirmationActivity.BUNDLE_ERROR_OBJECT, result);
+			displayConfirmationScreen(bundle);
+		}
+	}
+}
+</code></pre>
+<p>Note: Netaxept backend integration tips can be found in <em>Backend Tips </em>,  <em>Request body - Paytrail payment registration</em> <a href="#Backend_Tips">section</a></p>
+						
+<h1><a id="UI_Customization_API"></a>UI Customization API</h1>
+<hr>
+<p><img src="doc-files/Android_UI_customization_illustration.png" alt="Android UI customization illustration"></p>
+    <p><strong>PiA SDK</strong> provides a set of options to modify UI elements and match your graphical preferences. The UI customization can be done by simply assigning your customized values to the singleton object fields <code>PiaInterfaceConfiguration</code>.<br>
+    By using this API, you can easily change/customize the <strong>background color, text color, text font</strong> and also trigger the switch to Save card for later use before calling the PiA SDK. Besides, you can also customize the Card scanning view to be different from the rest of the UI by referencing to Card IO specific options.<br>
+    When applying the configuration, please keep in mind the following:</p>
+    <ul>
+        <li>For colors, pass resolved colors only (e.g. <code>Color.Red</code>, or <code>ContextCompat.getColor()</code>)</li>
+        <li>For the fonts, you can use the assets files to create <code>TypeFace</code> object (e.g. <code>Typeface.createFromAsset()</code>)</li>
+        <li>For drawable selectors, you can create your custom XML selectors, for different button states: normal, pressed, disabled</li>
+    </ul>
+    
+    <p><strong>Note:</strong> The SDK now supports dynamic language configuration. Through <code>PiaInterfaceConfiguration</code>, the SDK can ignore the device's locale, and use only the specified one. The possible values are found in the <code>PiaLanguage</code> enum:
+    </p>
+    <pre><code class="language-java">
+        /**
+        * Available Translation for English
+        */
+        <span class="hljs-keyword">ENGLISH("en", "English")</span>,
+        /**
+        * Available Translation for Swedish
+        */
+        <span class="hljs-keyword">SWEDISH("sv", "Swedish")</span>,
+        /**
+        * Available Translation for Danish
+        */
+        <span class="hljs-keyword">DANISH("da", "Danish")</span>,
+        /**
+        * Available Translation for Norwegian
+        */
+        <span class="hljs-keyword">NORWEGIAN("nb", "Norwegian")</span>,
+        /**
+        * Available Translation for Finnish
+        */
+        <span class="hljs-keyword">FINNISH("fi", "Finnish")</span>;
+    </code></pre>
+    <p>Use cases for language configuration:</p>
+    <ul>
+        <li>Set valid language by providing <code>PiaLanguage</code> enum item. Please note that this configuration applies only for the SDK Activities. It does not affect any Locale configuration that you set in your own application:
+            <pre><code class="language-java">PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.<span class="hljs-keyword">SWEDISH</span>);</code></pre>
+        </li>
+        <li>Notify SDK to use the device's default Locale when providing translation:
+            <pre><code class="language-java">PiaInterfaceConfiguration.getInstance().setPiaLanguage(<span class="hljs-keyword">null</span>);</code></pre>
+        </li>
+    </ul>
+    <p><strong>Note:</strong> It is recommended to apply the customization in the Application class, to have the SDK configured at runtime. Any field that is not configured, will be using the default value. Check the snippet below for reference:</p>
+    <pre><code class="language-java"><span class="hljs-comment">/**
+        * As colors, pass only resolved colors (ColorInt): ContextCompat.getColor() or Color objects, as below
+        */</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">customizeSDK</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-comment">//SDK Configuration</span>
+		PiaInterfaceConfiguration.getInstance().setLabelTextColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
+		PiaInterfaceConfiguration.getInstance().setFieldTextColor(Color.BLUE);
+		PiaInterfaceConfiguration.getInstance().setFieldBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
+		PiaInterfaceConfiguration.getInstance().setButtonTextColor(Color.WHITE);
+		PiaInterfaceConfiguration.getInstance().setSwitchThumbColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.pia_green_color));
+		PiaInterfaceConfiguration.getInstance().setMainButtonBackgroundSelector(ContextCompat.getDrawable(<span class="hljs-keyword">this</span>, R.drawable.pia_save_card_button));
+		PiaInterfaceConfiguration.getInstance().setToolbarActionButtonTextColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.colorAccent));
+		PiaInterfaceConfiguration.getInstance().setLabelFont(Typeface.SANS_SERIF);
+		PiaInterfaceConfiguration.getInstance().setButtonFont(Typeface.SERIF);
+		PiaInterfaceConfiguration.getInstance().setFieldFont(Typeface.MONOSPACE);
+		PiaInterfaceConfiguration.getInstance().setSaveCardSwitchDefault(<span class="hljs-keyword">true</span>);
+		PiaInterfaceConfiguration.getInstance().setLogoDrawable(ContextCompat.getDrawable(<span class="hljs-keyword">this</span>, R.drawable.digital_payment_by_nets));
+		PiaInterfaceConfiguration.getInstance().setErrorFieldBorderColor(Color.YELLOW);
+		PiaInterfaceConfiguration.getInstance().setValidFieldBorderColor(Color.BLUE);
+		PiaInterfaceConfiguration.getInstance().setToolbarBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
+		PiaInterfaceConfiguration.getInstance().setToolbarTitleColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.pia_black_color));
+		PiaInterfaceConfiguration.getInstance().setBodyBackgroundColor(Color.WHITE);
+		PiaInterfaceConfiguration.getInstance().setTokenCardCVCLayoutBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
+		PiaInterfaceConfiguration.getInstance().setDisableSaveCardOption(true);
+    
+    <span class="hljs-comment">//Scan Card UI configuration</span>
+		PiaInterfaceConfiguration.getInstance().setCardIOBackgroundColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
+		PiaInterfaceConfiguration.getInstance().setCardIOButtonTextColor(Color.RED);
+		PiaInterfaceConfiguration.getInstance().setCardIOButtonTextFont(Typeface.SERIF);
+		PiaInterfaceConfiguration.getInstance().setCardIOTextColor(Color.YELLOW);
+		PiaInterfaceConfiguration.getInstance().setCardIOPreviewFrameColor(Color.RED);
+		PiaInterfaceConfiguration.getInstance().setCardIOTextFont(Typeface.MONOSPACE);
+    
+    <span class="hljs-comment">//PiaSDK localization language</span>
+		PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.<span class="hljs-keyword">SWEDISH</span>);
+    
+    <span class="hljs-comment">//Manual entry text adjacent to save card switch</span>
+		String text = <span class="hljs-keyword">this</span>.getResources().getString(R.string.use_save_card_text);
+		TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(<span class="hljs-keyword">this</span>, R.style.UICustomizationTextViewStyle);
+		SpannableString spannableString = new SpannableString(text);
+		spannableString.setSpan(textAppearanceSpan, 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		PiaInterfaceConfiguration.getInstance().setSpannableSaveCardText(spannableString);
+    
+		PiaInterfaceConfiguration.getInstance().setActionButtonLeftMargin(50);
+		PiaInterfaceConfiguration.getInstance().setActionButtonRightMargin(50);
+		PiaInterfaceConfiguration.getInstance().setActionButtonBottomMargin(50);
+		PiaInterfaceConfiguration.getInstance().setFieldRoundCorner(50);
+		PiaInterfaceConfiguration.getInstance().setSwitchTurnOffColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
+		PiaInterfaceConfiguration.getInstance().setButtonRoundCorner(R.drawable.custom_rounded_button);
+		GradientDrawable drawable = new GradientDrawable();
+		drawable.setColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
+		drawable.setCornerRadius(8);
+		PiaInterfaceConfiguration.getInstance().setCardIOButtonBackgroundSelector(drawable);
+		PiaInterfaceConfiguration.getInstance().setInputTextHintColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.custom_orange_color));
+		PiaInterfaceConfiguration.getInstance().setSwitchOnTrackColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
+    }
+    </code></pre>
+    <p>For further understanding, please check the sample code as well as these images below:</p>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:center">Card IO</th>
+                <th style="text-align:center">Card IO dark</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:center"><img src="doc-files/Android_UI_Customization_for_CardIOView.png" width="90%" height="auto" alt=""></td>
+                <td style="text-align:center"><img src="doc-files/Android_UI_Customization_dark_theme_for_CardIOView.png" width="90%" height="auto" alt=""></td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:center">Card entry</th>
+                <th style="text-align:center">Card entry dark</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:center"><img src="doc-files/Android_UI_Customization_for_SaveCardView.png" width="90%" height="auto" alt=""></td>
+                <td style="text-align:center"><img src="doc-files/Android_UI_Customization_dark_theme_for_SaveCardView.png" width="90%" height="auto" alt=""></td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:center">Token card</th>
+                <th style="text-align:center">Token card dark</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:center"><img src="doc-files/Android_UI_Customization_for_TokenCardView.png" width="90%" height="auto" alt=""></td>
+                <td style="text-align:center"><img src="doc-files/Android_UI_Customization_dark_theme_for_TokenCardView.png" width="90%" height="auto" alt=""></td>
+            </tr>
+        </tbody>
+    </table>
+  
+    <h1><a id="Permissions"></a>Permissions</h1>
+    <hr>
+    <p><strong>PiA SDK</strong> will require the following permissions to be fully operational.</p>
+    <pre><code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">uses-permission</span> <span class="hljs-attribute">android:name</span>=<span class="hljs-value">"android.permission.INTERNET"</span>/&gt;</span>
+    </code></pre>
+    <h1><a id="Limitations"></a>Limitations</h1>
+    <hr>
+    <p>Known limitations in the SDK:</p>
+    <p><strong>Card IO Library - Scanner</strong></p>
+    <ul>
+        <li>Non-embossed cards cannot be scanned</li>
+        <li>Expiry Date cannot always be scanned</li>
+        <li>Supported card schemes: Visa, MasterCard, American Express (15 digits)</li>
+        <li>Scanner preview is only supported in 640x480 resolution. In any other, the scanner fails to detect the card</li>
+    </ul>
+    <p><strong>Supported TLS versions</strong></p>
+    <ul>
+        <li>Due  to PCI DSS requirements and known vulnerabilities in secure protocols less than TLS 1.2, TLS 1.2 is the only secure protocol available when connecting towards Netaxept. For this reason, we don't support the Android versions lower than 5.0 which are NOT enabled/supported TLS 1.2<br>
+            by default. For more information, you can check the details from <a href="https://shop.nets.eu/web/partners/communication">Netaxept</a>.</li>
+    </ul>
+    <h1><a id="Disable_card_scanner"></a>Disable card scanner</h1>
+    <hr>
+    <p>If you wish to disable card scanning functionality, you can toggle the following parameter within <code>PiaInterfaceConfiguration</code> API.</p>
+    <pre><code class="language-java">  PiaInterfaceConfiguration.getInstance().setDisableCardIO(true);</code></pre>
+    <h1><a id="Error_Codes_Handling"></a>Error Codes Handling</h1>
+    <hr>
+    <p>In the following link, you can find the Microsoft Excel document with the error codes handled inside the <strong>PiA SDK</strong>, along with further description on how they are used. <a href="error-codes/PiA_SDK-Netaxept_-_Response_codes.xlsx">PiA SDK - Netaxept - Response codes</a></p>
+    <p><strong>Note:</strong>*<br>
+    The error codes are returned back to the application, through the <code>onActivityResult()</code> method, inside the <code>PiaResult</code>. If is error case, this object will contain the<code>PiaError</code>, which has getters for error code and error message. The error codes are mapped inside an enum <code>PiaErrorCode</code>, but each explanation message is stored in the strings file. If you want custom error messages, you can create your custom map based on the codes.<br>
+    <strong>Note:</strong>** We recommend that you keep all error codes internal without showing them to your users. Instead, you should provide generic messages encouraging them to retry the transaction, to select another payment method, or to contact your customer service. Beside the Netaxept error codes, there are handled internal SDK errors, such as:</p>
+    <ul>
+        <li><strong>GENERIC_ERROR, code 300:</strong> Terminal call has completed with an unexpected error. Please make the Netaxept Query call to get more detailed information.</li>
+        <li><strong>TERMINAL_VALIDATION_ERROR, code 301:</strong> Operation denied by transaction filter. May occur in the following cases:
+            <ul>
+                <li>Credit card type denied</li>
+                <li>Velocity filter</li>
+                <li>Blocked IP</li>
+            </ul>
+            <strong>NOTE TO DEVELOPER:</strong>
+            <ul>
+                <li>Check transaction filter parameters on Netaxept Admin</li>
+                <li>Conversion tips: suggest user to retry transaction with another card / payment method"</li>
+            </ul>
+        </li>
+        <li><strong>VIPPS_ERROR, code 302:</strong> Payment with Vipps failed. May occur in the following cases:
+            <ul>
+                <li>User doesn't have Vipps profile</li>
+                <li>Login failed (login max attempt reached)</li>
+                <li>Vipps doesn't support this action, please update Vipps</li>
+                <li>Request timed out or Token has expired</li>
+                <li>The user was selected for fraud validation</li>
+            </ul>
+            <strong>NOTE TO DEVELOPER:</strong>
+            <ul>
+                <li>Error code returned by Vipps is accessible using <code>getMobileWalletErrorCode</code>. You can further refer to <a href="https://github.com/vippsas/vipps-ecom-api/blob/master/vipps-ecom-api.md#error-codes">error codes</a> from the Vipps documentation.</li>
+            </ul>
+        </li>
+        <li><strong>WALLET_APP_NOT_FOUND, code 303:</strong> Mobile wallet application not installed in the device. May occur if the required wallet app is not installed on the device.
+        </li>
+        <li><strong>SWISH_ERROR, code 304:</strong> Payment with Swish failed. May occur in the following cases:
+            <ul>
+                <li>User doesn't have Swish profile</li>
+                <li>Login failed (login max attempt reached)</li>
+                <li>Swish doesn't support this action, please update Swish</li>
+                <li>Request timed out or Token has expired</li>
+                <li>The user was selected for fraud validation</li>
+            </ul>
+        </li>
+		<li><strong>TRANSACTION_INFO_NULL, code 306:</strong> Transaction Info object is null. May occur in the following cases:
+            <ul>
+                <li>The TransactionInfo object passed to SDK is null</li>
+            </ul>
+        </li>
+        <li><strong>REQUEST_FAILED, code 200:</strong> May occur in the folowing cases:
+            <ul>
+                <li>internet connectivity issues</li>
+                <li>timeout error</li>
+                <li>failed serialisation in models</li>
+            </ul>
+        </li>
+    </ul>
+    <h1><a id="Backend_Tips"></a>Backend Tips</h1>
+    <hr>
+    <p>Netaxept offers <a href="https://shop.nets.eu/web/partners/appi"> REST API </a> to register, authorize and capture payments and query transaction status. This section provides backend tips of each API and some variations for different payment flows.</p>
+    <p><strong>Register API</strong><br>
+    Merchant backend registers payments with netaxept through the register API. This API is also used to register/store cards in Netaxept’s secure store (for cards that support this feature). The API retruns a transaction ID which the client SDK (Pia SDK) uses to make terminal call with Netaxept for most transaction flows.<br></p>
+    <strong>Registering card for Easy Payment</strong><br>
+    <strong>Note:</strong> See <a href="https://shop.nets.eu/web/partners/register">Netaxept</a> documentation for more details on this API.<br>
+    <blockquote>
+        <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+        Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+        Path:  <strong>/netaxept/register.aspx</strong>
+        Method: <strong><em>POST</em></strong></p>
+    </blockquote>
+    
+<p>Request body:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"S"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"force3DSecure"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"updateStoredPaymentInfo"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Netaxept returns transaction ID following the above register call. In order to store the card, make a verify API call to Netaxept with the given transaction ID.</p>
+
+<p>(Query the status of the register call with Netaxept to retreive and store the Pan-hash associated with the card)</p>
+
+<blockquote>
+    <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+    Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+    Path:  <strong>/netaxept/process.aspx</strong>
+    Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"operation"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"VERIFY"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Use the <em>query</em> API to fetch the Pan Hash associated with the card once process VERIFY is successful.</p>
+<h4 id='registering-em-easy-payment-em' class='heading'>Registering <em>Easy Payment</em></h4>
+<h5 id='initial-transaction' class='heading'>Initial transaction</h5><br>
+
+<blockquote>
+    <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+    Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+    Path:  <strong>/netaxept/register.aspx</strong>
+    Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"S"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"force3DSecure"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h5 id='subsequent-transaction' class='heading'>Subsequent transaction</h5>
+
+<p>Subsequent easy payment requires <code>recurringUse3DS = true</code> and the <code>panHash</code> additional fields.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"S"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"recurringUse3DS"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"panHash"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h4 id='registering-recurring-payment' class='heading'>Registering Recurring Payment</h4>
+<h5 id='initial-transaction' class='heading'>Initial transaction</h5><br>
+
+<blockquote>
+    <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+    Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+    Path:  <strong>/netaxept/register.aspx</strong>
+    Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body:</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"R"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"force3DSecure"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"recurringExpiryDate"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"YYYYMMDD"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"recurringFrequency"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>If the initial transaction is merely to store card for further payments, add <code>&quot;updateStoredPaymentInfo&quot; : &quot;true&quot;</code> field to the request body. </p>
+<h5 id='subsequent-transaction' class='heading'>Subsequent transaction</h5>
+
+<p>Subsequent recurring payment requires <code>&quot;recurringUse3DS&quot; : &quot;true&quot;</code> and the <code>&quot;panHash&quot; : &quot;string&quot;</code> additional fields.</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"language"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"recurringType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"R"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"recurringUse3DS"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"panHash"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h5 id='request-body-pay-pal-payment-registration' class='heading'>Request body - Pay Pal payment registration:</h5><br>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"PayPal"</span><span class="w">
+	</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - Apple Pay payment registration:</h5><br>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"paymentData"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"ApplePay"</span><span class="w">
+	</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>The <em>paymentData</em> should contain th encrypted Payment Data from Apple pay of the following format: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"paymentData"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nt">"version"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+		</span><span class="nt">"data"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+		</span><span class="nt">"signature"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+		</span><span class="nt">"header"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+			</span><span class="nt">"ephemeralPublicKey"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+			</span><span class="nt">"publicKeyHash"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+			</span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+			</span><span class="p">}</span><span class="w">
+		</span><span class="p">},</span><span class="w">
+	</span><span class="nt">"paymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nt">"displayName"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+		</span><span class="nt">"network"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+		</span><span class="nt">"type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+		</span><span class="p">},</span><span class="w">
+	</span><span class="nt">"transactionIdentifier"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - Vipps payment registration:</h5><br>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+</span><span class="nt">"customerPhoneNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+</span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Vipps"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - Swish payment registration:</h5><br>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"SwishM"</span><span class="w">
+	</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+    
+<h5 id='request-body-paytrail-payment-registration' class='heading'>Request body - Paytrail payment registration:</h5><br>
+							
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w"> 
+    </span><span class="nl">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"orderNumber"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"amount"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"currencyCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">  
+    </span><span class="nl">"redirectUrl"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"serviceType"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"B"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> 
+        </span><span class="nl">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"bank selected by the customer, example PaytrailOP or PaytrailAktia"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"customerEmail"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"customerFirstName"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"customerLastName"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"customerAddress1"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"customerPostCode"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"customerTown"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"customerCountry"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+							
+<h4 id='payment-authorization-with-netaxept' class='heading'>Payment authorization with Netaxept</h4>
+
+<p>Send authorization of payment to Netaxept following user&rsquo;s action (handled by the client Pia SDK)</p>
+
+<blockquote>
+    <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+    Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+    Path:  <strong>/netaxept/process.aspx</strong>
+    Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"operation"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"AUTH"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Note: See <a href="https://shop.nets.eu/web/partners/process" title="Netaxept">Netaxept</a> documentation for more details on this API. </p>
+<h3 id='capture-payment' class='heading'>Capture payment</h3>
+
+<blockquote>
+    <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+    Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+    Path:  <strong>/netaxept/process.aspx</strong>
+    Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"transactionAmount "</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"operation"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"CAPTURE "</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<h3 id='query-transaction-status' class='heading'>Query transaction status</h3>
+
+<blockquote>
+    <p>Test: <a href="https://test.epayment.nets.eu">https://test.epayment.nets.eu</a>
+    Production: <a href="https://epayment.nets.eu">https://epayment.nets.eu</a>
+    Path:  <strong>/netaxept/query.aspx</strong>
+    Method: <strong><em>POST</em></strong></p>
+</blockquote>
+
+<p>Request body: </p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"merchantId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"token"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+	</span><span class="nt">"transactionId"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Note: See <a href="https://shop.nets.eu/web/partners/query" title="Netaxept">Netaxept</a> documentation for more details on this API. </p>
+
+<h1><a id="Get_in_touch"></a>Get in touch</h1>
+<hr>
+<p>If you have any questions, please contact us via email:</p>
+<ul>
+    <li><a href="mailto:mobile-acceptance@nets.eu">mobile-acceptance@nets.eu</a></li>
+</ul>
+<h1><a id="Licenses"></a>Licenses</h1>
+<hr>
+<ul>
+    <li><strong>PiA - Netaxept Android SDK</strong></li>
+</ul>
+<p><strong><code>Copyright (c) 2020 Nets Denmark A/S</code></strong></p>
+<p>NETS DENMARK A/S, ("NETS"), FOR AND ON BEHALF OF ITSELF AND ITS SUBSIDIARIES AND AFFILIATES UNDER COMMON CONTROL, IS WILLING TO LICENSE THE SOFTWARE TO YOU ONLY UPON THE CONDITION THAT YOU ACCEPT ALL OF THE TERMS CONTAINED IN THIS BINARY CODE LICENSE AGREEMENT. BY USING THE SOFTWARE YOU ACKNOWLEDGE THAT YOU HAVE READ THE TERMS AND AGREE TO THEM. IF YOU ARE AGREEING TO THESE TERMS ON BEHALF OF A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT THAT YOU HAVE THE LEGAL AUTHORITY TO BIND THE LEGAL ENTITY TO THESE TERMS. IF YOU DO NOT HAVE SUCH AUTHORITY, OR IF YOU DO NOT WISH TO BE BOUND BY THE TERMS, YOU MUST NOT USE THE SOFTWARE ON THIS SITE OR ANY OTHER MEDIA ON WHICH THE SOFTWARE IS CONTAINED.</p>
+<p>Software is copyrighted. Title to Software and all associated intellectual property rights is retained by NETS and/or its licensors. Unless enforcement is prohibited by applicable law, you may not modify, decompile, or reverse engineer Software.</p>
+<p>No right, title or interest in or to any trademark, service mark, logo or trade name of NETS or its licensors is granted under this Agreement.</p>
+<p>Permission is hereby granted, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software, including without limitation the rights to use, copy, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+<p>Software may only be used for commercial or production purpose together with Netaxept services provided from NETS, its subsidiaries or affiliates under common control.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<ul>
+    <li><strong>CardIo</strong></li>
+</ul>
+<p><strong><code>MIT License</code></strong></p>
+<p><strong><code>Copyright (c) 2013-2016 PayPal Holdings, Inc.</code></strong></p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy  of this software and associated documentation files (the "Software"), to deal  in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is  furnished to do so, subject to the following conditions:<br>
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<h1><a id="Change_log"></a>Change log</h1>
+<hr>
+<h4><a id="v100_Released_20Nov2018_564"></a>v1.0.0 Released: 20-Nov-2018</h4>
+<h4><a id="Release_notes_597"></a>Release notes:</h4>
+<ul>
+    <li>First official release</li>
+</ul>
+<h4><a id="v110_Released_14Dec2018_580"></a>v1.1.0 Released: 18-Dec-2018</h4>
+<h4><a id="Release_notes_5581"></a>Release notes:</h4>
+<ul>
+    <li><strong>Security improvement:</strong> Payment parameters passed by the SDK to the backend are now sent through a <strong>POST</strong>. The <strong>GET</strong> request is discontinued</li>
+    <li><strong>Xamarin</strong> and <strong>React Native</strong> support</li>
+    <li>Fixed logo issue for <i>DinersClubInternational</i> recurring payments</li>
+    <li>Improved <i>PiaSDK.start()</i> to accept Fragment parameter</li>
+    <li>New configuration to disable card scanner</li>
+</ul>
+<h4><a id="v111_Released_25Jan2019_580"></a>v1.1.1 Released: 25-Jan-2019</h4>
+<h4><a id="Release_notes_5581"></a>Release notes:</h4>
+<ul>
+    <li>Improvements for UI Customization:</li>
+    <ul>
+        <li>added new flag for hiding the "Save card for later use" functionality from payment screen</li>
+        <li>added new option for setting custom background color for input fields</li>
+        <li>updated card logos</li>
+    </ul>
+    <li>Improvements in WebView navigation bar: replaced text with specific icons</li>
+</ul>
+
+<h4><a id="v120_Released_5MAR2019_660"></a>v1.2.0 Released: 5-Mar-2019</h4>
+<h4><a id="Release_notes_667"></a>Release notes:</h4>
+<ul>
+    <li>New language customization settings: it is now possible to set SDK's language according to locale (default) or based on a different language selected by application's users</li>
+    <li>New <strong>FAQs</strong> appendix</li>
+    <li>New error code (301) handling for operations restricted by transaction filter (credit card, country filter, ...) as set in Netaxept admin</li>
+    <li>Availability of <code>Light PiA SDK</code> a new version of the SDK without <strong>Card.IO</strong>. Available upon request on Android and iOS.</li>
+    <li>Improved expiration date verification for Tokenized Card payments</li>
+</ul>
+<h4><a id="v130_Released_23MAY2019_660"></a>v1.3.0 Released: 29-May-2019</h4>
+<h4><a id="Release_notes_670"></a>Release notes:</h4>
+<ul>
+    <li><strong>Flutter</strong> support</li>
+    <li><strong>PiA-Xamarin-Android</strong> library available on Nuget</li>
+    <li>Added support for Google Wallet prefill functionality</li>
+    <li>Card scanner UI improvements</li>
+    <li>The constructor <code>TransactionInfo("transactionId", "redirectOk", "RedirectCancel")</code> has been <strong>Deprecated</strong>. Use a secondary constructor <code>TransactionInfo("transactionId", "redirectOk")</code> in place of it</li>
+</ul>
+<h4><a id="v131_Released_24JUN2019_660"></a>v1.3.1 Released: 24-Jun-2019</h4>
+<h4><a id="Release_notes_731"></a>Release notes:</h4>
+<ul>
+    <li>Added support of app switch for the Swedish BankId verification on <strong>MasterCard ID Check</strong></li>
+</ul>
+<h4><a id="v131_Released_24JUN2019_660"></a>v1.3.2 Released: 12-Aug-2019</h4>
+<h4><a id="Release_notes_732"></a>Release notes:</h4>
+<ul>
+    <li>Added support for Vipps Payment Method.</li>
+</ul>
+<h4><a id="v140_Released_20OCT2019_660"></a>v1.4.0 Released: 20-OCT-2019</h4>
+<h4><a id="Release_notes_733"></a>Release notes:</h4>
+<ul>
+    <li>More UI customization</li>
+    <li>Maestro card support</li>
+    <li>Removed system authentication (according to PSD2/SCA regulation)</li>
+    <li>General bug fixes.</li>
+</ul>
+
 							<h4><a id="v150_Released_29NOV2019_661"></a>v1.5.0 Released: 29-NOV-2019</h4>
-                            <h4><a id="Release_notes_734"></a>Release notes:</h4>
-                            <ul>
-                                <li>Change in UI customization property. Earlier the SDK had a method which would accept Drawable parameter which would include all custome button parameters, but now they have been seperated. 
+<h4><a id="Release_notes_734"></a>Release notes:</h4>
+<ul>
+    <li>Change in UI customization property. Earlier the SDK had a method which would accept Drawable parameter which would include all custome button parameters, but now they have been seperated. 
 								For example, currently there is <code>setButtonBackgroundColor(Integer integer)</code> which is used to set the button backgroung color where as before we had <code>setMainButtonBackgroundSelector(Drawable drawable)</code> which was a generic method.</li>
-                                <li>Swish Payment support</li>
-                                <li>General bug fixes</li>
-                            </ul>
+    <li>Swish Payment support</li>
+    <li>General bug fixes</li>
+</ul>
 						
-							<h4><a id="v160_Released_30JAN2020_662"></a>v1.6.0 Released: 30-JAN-2020</h4>
-                            <h4><a id="Release_notes_735"></a>Release notes:</h4>
-                            <ul>
-                                <li>The SDK now supports a faster flow for paying with already saved cards. It is possible to skip card confirmation for subsequent payments. Refer to <a href="#Payment_without_Security_code">our documentation</a> and our native, Xamarin or ReactNative sample application for more information.</li>
-                                <li>General bug fixes.</li>
-                            </ul>
+<h4><a id="v160_Released_30JAN2020_662"></a>v1.6.0 Released: 30-JAN-2020</h4>
+<h4><a id="Release_notes_735"></a>Release notes:</h4>
+<ul>
+    <li>The SDK now supports a faster flow for paying with already saved cards. It is possible to skip card confirmation for subsequent payments. Refer to <a href="#Payment_without_Security_code">our documentation</a> and our native, Xamarin or ReactNative sample application for more information.</li>
+    <li>General bug fixes.</li>
+</ul>
+
+<h4><a id="v170_Released_08MAY2020_663"></a>v1.7.0 Released: 08-MAY-2020</h4>
+<h4><a id="Release_notes_736"></a>Release notes:</h4>
+<ul>
+	<li>The SDK now supports Paytrail payment flow. Refer to <a href="#Direct_bank_payment_via_paytrail">our documentation</a> for more information.</li>
+    <li>Paytrail support added for Xamarin and ReactNative platforms.</li>
+	<li>Revoked the app cookies cleanup after 3DS process.</li>
+	<li>General bug fixes.</li>
+</ul>
 						
-                            <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>
-                            
-                            <ul>
-                                <li>On September 14, 2019, a new requirement for all online payments is being introduced in the EU, stating that all transactions should be verified by the buyer, only a few types of payments are exempt. The verification of payments is made by the consumer, who has to approve the payment with two-factor authentication. For example, for Visa and Mastercard, this is done by using 3D Secure (3DS) authentication. More information can be found in Netaxept <a href="https://shop.nets.eu/web/partners/psd2" title="here">documentation</a>.</li>
-                            </ul>
-                            
-                            <h4><a id="guidelines_for_app_merchants"></a>Guidelines for app merchants:</h4>
-                            
-                            <ul>
-                                <li>Please make sure 3D Secure is activated for your Netaxept Merchant account in production. Reach out to your Netaxept contact if this is not the case.</li>
-                            </ul>
-                            
-                            <h4><a id="one_click_payments"></a>One click payments</h4>
-                            <li>When using the Easy payment flow, the below parameters should be added to the register call from your backend:</li>
-                            <ul>
-                                <li> Initital transaction: use <code>force3DSecure = true</code></li>
-                                <li>Subsequent transactions: <code>recurringUse3DS = true</code></li></ul>
-                            
-                            <h4><a id="note"></a>Note</h4>
-                            <li>System authentication for subsequent payment is now deprecated</li>
-                            <li>Please make sure Dynamic 3DS is not in use in your Netaxept implementation after the deadline.</li>
-                            </p>
+<h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>
+
+<ul>
+    <li>On September 14, 2019, a new requirement for all online payments is being introduced in the EU, stating that all transactions should be verified by the buyer, only a few types of payments are exempt. The verification of payments is made by the consumer, who has to approve the payment with two-factor authentication. For example, for Visa and Mastercard, this is done by using 3D Secure (3DS) authentication. More information can be found in Netaxept <a href="https://shop.nets.eu/web/partners/psd2" title="here">documentation</a>.</li>
+</ul>
+
+<h4><a id="guidelines_for_app_merchants"></a>Guidelines for app merchants:</h4>
+
+<ul>
+    <li>Please make sure 3D Secure is activated for your Netaxept Merchant account in production. Reach out to your Netaxept contact if this is not the case.</li>
+</ul>
+
+<h4><a id="one_click_payments"></a>One click payments</h4>
+<li>When using the Easy payment flow, the below parameters should be added to the register call from your backend:</li>
+<ul>
+    <li> Initital transaction: use <code>force3DSecure = true</code></li>
+    <li>Subsequent transactions: <code>recurringUse3DS = true</code></li></ul>
+
+<h4><a id="note"></a>Note</h4>
+<li>System authentication for subsequent payment is now deprecated</li>
+<li>Please make sure Dynamic 3DS is not in use in your Netaxept implementation after the deadline.</li>
+</p>
 </body></html>

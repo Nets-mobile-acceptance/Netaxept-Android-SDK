@@ -64,6 +64,10 @@ public class PiaSampleSharedPreferences {
         prefsEditor.commit();
     }
 
+    public static boolean isPiaTestMode() {
+        return mSharedPrefs.getBoolean(PIA_TEST_MODE, false);
+    }
+
     public static boolean isUseSystemAuth() {
         return mSharedPrefs.getBoolean(USE_SYSTEM_AUTH, false);
     }
@@ -72,10 +76,6 @@ public class PiaSampleSharedPreferences {
         SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
         prefsEditor.putBoolean(USE_SYSTEM_AUTH, useSystemAuth);
         prefsEditor.commit();
-    }
-
-    public static boolean isPiaTestMode() {
-        return mSharedPrefs.getBoolean(PIA_TEST_MODE, false);
     }
 
     public static void setDisableCardIo(boolean disableCardIo) {

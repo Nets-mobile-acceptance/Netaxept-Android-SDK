@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +21,10 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import eu.nets.pia.PiaInterfaceConfiguration;
@@ -29,6 +35,7 @@ import eu.nets.pia.data.model.OrderInfo;
 import eu.nets.pia.data.model.PiaResult;
 import eu.nets.pia.data.model.SchemeType;
 import eu.nets.pia.data.model.TokenCardInfo;
+import eu.nets.pia.data.model.TransactionInfo;
 import eu.nets.pia.sample.BuildConfig;
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.RegisterPaymentHandlerImpl;
@@ -325,6 +332,17 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                 mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.VIPPS);
             } else if (method.getType() == PaymentMethodType.SWISH) {
                 mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.SWISH);
+            } else if (method.getType() == PaymentMethodType.AKTIA
+                    || method.getType() == PaymentMethodType.ALANDSBANKEN
+                    || method.getType() == PaymentMethodType.DANSKEBANK
+                    || method.getType() == PaymentMethodType.HANDELSBANKEN
+                    || method.getType() == PaymentMethodType.NORDEA
+                    || method.getType() == PaymentMethodType.OMA_SAASTOPANKKI
+                    || method.getType() == PaymentMethodType.OP_FINLAND
+                    || method.getType() == PaymentMethodType.POP_PANKKI_FINLAND
+                    || method.getType() == PaymentMethodType.S_PANKKI
+                    || method.getType() == PaymentMethodType.SAASTOPANKKI_FINLAND) {
+                mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.PAYTRAIL);
             } else {
                 mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.OTHERS);
             }
@@ -342,9 +360,21 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
     }
 
     private boolean isPaymentMethodSupported(PaymentMethod method) {
-        if (method.getType() == PaymentMethodType.TOKEN || method.getType() == PaymentMethodType.CREDIT_CARDS
-                || method.getType() == PaymentMethodType.VIPPS || method.getType() == PaymentMethodType.SWISH
-                || method.getType() == PaymentMethodType.PAY_PAL) {
+        if (method.getType() == PaymentMethodType.TOKEN
+                || method.getType() == PaymentMethodType.CREDIT_CARDS
+                || method.getType() == PaymentMethodType.VIPPS
+                || method.getType() == PaymentMethodType.SWISH
+                || method.getType() == PaymentMethodType.PAY_PAL
+                || method.getType() == PaymentMethodType.AKTIA
+                || method.getType() == PaymentMethodType.ALANDSBANKEN
+                || method.getType() == PaymentMethodType.DANSKEBANK
+                || method.getType() == PaymentMethodType.HANDELSBANKEN
+                || method.getType() == PaymentMethodType.NORDEA
+                || method.getType() == PaymentMethodType.OMA_SAASTOPANKKI
+                || method.getType() == PaymentMethodType.OP_FINLAND
+                || method.getType() == PaymentMethodType.POP_PANKKI_FINLAND
+                || method.getType() == PaymentMethodType.S_PANKKI
+                || method.getType() == PaymentMethodType.SAASTOPANKKI_FINLAND) {
             //these are enabled by default
             return true;
         }
@@ -469,6 +499,18 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                 break;
             case SWISH:
                 PiaSDK.getInstance().startSwishProcess(this, bundle, mRegisterPaymentHandler);
+                break;
+            case AKTIA:
+            case ALANDSBANKEN:
+            case DANSKEBANK:
+            case HANDELSBANKEN:
+            case NORDEA:
+            case OMA_SAASTOPANKKI:
+            case OP_FINLAND:
+            case POP_PANKKI_FINLAND:
+            case S_PANKKI:
+            case SAASTOPANKKI_FINLAND:
+                initPaytrailPayment(bundle, mRegisterPaymentHandler);
                 break;
             default:
                 PiaSDK.getInstance().start(this, bundle, mRegisterPaymentHandler);
@@ -712,7 +754,115 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                     eu.nets.pia.sample.BuildConfig.APPLICATION_ID));
         }
 
+        if (method.getType() == PaymentMethodType.AKTIA
+                || method.getType() == PaymentMethodType.ALANDSBANKEN
+                || method.getType() == PaymentMethodType.DANSKEBANK
+                || method.getType() == PaymentMethodType.HANDELSBANKEN
+                || method.getType() == PaymentMethodType.NORDEA
+                || method.getType() == PaymentMethodType.OMA_SAASTOPANKKI
+                || method.getType() == PaymentMethodType.OP_FINLAND
+                || method.getType() == PaymentMethodType.POP_PANKKI_FINLAND
+                || method.getType() == PaymentMethodType.S_PANKKI
+                || method.getType() == PaymentMethodType.SAASTOPANKKI_FINLAND) {
+
+            paymentRequest.setMethod(new Method(method.getId()));
+
+            //Merchant specific User details
+            paymentRequest.setCustomerEmail("bill.buyer@nets.eu");
+            paymentRequest.setCustomerFirstName("Bill");
+            paymentRequest.setCustomerLastName("Buyer");
+            paymentRequest.setCustomerAddress1("Testaddress");
+            paymentRequest.setCustomerPostCode("00510");
+            paymentRequest.setCustomerTown("Helsinki");
+            paymentRequest.setCustomerCountry("FI");
+            //Merchant specific User details
+
+            paymentRequest.setOrderNumber(getPaytrailOrderNumber());
+        }
+
         return paymentRequest;
+    }
+
+    //An algorithm to create reference number to your invoices as per Finnish Payment Guidelines.
+    private String getPaytrailOrderNumber() {
+
+        int checkDigit = -1;
+        int[] multipliers = {7, 3, 1};
+        int multiplierIndex = 0;
+        int sum = 0;
+        final String DATE_TIME_FORMAT = "yyMMddHHmmssSSS";
+
+        // Storing random positive integers in an array. '1' is appended in the beginning of the
+        // order number in order to differentiate between Android and iOS (0 for iOS and 1 for Android)
+        String orderNumber = "1" + new SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(new Date());
+
+        //Sum of the product of each element of randomNumber and multipliers in right to left manner
+        for (int i = orderNumber.length() - 1; i >= 0; i--) {
+            if (multiplierIndex == 3) {
+                multiplierIndex = 0;
+            }
+            int value = Character.getNumericValue(orderNumber.charAt(i));
+            sum += value * multipliers[multiplierIndex];
+            multiplierIndex++;
+        }
+
+        //The sum is then subtracted from the next highest ten
+        checkDigit = 10 - sum % 10;
+
+        if (checkDigit == 10) {
+            checkDigit = 0;
+        }
+
+        return orderNumber + checkDigit;
+
+    }
+
+    private void initPaytrailPayment(Bundle bundle, RegisterPaymentHandler mRegisterPaymentHandler) {
+        PaytrailRegisterPaymentRunnable paytrailRegisterPaymentRunnable = new PaytrailRegisterPaymentRunnable();
+        paytrailRegisterPaymentRunnable.setParam(bundle, mRegisterPaymentHandler);
+        new Thread(paytrailRegisterPaymentRunnable).start();
+    }
+
+    class PaytrailRegisterPaymentRunnable implements Runnable {
+
+        Bundle bundle;
+        RegisterPaymentHandler mRegisterPaymentHandler;
+
+        void setParam(Bundle bundle, RegisterPaymentHandler mRegisterPaymentHandler) {
+            this.bundle = bundle;
+            this.mRegisterPaymentHandler = mRegisterPaymentHandler;
+        }
+
+        @Override
+        public void run() {
+            if (mRegisterPaymentHandler != null) {
+                TransactionInfo transactionInfo = mRegisterPaymentHandler.doRegisterPaymentRequest(false);
+                bundle.putParcelable(PiaSDK.BUNDLE_TRANSACTION_INFO, transactionInfo);
+                startPaytrail(bundle);
+            }
+        }
+    }
+
+    private void startPaytrail(Bundle bundle) {
+        StartPaytrailRunnable startPaytrailRunnable = new StartPaytrailRunnable();
+        startPaytrailRunnable.setParam(bundle);
+        new Handler(Looper.getMainLooper()).post(startPaytrailRunnable);
+    }
+
+    class StartPaytrailRunnable implements Runnable {
+
+        private Bundle bundle;
+
+        void setParam(Bundle bundle) {
+            this.bundle = bundle;
+        }
+
+        @Override
+        public void run() {
+            if (bundle != null) {
+                PiaSDK.getInstance().startPaytrailProcess(MainActivity.this, bundle);
+            }
+        }
     }
 
 }
