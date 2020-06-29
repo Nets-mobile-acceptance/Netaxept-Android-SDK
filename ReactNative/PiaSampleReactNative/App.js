@@ -31,7 +31,6 @@ const instructions = Platform.select({
 });
 
 const netsProduction = {
-  /*#external_code_section_start
     static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
     static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
     static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
@@ -39,17 +38,10 @@ const netsProduction = {
     static let tokenIdTest: String = "YOUR TEST TOKED ID"
     static let schemeIdTest: String = "YOUR TEST CARD PROVIDER NAME"
     static let expiryDateTest: String = "YOUR TEST CARD EXPIRY DATE"
-#external_code_section_end*/
-
-  //#internal_code_section_start
-  backendUrlProd: "https://api-gateway-pp.nets.eu/pia/merchantdemo/",
-  merchantIdProd: "733255",
-  //#internal_code_section_end
 };
 
 
-const netsTest = {
-  /*#external_code_section_start
+const netsTest = {  
       static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
       static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
       static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
@@ -57,14 +49,6 @@ const netsTest = {
       static let tokenIdTest: String = "YOUR TEST TOKED ID"
       static let schemeIdTest: String = "YOUR TEST CARD PROVIDER NAME"
       static let expiryDateTest: String = "YOUR TEST CARD EXPIRY DATE"
-  #external_code_section_end*/
-  //#internal_code_section_start
-  backendUrlTest: "https://api-gateway-pp.nets.eu/pia/test/merchantdemo/",
-  merchantIdTest: "12002835",
-  tokenIdTest: "492500******0004",
-  schemeIdTest: "Visa",
-  expiryDateTest: "12/22"
-  //#internal_code_section_end
 };
 
 type Props = {};
