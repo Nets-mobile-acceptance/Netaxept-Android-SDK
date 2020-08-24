@@ -14,14 +14,6 @@
     <string name="currency_eur">EUR</string>
     <string name="currency_sek">SEK</string>
 
-
-    <!-- Confirmation screen -->
-    <string name="merchant_name">Bik Bok</string>
-    <string name="done_btn">Valmis</string>
-    <string name="payment_canceled">Keskeytit tapahtuman.</string>
-    <string name="payment_approved">Maksu on hyväksytty. \nSaat tuotteet 1&#8211;3 arkipäivässä.</string>
-    <string name="payment_failure">Odottamaton virhe. \n Ole hyvä, ota yhteyttä asiakaspalveluun jos ongelma jatkuu.</string>
-
     <!-- payment methods dialog -->
     <string name="payment_method_title">Valitse maksutapa</string>
     <string name="payment_method_credit_cards">Luottokortit</string>
@@ -33,15 +25,8 @@
 
     <!-- update customer id screen -->
     <string name="enter_customer_id">Syötä asiakas ID</string>
-    <string name="change_customer_id">Muuta asiakas ID</string>
-    <string name="logged_in_as">Olet kirjautuneena käyttääjänä: &lt;br> &lt;i>%1$s&lt;/i></string>
-    <string name="login">Kirjaudu</string>
     <string name="sign_up">Rekisteröidy</string>
-    <string name="register_card">Tallenna kortti</string>
     <string name="customer_id_is_invalid">Täytä asiakas id.</string>
-    <string name="production_label">Tuotanto</string>
-    <string name="test_label">Testi</string>
-    <string name="show_app_version">Näytä sovelluksen versio</string>
     <string name="app_version">Sovelluksen versio</string>
     <string name="alert_ok">OK</string>
 

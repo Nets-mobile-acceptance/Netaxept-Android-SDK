@@ -246,45 +246,63 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             switch (method.getType()) {
                 case PAY_PAL:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.paypal));
+                    mCardLogo.setContentDescription("PayPal");
                     break;
                 case KLARNA:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.klarna));
+                    mCardLogo.setContentDescription("Klarna");
                     break;
                 case VIPPS:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.vipps));
+                    mCardLogo.setContentDescription("Vipps");
                     break;
                 case SWISH:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.swish));
+                    mCardLogo.setContentDescription("Swish");
                     break;
                 case AKTIA:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.aktia_finalnd));
+                    mCardLogo.setContentDescription("Aktia");
                     break;
                 case ALANDSBANKEN:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.alandsbanken_finland));
+                    mCardLogo.setContentDescription("Alandsbanken");
                     break;
                 case DANSKEBANK:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.danske_bank));
+                    mCardLogo.setContentDescription("Danske Bank");
                     break;
                 case HANDELSBANKEN:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.handelsbanken));
+                    mCardLogo.setContentDescription("Handelsbanken");
                     break;
                 case NORDEA:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.nordea));
+                    mCardLogo.setContentDescription("Nordea");
                     break;
                 case OMA_SAASTOPANKKI:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.oma_saastopankki));
+                    mCardLogo.setContentDescription("Oma Saastopankki");
                     break;
                 case OP_FINLAND:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.op_finland));
+                    mCardLogo.setContentDescription("Osuuspankki");
                     break;
                 case POP_PANKKI_FINLAND:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.pop_pankki_finland));
+                    mCardLogo.setContentDescription("Pop Pankki");
                     break;
                 case S_PANKKI:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.s_pankki));
+                    mCardLogo.setContentDescription("S-Pankki");
                     break;
                 case SAASTOPANKKI_FINLAND:
                     mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.saastopankki_finland));
+                    mCardLogo.setContentDescription("Saastopankki");
+                    break;
+                case MOBILE_PAY:
+                    mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.mobilepay));
+                    mCardLogo.setContentDescription("MobilePay");
                     break;
             }
             itemView.setOnClickListener(new View.OnClickListener() {

@@ -55,6 +55,13 @@ public class PaymentFlowCache {
         mPaymentSelected = PaymentMethodSelected.NOT_SELECTED;
     }
 
+    public void resetStateAndPaymentMethod() {
+        mState = PaymentFlowState.IDLE;
+        mFinishedWithError = false;
+        mFailedRequest = false;
+        mPaymentSelected = PaymentMethodSelected.NOT_SELECTED;
+    }
+
     public void setPaymentRegisterResponse(PaymentRegisterResponse mPaymentRegisterResponse) {
         this.mPaymentRegisterResponse = mPaymentRegisterResponse;
     }

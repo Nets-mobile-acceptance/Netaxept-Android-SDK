@@ -9,6 +9,7 @@
     <string name="payment_description">Thank you for shopping on BikBok!</string>
     <string name="payment_value_zero">Please add a non-zero value.</string>
     <string name="payment_rollback_error">There was an error when rolling back the transaction.</string>
+    <string name="payment_interrupted">Wallet Payment Interrupted.</string>
     <string name="setting_menu">Settings</string>
     <string name="share_menu">Share</string>
     <string name="currency_eur">EUR</string>

@@ -424,6 +424,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
         this.merchantInfo = null;
         this.orderInfo = null;
         this.tokenCardInfo = null;
+        this.transactionInfo = null;
     }
 
     /**
@@ -441,11 +442,12 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      */
     private TransactionInfo getTransactionInfo() throws InterruptedException {
         synchronized (threadSynchronizator) {
-            while (transactionInfo == null) {
+            if (transactionInfo == null)
                 threadSynchronizator.wait();
-            }
         }
-        System.out.println("onTransactionInfo:" + transactionInfo.getTransactionId() + " " + transactionInfo.getRedirectUrl() + " " + transactionInfo.getCancelRedirectUrl());
+
+        String log = transactionInfo != null ? transactionInfo.getTransactionId() + " " + transactionInfo.getRedirectUrl() + " " + transactionInfo.getCancelRedirectUrl() : "TransactionInfo : null";
+        System.out.println("onTransactionInfo:" + log);
         return transactionInfo;
     }
 }

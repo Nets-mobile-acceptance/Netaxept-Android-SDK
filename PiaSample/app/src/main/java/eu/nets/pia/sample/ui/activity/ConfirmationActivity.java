@@ -49,6 +49,7 @@ public class ConfirmationActivity extends AppCompatActivity {
     public static final String BUNDLE_PAYMENT_CANCELED = "bundle_payment_canceled";
     public static final String BUNDLE_SUCCESS_MESSAGE = "bundle_success_message";
     public static final String BUNDLE_SUCCESS_TITLE = "bundle_success_title";
+    public static final String BUNDLE_FAILED_PAYMENT = "bundle_failed_payment";
 
     @BindView(R.id.custom_toolbar)
     CustomToolbar mToolbar;
@@ -94,6 +95,23 @@ public class ConfirmationActivity extends AppCompatActivity {
             mStatusMessage.setText(getIntent().getStringExtra(BUNDLE_SUCCESS_MESSAGE));
             mToolbar.setTitle(getIntent().getStringExtra(BUNDLE_SUCCESS_TITLE));
             mRootView.setBackgroundColor(ContextCompat.getColor(this, R.color.custom_light_blue_color));
+        } else if (getIntent().getBooleanExtra(BUNDLE_FAILED_PAYMENT, true)) {
+            //Wallet app not installed on the device
+
+            String statusMsg;
+
+            if (getIntent().getStringExtra(BUNDLE_SUCCESS_MESSAGE) != null) {
+                statusMsg = getIntent().getStringExtra(BUNDLE_SUCCESS_MESSAGE);
+            } else if (piaResult != null && piaResult.getError() != null) {
+                statusMsg = piaResult.getError().getMessage(this);
+            } else {
+                statusMsg = getString(R.string.process_error);
+            }
+
+            mStatusIcon.setBackgroundResource(R.drawable.ic_retry);
+            mStatusMessage.setText(statusMsg);
+            mToolbar.setTitle(getIntent().getStringExtra(BUNDLE_SUCCESS_TITLE) != null ? getIntent().getStringExtra(BUNDLE_SUCCESS_TITLE) : getString(R.string.toolbar_title_failed));
+            mRootView.setBackgroundColor(ContextCompat.getColor(this, R.color.custom_red_color));
         } else {
             //there was an error processing the transaction
             String errorMessage = "";

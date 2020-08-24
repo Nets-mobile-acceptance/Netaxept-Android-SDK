@@ -31,24 +31,21 @@ const instructions = Platform.select({
 });
 
 const netsProduction = {
+
     static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
-    static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
     static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
-    static let merchantIdTest: String = "YOUR TEST NETAXEPT MERCHANT ID HERE"
-    static let tokenIdTest: String = "YOUR TEST TOKED ID"
-    static let schemeIdTest: String = "YOUR TEST CARD PROVIDER NAME"
-    static let expiryDateTest: String = "YOUR TEST CARD EXPIRY DATE"
+
 };
 
 
-const netsTest = {  
-      static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
+const netsTest = {
+
       static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
-      static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
       static let merchantIdTest: String = "YOUR TEST NETAXEPT MERCHANT ID HERE"
       static let tokenIdTest: String = "YOUR TEST TOKED ID"
       static let schemeIdTest: String = "YOUR TEST CARD PROVIDER NAME"
       static let expiryDateTest: String = "YOUR TEST CARD EXPIRY DATE"
+
 };
 
 type Props = {};

@@ -17,6 +17,7 @@
         <li><a href="#PayPal_flow_description">PayPal flow description</a></li>
         <li><a href="#Vipps_payment_flow_description">Vipps Payment flow description</a></li>
         <li><a href="#Swish_m_commerce_integration">Swish m-commerce integration</a></li>
+		<li><a href="#MobilePay_payment_flow_description">MobilePay Payment flow description</a></li>
         <li><a href="#Direct_bank_payment_via_paytrail">Finland - Direct bank payment (via Paytrail)</a></li>
         <li><a href="#UI_Customization_API">UI Customization API</a></li>
         <li><a href="#Permissions">Permissions</a></li>
@@ -59,7 +60,7 @@
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         ...
         
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.7.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:1.8.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         
         ...
         }
@@ -552,14 +553,14 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="text-align:center"><img src="doc-files/vipps_gif.gif" alt="Vipps Flow"></td>
+                            <td style="text-align:center"><img src="doc-files/vipps_flow.gif" alt="Vipps Flow"></td>
                         </tr>
                     </tbody>
                 </table>
                 <p>Pia SDK supports Vipps transactions with similar implementation flow as other card schemes. Initialize a Vipps payment by registering the transaction using the SDK API <code>PiaSDK.startVippsProcess()</code></p>
                 <p>The flow diagram of Vipps payment is as below :</p>
                 
-                <p><img src="doc-files/vipps_flow.png" alt="Vipps Payment Flow"></p>
+                <p><img src="doc-files/vipps_flow.png" alt="Vipps Payment Flow"></p>			
                     <strong>Vipps App Detection</strong>
                     <p>The PiA SDK will perform a check for the Vipps app on your device in the below cases</p>
                     <ul>
@@ -720,8 +721,109 @@
                         
                         </p>
                         <p></p>
+						
+						
+						<h1><a id="MobilePay_payment_flow_description"></a>MobilePay payment flow description</h1>
+                    <hr>
+                    <table class="table table-striped table-bordered" align="center">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">MobilePay Flow</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align:center"><img src="doc-files/mobilepay_flow.gif" alt="MobilePay Flow"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+<p>To initiate MobilePay payment with <strong>Pia SDK</strong>, implement the <code>MobilePayListener</code> interface and start the process as follows:</p>
+<pre class="sourceCode java"><code class="sourceCode java"><span class="co">/**</span>
+<span class="co">* Initiating MobilePay from an Activity that implements MobilePayListener.</span>
+<span class="co">* The API returns false if MobilePay app is not installed in the device in which</span>
+<span class="co">* case, its recommended to lead the user to a different payment method.</span>
+<span class="co">*/</span>
+Boolean mobilePay = PiaSDK.<span class="fu">initiateMobilePay</span>(
+        parent: <span class="kw">new</span> <span class="fu">Presenter</span>(<span class="kw">this</span>), <span class="co">// Presenter can be created with an Activity or a Fragment</span>
+        listener: <span class="kw">this</span>, <span class="co">// The object implementing MobilePayListener interface</span>
+        redirectURL: redirectURL, <span class="co">// The same redirect URL used during payment registration</span>
+        paymentRegistration: mobilePayRegistration <span class="co">// Payment registration with wallet URL callback</span>
+);
+
+<span class="kw">if</span> (!mobilePay) { <span class="co">// MobilePay is not installed, lead user to a different payment method</span>
+    Toast.<span class="fu">makeText</span>(<span class="kw">this</span>, <span class="st">&quot;Mobile Pay is not installed&quot;</span>, Toast.<span class="fu">LENGTH_LONG</span>).<span class="fu">show</span>();
+}</code></pre>
+<p>Payment registration should callback with <code>WalletURL</code> obtained from merchant backend or <code>null</code> if unsuccessful. The following is an example implementation of <code>mobilePayRegistration</code>:</p>
+<pre class="sourceCode java"><code class="sourceCode java">WalletPaymentRegistration mobilePayRegistration = <span class="kw">new</span> <span class="fu">WalletPaymentRegistration</span>() {
+    <span class="fu">@Override</span>
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">registerPayment</span>(<span class="dt">final</span> WalletURLCallback callback) {
+        <span class="co">// Obtain the `walletURL` from merchant backend and invoke callback</span>
+        <span class="co">//</span>
+        <span class="co">// Registration network request requires a request body with order and payment details.</span>
+        <span class="co">// The sample backend identifies MobilePay with its method ID:</span>
+        <span class="co">// `PaymentMethodID(id: &quot;MobilePay&quot;, displayName: &quot;MobilePay&quot;, fee: 0)`</span>
+        <span class="co">//</span>
+        <span class="co">// Upon success, callback with the `walletURL` or `null` if unsuccessful</span>
+        <span class="fu">callback</span>(walletURL);
+    }
+};</code></pre>
+<p><strong>MobilePay App Detection</strong></p>
+<p>The SDK checks if MobilePay can be launched as the first step in the process preventing unnecessary payment registration. If MobilePay app is not installed on user's device, we recommend leading user to other available payment methods. The SDK throws <code>WALLET_APP_NOT_FOUND</code> error in the corner case where user uninstalls MobilePay app after payment has been registered with merchant backend.</p>
+<p>Here is the flow diagram for MobilePay payment:</p>
+<div class="figure">
+<p class="caption"><strong>MobilePay Flow</strong><img src="doc-files/mobile_pay_flow.png" alt="MobilePay Flow" /></p>
+</div>
+<p><strong>Initializing a payment with MobilePay:</strong></p>
+<ul>
+<li>Netaxpet requires a <code>redirectUrl</code> parameter which is the URL scheme of your application that is used to switch back to your application following app-switch to MobilePay app.</li>
+</ul>
+<p>The following is an example of handling MobilePay payment registration:</p>
+<p><strong>Launching MobilePay App:</strong></p>
+<p>After the transaction is authorized in MobilePay application, user is redirected to the merchant app and the redirect is notified to the <code>MobilePayListener</code> object.</p>
+<p>The SDK will notify of successful redirect via <code>onMobilePayRedirect</code> interface method. Merchant app should query payment status from Netaxept through merchant backend.<br />The following code shows implementation of <code>MobilePayListener</code> in the sample app:</p>
+<pre class="sourceCode java"><code class="sourceCode java">
+<span class="co">// MARK: MobilePayListener - Results</span>
+    
+    <span class="fu">@Override</span>
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onMobilePayRedirect</span>() {
+        <span class="co">// Query payment status and handle accordingly</span>
+    }
+
+    <span class="fu">@Override</span>
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onMobilePayRedirectInterrupted</span>() {
+        <span class="co">// Query payment status and handle accordingly</span>
+    }
+
+    <span class="fu">@Override</span>
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onMobilePayAppSwitchFailure</span>(MobilePayError error) {
+        <span class="kw">switch</span> (error) {
+            <span class="kw">case</span> INVALID_WALLET_URL: <span class="co">// The Wallet URL is invalid, typically null</span>
+            <span class="kw">case</span> NETWORK_ERROR: <span class="co">// Check `error.data` for detail error response</span>
+            <span class="kw">case</span> WALLET_APP_NOT_FOUND: <span class="co">// User may have uninstalled MobilePay. Recommend other payment methods</span>
+        }
+    }</code></pre>
+<p><strong>MobilePay - Cases of interrupted transactions</strong></p>
+<p>The typical payment flow via MobilePay starts from the app where transaction registration request is sent to merchant backend. Upon receiving a wallet URL, the SDK launches the wallet app. The wallet app then redirects back to the application and PiaSDK notifies <code>MobilePayListener</code> to complete the transaction.</p>
+<p>However, - User may interrupt this flow e.g. by manually navigating to your application before completing authorization at the wallet app or - The wallet app may fail to redirect for an unknown reason forcing the user to manually return to your application</p>
+<p>In these and related scenarios, PiaSDK notifies interruption through <code>onMobilePayRedirectInterrupted</code> interface method.</p>
+<p>Upon receiving interruption, it's best to query the transaction status and check if the authorization was complete or has been interrupted/denied in the wallet app. (If the user navigates back to the wallet app for authorization resulting in a successful redirect to your app, PiaSDK will notify the redirect where the app can commit / rollback the transaction accordingly)</p>
+
+<p><strong>MobilePay - Additional Configuration</strong></p>
+<p>The API <code>PiaSDK.initiateMobilePay(…)</code> contains two more parameters for additional configuration.</p>
+<ul>
+<li>A boolean <code>showProgressIndicator</code> (by default true) can be set to <em>false</em> to show a custom progress indicator</li>
+<li>Activity class type <code>redirectReceiverActivityClass</code> (by default null) is the Activity class that maybe launched upon redirect</li>
+</ul>
+<p>The redirect from MobilePay cannot be returned via <code>MobilePayListener</code> if the object is deallocated. This can happen e.g. in the corner case where user terminates the application. In this scenario, a new instance of <code>redirectReceiverActivityClass</code> Activity is launched to allow your application to handle the redirect. In <code>onCreate</code> of this Activity, you can confirm the redirect calling <code>boolean PiaSDK.willHandleRedirectWithIntent(Intent, MobilePayListener)</code>. The API returns true and will call <code>onMobilePayRedirect</code> via the listener.</p>
+<p>If this parameter - <code>redirectReceiverActivityClass</code> is omitted or is null, the Activity class of <code>parent</code> that's used when initiating Mobile pay: <code>PiaSDK.initiateMobilePay(parent: Activity/Fragment…)</code> is used to launch your application upon redirect following application termination.</p>
+		
+</ul>
+	<p><strong>Note: </strong></strong>Users have 5 minutes to complete a MobilePay transaction before the session expires.</p>
+<p></p>
 				
 <h1><a id="Direct_bank_payment_via_paytrail"></a>Finland - Direct bank payment (via Paytrail)</h1>
+<hr>
+
 <p>With the PiA SDK, you can allow Finnish customers to pay with Paytrail direct bank transfers. It supports through 1 integration, the 10 main banks which are part of this direct payment scheme.</p>
 <p>You can get more information about Paytrail via Netaxept from the <a href="https://shop.nets.eu/documents/535922/545797/Netaxept_Paytrail_GetStartedGuide_EN_v1.7.pdf/182ad7e8-ad0d-4c6f-9a74-bd8508300177">Paytrail Getting Started Guide</a>.</p>
 <p><strong>Pre-requisite to accept direct bank payments via Paytrail :</strong></p>
@@ -750,6 +852,7 @@
 <p>Here is the flow diagram for Paytrail payment:</p>
 
 <p><img src="doc-files/paytrail_payment_flow.png" alt="Paytrail Payment Flow"></p>
+
 
 <p><strong>Initializing a payment with Paytrail</strong></p>
 
@@ -1041,6 +1144,13 @@
                 <li>failed serialisation in models</li>
             </ul>
         </li>
+		 <li><strong>WALLET_PAYMENT_INTERRUPTED, code 201:</strong> Wallet payment flow interrupted. May occur in the following cases
+		   <ul>
+				<li>App switch failed due to an unknown error on Wallet application</li>
+                <li>User switches back to the merchant app manually</li>
+			For more details, follow the code snippet and the note<a href="#Handle_Interruption"> here</a>.	
+            </ul>
+        </li>
     </ul>
     <h1><a id="Backend_Tips"></a>Backend Tips</h1>
     <hr>
@@ -1227,6 +1337,14 @@
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
 	</span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
 	</span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"SwishM"</span><span class="w">
+	</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<h5 id='request-body-apple-pay-payment-registration' class='heading'>Request body - MobilePay payment registration:</h5><br>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+	</span><span class="nt">"paymentMethodActionList"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="nt">"PaymentMethod"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"MobilePay"</span><span class="w">
 	</span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
@@ -1428,6 +1546,12 @@ The above copyright notice and this permission notice shall be included in all c
     <li>Paytrail support added for Xamarin and ReactNative platforms.</li>
 	<li>Revoked the app cookies cleanup after 3DS process.</li>
 	<li>General bug fixes.</li>
+</ul>
+
+<h4><a id="v200_Released_02JULY2020_664"></a>v2.0.0 Released: 02-JULY-2020</h4>
+<h4><a id="Release_notes_736"></a>Release notes:</h4>
+<ul>
+	<li>The SDK now supports MobilePay payment flow. Refer to <a href="#MobilePay_payment_flow_description">our documentation</a> for more information.</li>
 </ul>
 						
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>

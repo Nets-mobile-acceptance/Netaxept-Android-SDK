@@ -3,9 +3,8 @@ package eu.nets.pia.sample.ui.activity.main;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +29,7 @@ import butterknife.ButterKnife;
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.RegisterPaymentHandler;
+import eu.nets.pia.data.exception.PiaError;
 import eu.nets.pia.data.model.MerchantInfo;
 import eu.nets.pia.data.model.OrderInfo;
 import eu.nets.pia.data.model.PiaResult;
@@ -48,6 +48,7 @@ import eu.nets.pia.sample.network.model.Amount;
 import eu.nets.pia.sample.network.model.Method;
 import eu.nets.pia.sample.network.model.PaymentMethodsResponse;
 import eu.nets.pia.sample.network.model.PaymentRegisterRequest;
+import eu.nets.pia.sample.network.model.PaymentRegisterResponse;
 import eu.nets.pia.sample.ui.activity.ConfirmationActivity;
 import eu.nets.pia.sample.ui.activity.LoginActivity;
 import eu.nets.pia.sample.ui.data.DisplayedToken;
@@ -58,7 +59,13 @@ import eu.nets.pia.sample.ui.fragment.FragmentCallback;
 import eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment;
 import eu.nets.pia.ui.main.PiaActivity;
 import eu.nets.pia.utils.LogUtils;
+import eu.nets.pia.wallets.MobilePayError;
+import eu.nets.pia.wallets.MobilePayListener;
+import eu.nets.pia.wallets.Presenter;
+import eu.nets.pia.wallets.WalletPaymentRegistration;
+import eu.nets.pia.wallets.WalletURLCallback;
 
+import static eu.nets.pia.data.exception.PiaErrorCode.TRANSACTION_INFO_NULL;
 import static eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment.ID_SWISH;
 
 /**
@@ -80,8 +87,9 @@ import static eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment.ID_SWISH;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+
 public class MainActivity extends AppCompatActivity implements MerchantRestClient.PaymentFlowCallback,
-        FragmentCallback {
+        FragmentCallback, MobilePayListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final String ORDER_NUMBER = "PiaSDK-Android";
@@ -98,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
     private RegisterPaymentHandler mRegisterPaymentHandler;
     private MerchantRestClient mRestClient = MerchantRestClient.getInstance();
     private PaymentMethodsResponse paymentMethodsResponse;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +143,10 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
         //This is need to be set so that the SDK remember that what was the Skip Confirmation status.
         PiaInterfaceConfiguration.getInstance().setSkipConfirmationSelected(PiaSampleSharedPreferences.getEnableSkipConfirmation());
+
+        if (!PiaSDK.willHandleRedirectWithIntent(getIntent(), this)) {
+            // Activity launch is not triggered by PiaSDK initiated redirect.
+        }
     }
 
     /**
@@ -288,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
         //make the register call
         Log.d(TAG, "[onPayClicked] start payment methods payment call");
-        mProgressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
         /**
          * Call your backend to get available payment methods for this user
          */
@@ -320,6 +331,8 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
     @Override
     public void onPaymentMethodSelected(PaymentMethod method) {
+        if (mPaymentCache.getState() != PaymentFlowState.IDLE) return;
+
         if (isPaymentMethodSupported(method)) {
             Log.d(TAG, "[onPaymentMethodSelected] start Pia SDK " + PiaSampleSharedPreferences.getPhoneNumber());
             if ((method.getType() == PaymentMethodType.VIPPS) && PiaSampleSharedPreferences.getPhoneNumber() == null) {
@@ -332,6 +345,8 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                 mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.VIPPS);
             } else if (method.getType() == PaymentMethodType.SWISH) {
                 mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.SWISH);
+            } else if (method.getType() == PaymentMethodType.MOBILE_PAY) {
+                mPaymentCache.setPaymentMethodSelected(PaymentMethodSelected.MOBILE_PAY);
             } else if (method.getType() == PaymentMethodType.AKTIA
                     || method.getType() == PaymentMethodType.ALANDSBANKEN
                     || method.getType() == PaymentMethodType.DANSKEBANK
@@ -374,7 +389,8 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                 || method.getType() == PaymentMethodType.OP_FINLAND
                 || method.getType() == PaymentMethodType.POP_PANKKI_FINLAND
                 || method.getType() == PaymentMethodType.S_PANKKI
-                || method.getType() == PaymentMethodType.SAASTOPANKKI_FINLAND) {
+                || method.getType() == PaymentMethodType.SAASTOPANKKI_FINLAND
+                || method.getType() == PaymentMethodType.MOBILE_PAY) {
             //these are enabled by default
             return true;
         }
@@ -400,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         } else if (!mPaymentCache.isFinishedWithError()) {
             switch (mPaymentCache.getState()) {
                 case COMMIT_PAYMENT_CALL_FINISHED:
-                    successfulPaymentResult();
+                    paymentConfirmationWithResult();
                     break;
                 case IDLE:
                     dismissProgressBar();
@@ -411,10 +427,11 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                 case SENDING_ROLLBACK_TRANSACTION_CALL:
                 case ROLLBACK_TRANSACTION_FINISHED:
                 case CALL_PIA_SDK:
-                    break;
             }
         } else {
-            if (mPaymentCache.getState() != PaymentFlowState.SENDING_ROLLBACK_TRANSACTION_CALL &&
+            if (mPaymentCache.getState() == PaymentFlowState.CALL_COMMIT_FAILED_NO_ROLLBACK) {
+                failedPaymentResult(getString(R.string.payment_interrupted), true);
+            } else if (mPaymentCache.getState() != PaymentFlowState.SENDING_ROLLBACK_TRANSACTION_CALL &&
                     mPaymentCache.getState() != PaymentFlowState.ROLLBACK_TRANSACTION_FINISHED) {
                 //reset error state
                 mPaymentCache.setFinishedWithError(false);
@@ -431,12 +448,30 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         }
     }
 
-    private void successfulPaymentResult() {
+    private void paymentConfirmationWithResult() {
         Bundle bundle = new Bundle();
-        bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, true);
-        bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_MESSAGE, getString(R.string.thanks_for_shopping));
-        bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_TITLE, getString(R.string.toolbar_title_success_pay));
+        if (mPaymentCache.isFinishedWithError()) {
+            bundle.putBoolean(ConfirmationActivity.BUNDLE_FAILED_PAYMENT, true);
+            bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_MESSAGE, mPaymentCache.getPaymentCommitResponse().toString());
+            bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_TITLE, getString(R.string.process_error));
+        } else {
+            bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, true);
+            bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_MESSAGE, getString(R.string.thanks_for_shopping));
+            bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_TITLE, getString(R.string.toolbar_title_success_pay));
+        }
         displayConfirmationScreen(bundle);
+    }
+
+
+    private void failedPaymentResult(String error, boolean maintainCache) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ConfirmationActivity.BUNDLE_FAILED_PAYMENT, true);
+        bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_MESSAGE, error);
+        bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_TITLE, getString(R.string.toolbar_title_failed));
+        if (maintainCache)
+            displayConfirmationScreenMaintainCache(bundle);
+        else
+            displayConfirmationScreen(bundle);
     }
 
     private void displayRequestFailedDialog() {
@@ -512,13 +547,48 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
             case SAASTOPANKKI_FINLAND:
                 initPaytrailPayment(bundle, mRegisterPaymentHandler);
                 break;
+            case MOBILE_PAY:
+                Boolean mobilePay = PiaSDK.initiateMobilePay(
+                        new Presenter(this),
+                        this,
+                        Uri.parse(String.format("%1$s://piasdk_mobilepay",
+                                BuildConfig.APPLICATION_ID)), // TODO: Use constant
+                        mobilePayRegistration
+                );
+                if (!mobilePay) { // MobilePay is not installed, lead user to a different payment method
+                    Toast.makeText(this, "Mobile Pay is not installed", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                break;
             default:
                 PiaSDK.getInstance().start(this, bundle, mRegisterPaymentHandler);
         }
         overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_bottom);
-
         mPaymentCache.setState(PaymentFlowState.CALL_PIA_SDK);
+
     }
+
+    WalletPaymentRegistration mobilePayRegistration = new WalletPaymentRegistration() {
+        @Override
+        public void registerPayment(final WalletURLCallback callback) {
+            final PaymentFlowCache paymentFlowCache = PaymentFlowCache.getInstance();
+            final PaymentRegisterRequest paymentRegisterRequest = mPaymentCache.getPaymentRegisterRequest();
+            paymentRegisterRequest.setStoreCard(false);
+            new Thread() {
+                @Override
+                public void run() {
+                    MerchantRestClient.getInstance().registerPayment(paymentRegisterRequest);
+                    PaymentRegisterResponse paymentRegisterResponse = paymentFlowCache.getPaymentRegisterResponse();
+                    if (paymentRegisterResponse != null && paymentRegisterResponse.getWalletUrl() != null) {
+                        callback.walletURL(Uri.parse(paymentRegisterResponse.getWalletUrl()));
+                    } else {
+                        callback.walletURL(null);
+                    }
+                }
+            }.start();
+
+        }
+    };
 
     /**
      * Override the OnActivityResult, to receive the payment result from PiaSDK
@@ -543,6 +613,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         //in case user canceled
         Bundle bundle = new Bundle();
 
+
         if (resultCode == RESULT_CANCELED) {
             /**
              * If the result was cancelled, make a call to your backend to rollback the transaction
@@ -564,37 +635,93 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
             PiaResult result = data.getParcelableExtra(PiaActivity.BUNDLE_COMPLETE_RESULT);
             if (result.isSuccess()) {
                 //in case of success commit the payment
-                mProgressBar.setVisibility(View.VISIBLE);
-                if (mPaymentCache.getPaymentRegisterResponse() != null
-                        && mPaymentCache.getPaymentRegisterResponse().getTransactionId() != null) {
-                    /**
-                     * If the result is success, call commit payment on your backend
-                     */
-                    mRestClient.commitPayment(mPaymentCache.getPaymentRegisterResponse().getTransactionId());
-                } else {
-                    //register payment is null -- something went wrong
-                    bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, false);
-                    bundle.putParcelable(ConfirmationActivity.BUNDLE_ERROR_OBJECT,
-                            new PiaResult(false));
-                    displayConfirmationScreen(bundle);
-                }
-            } else {
+                showProgressBar();
                 /**
+                 * If the result is success, call commit payment on your backend
+                 */
+                callCommitPayment(bundle);
+            } else {
+                /*
                  * PiaResult is not successful (error occured)
                  * - the method displayConfirmationScreen(bundle); will also call rollback transaction
                  */
                 bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, false);
                 bundle.putParcelable(ConfirmationActivity.BUNDLE_ERROR_OBJECT, result);
                 displayConfirmationScreen(bundle);
+
             }
         }
     }
+
+    @Override
+    public void onMobilePayRedirect() {
+        commitMobilePay(true, dismissSdkProgressIndicator);
+    }
+
+    @Override
+    public void onMobilePayRedirectInterrupted() {
+        commitMobilePay(false, dismissSdkProgressIndicator);
+    }
+
+    MerchantRestClient.Completion dismissSdkProgressIndicator = new MerchantRestClient.Completion() {
+        @Override
+        public void success(boolean isSuccess) {
+            PiaSDK.dismissProgressIndicator();
+        }
+    };
+
+    @Override
+    public void onMobilePayAppSwitchFailure(MobilePayError error) {
+        switch (error) {
+            case INVALID_WALLET_URL: // The Wallet URL is invalid, typically null
+            case NETWORK_ERROR: // Check `error.data` for detail error response
+            case WALLET_APP_NOT_FOUND: // User may have uninstalled MobilePay. Recommend other payment methods
+        }
+        failedPaymentResult(error.getDescription(), false);
+    }
+
+    private void callCommitPayment(final Bundle bundle) {
+        if (mPaymentCache.getPaymentRegisterResponse() != null
+                && mPaymentCache.getPaymentRegisterResponse().getTransactionId() != null) {
+            mRestClient.commitPayment(mPaymentCache.getPaymentRegisterResponse().getTransactionId(), true, new MerchantRestClient.Completion() {
+                @Override
+                public void success(boolean isSuccess) {
+                }
+            });
+        } else {
+            //register payment is null -- something went wrong
+            bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, false);
+            bundle.putParcelable(ConfirmationActivity.BUNDLE_ERROR_OBJECT,
+                    new PiaResult(false));
+            displayConfirmationScreen(bundle);
+        }
+    }
+
+    private void commitMobilePay(boolean isSuccessfulRedirect, MerchantRestClient.Completion completion) {
+        Bundle bundle = new Bundle();
+        if (mPaymentCache.getPaymentRegisterResponse() != null
+                && mPaymentCache.getPaymentRegisterResponse().getTransactionId() != null) {
+            mRestClient.commitPayment(mPaymentCache.getPaymentRegisterResponse().getTransactionId(), isSuccessfulRedirect, completion);
+        } else {
+            //register payment is null -- something went wrong
+            bundle.putBoolean(ConfirmationActivity.BUNDLE_FAILED_PAYMENT, true);
+            bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_MESSAGE, getString(R.string.process_error));
+            bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_TITLE, getString(R.string.toolbar_title_failed));
+            displayConfirmationScreen(bundle);
+            completion.success(false);
+        }
+    }
+
 
     private void rollbackTransaction() {
         if (mPaymentCache.getPaymentRegisterResponse() != null
                 && mPaymentCache.getPaymentRegisterResponse().getTransactionId() != null) {
             mRestClient.transactionRollback(mPaymentCache.getPaymentRegisterResponse().getTransactionId());
         }
+    }
+
+    private void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void dismissProgressBar() {
@@ -608,6 +735,15 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
         mPaymentCache.reset();
+    }
+
+    private void displayConfirmationScreenMaintainCache(final Bundle bundle) {
+        dismissProgressBar();
+        Intent intent = new Intent(MainActivity.this, ConfirmationActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+        mPaymentCache.resetStateAndPaymentMethod();
     }
 
     /**
@@ -780,6 +916,13 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
             paymentRequest.setOrderNumber(getPaytrailOrderNumber());
         }
 
+        if (method.getType() == PaymentMethodType.MOBILE_PAY) {
+            paymentRequest.setPaymentMethodActionList("[{PaymentMethod:MobilePay}]");
+            paymentRequest.setRedirectUrl(String.format("%1$s://piasdk_mobilepay",
+                    eu.nets.pia.sample.BuildConfig.APPLICATION_ID));
+            paymentRequest.setMethod(new Method(method.getId()));
+        }
+
         return paymentRequest;
     }
 
@@ -818,12 +961,12 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
     }
 
     private void initPaytrailPayment(Bundle bundle, RegisterPaymentHandler mRegisterPaymentHandler) {
-        PaytrailRegisterPaymentRunnable paytrailRegisterPaymentRunnable = new PaytrailRegisterPaymentRunnable();
-        paytrailRegisterPaymentRunnable.setParam(bundle, mRegisterPaymentHandler);
-        new Thread(paytrailRegisterPaymentRunnable).start();
+        RegisterPaymentRunnable registerPaymentRunnable = new RegisterPaymentRunnable();
+        registerPaymentRunnable.setParam(bundle, mRegisterPaymentHandler);
+        new Thread(registerPaymentRunnable).start();
     }
 
-    class PaytrailRegisterPaymentRunnable implements Runnable {
+    class RegisterPaymentRunnable implements Runnable {
 
         Bundle bundle;
         RegisterPaymentHandler mRegisterPaymentHandler;
@@ -836,33 +979,48 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         @Override
         public void run() {
             if (mRegisterPaymentHandler != null) {
+                showProgressFromHandler();
                 TransactionInfo transactionInfo = mRegisterPaymentHandler.doRegisterPaymentRequest(false);
                 bundle.putParcelable(PiaSDK.BUNDLE_TRANSACTION_INFO, transactionInfo);
-                startPaytrail(bundle);
+
+                if (mPaymentCache.getPaymentMethodSelected() == PaymentMethodSelected.PAYTRAIL
+                        && validatePaytrailTansactionInfo(transactionInfo)) {
+                    dismissProgressFromHandler();
+                    PiaSDK.getInstance().startPaytrailProcess(MainActivity.this, bundle);
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, false);
+                    bundle.putParcelable(ConfirmationActivity.BUNDLE_ERROR_OBJECT,
+                            new PiaResult(false, new PiaError(TRANSACTION_INFO_NULL)));
+                    displayConfirmationScreen(bundle);
+                }
             }
         }
     }
 
-    private void startPaytrail(Bundle bundle) {
-        StartPaytrailRunnable startPaytrailRunnable = new StartPaytrailRunnable();
-        startPaytrailRunnable.setParam(bundle);
-        new Handler(Looper.getMainLooper()).post(startPaytrailRunnable);
+    //Validate the TransactionInfo details that we get from Register Call for Paytrail
+    private boolean validatePaytrailTansactionInfo(TransactionInfo transactionInfo) {
+        return transactionInfo != null && transactionInfo.getRedirectUrl() != null
+                && transactionInfo.getTransactionId() != null;
     }
 
-    class StartPaytrailRunnable implements Runnable {
-
-        private Bundle bundle;
-
-        void setParam(Bundle bundle) {
-            this.bundle = bundle;
-        }
-
-        @Override
-        public void run() {
-            if (bundle != null) {
-                PiaSDK.getInstance().startPaytrailProcess(MainActivity.this, bundle);
+    //Since ProgressBar is not called from Main Thread
+    private void showProgressFromHandler() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showProgressBar();
             }
-        }
+        });
     }
 
+    //Since ProgressBar is not called from Main Thread
+    private void dismissProgressFromHandler() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dismissProgressBar();
+            }
+        });
+    }
 }

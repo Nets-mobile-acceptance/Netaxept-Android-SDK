@@ -14,14 +14,6 @@
     <string name="currency_eur">EUR</string>
     <string name="currency_sek">SEK</string>
 
-
-    <!-- Confirmation screen -->
-    <string name="merchant_name">Bik Bok</string>
-    <string name="done_btn">Klart</string>
-    <string name="payment_canceled">Transaktionen avbruten.</string>
-    <string name="payment_approved">Transaktionen godkänd.\nDu kan räkna med att få varorna inom 1&#8211;3 arbetsdagar.</string>
-    <string name="payment_failure">Ett oväntat fel inträffade.\nVar vänlig kontakta kundtjänst om problemet kvarstår.</string>
-
     <!-- payment methods dialog -->
     <string name="payment_method_title">Välj betalmetod</string>
     <string name="payment_method_credit_cards">Kort</string>
@@ -33,14 +25,8 @@
 
     <!-- update customer id screen -->
     <string name="enter_customer_id">Ange kundnummer</string>
-    <string name="change_customer_id">Ändra kundnummer</string>
-    <string name="logged_in_as">Inloggad som: &lt;br> &lt;i>%1$s&lt;/i></string>
-    <string name="login">Loggga in</string>
     <string name="sign_up">Registrera</string>
-    <string name="register_card">Spara kort</string>
     <string name="customer_id_is_invalid">Vänligen ange kundnummer.</string>
-    <string name="production_label">Produktion</string>
-    <string name="test_label">Test</string>
     <string name="alert_ok">OK</string>
 
     <!-- Confirmation Screen -->

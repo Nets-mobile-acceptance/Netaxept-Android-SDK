@@ -21,6 +21,6 @@ package eu.nets.pia.sample.data;
 
 public enum PaymentMethodSelected {
 
-    VIPPS, SWISH, OTHERS, NOT_SELECTED, PAYTRAIL
+    VIPPS, SWISH, OTHERS, NOT_SELECTED, PAYTRAIL, MOBILE_PAY
 
 }

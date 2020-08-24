@@ -67,6 +67,7 @@ public class PaymentMethodsFragment extends Fragment {
     public static final String ID_PAYTRAILPOP = "PaytrailPOP";
     public static final String ID_PAYTRAILSAASTOPANKKI = "PaytrailSaastopankki";
     public static final String ID_PAYTRAILSPANKKI = "PaytrailSPankki";
+    public static final String ID_MOBILE_PAY = "MobilePay";
 
     @BindView(R.id.toolbar)
     CustomToolbar mToolbar;
@@ -155,6 +156,7 @@ public class PaymentMethodsFragment extends Fragment {
                     && !method.getId().equals(ID_PAY_PAL)
                     && !method.getId().equals(ID_VIPPS)
                     && !method.getId().contains(ID_SWISH)
+                    && !method.getId().contains(ID_MOBILE_PAY)
                     && !method.getId().contains(ID_PAYTRAILAKTIA)
                     && !method.getId().contains(ID_PAYTRAILALANDSBANKEN)
                     && !method.getId().contains(ID_PAYTRAILDANSKEBANK)
@@ -237,6 +239,11 @@ public class PaymentMethodsFragment extends Fragment {
         swish.setType(PaymentMethodType.SWISH);
         swish.setId("SwishM");
         methods.add(swish);
+
+        PaymentMethod mobilePay = new PaymentMethod();
+        mobilePay.setType(PaymentMethodType.MOBILE_PAY);
+        mobilePay.setId(ID_MOBILE_PAY);
+        methods.add(mobilePay);
 
         PaymentMethod aktia = new PaymentMethod();
         aktia.setType(PaymentMethodType.AKTIA);

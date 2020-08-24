@@ -47,6 +47,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MerchantRestClient {
 
+    public interface Completion {
+        void success(boolean isSuccess);
+    }
+
     private static final String TAG = MerchantRestClient.class.getSimpleName();
 
     private static MerchantRestClient mInstance;
@@ -54,6 +58,7 @@ public class MerchantRestClient {
     private Gson mGson;
     private PaymentFlowCache mPaymentCache;
     private final long CLIENT_TIMEOUT = 20;
+    private final String RESPONSE_CODE_OK = "OK";
 
     public interface PaymentFlowCallback {
         void onPaymentCallFinished();
@@ -172,7 +177,7 @@ public class MerchantRestClient {
      *
      * @param transactionId The ID of the transaction
      */
-    public void commitPayment(String transactionId) {
+    public void commitPayment(String transactionId, final boolean shouldRollbackIfUnsuccessful, final Completion completion) {
         LogUtils.logD(TAG, "[commitPayment] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
         mPaymentCache.setState(PaymentFlowState.SENDING_COMMIT_PAYMENT_CALL);
         mMerchantBackendAPI.processPayment(
@@ -185,19 +190,24 @@ public class MerchantRestClient {
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
                 if (response.isSuccessful()) {
                     LogUtils.logD(TAG, "[onResponse] [response.body():" + response.body() != null ? response.body().toString() : "" + "]");
+                    boolean finishedWithError = !response.body().getResponseCode().equalsIgnoreCase(RESPONSE_CODE_OK);
+                    mPaymentCache.setFinishedWithError(finishedWithError);
                     mPaymentCache.setPaymentCommitResponse(response.body());
-                    mPaymentCache.setFinishedWithError(false);
                 } else {
                     parseErrorResponse(response.errorBody());
+                    if (!shouldRollbackIfUnsuccessful)
+                        mPaymentCache.setState(PaymentFlowState.CALL_COMMIT_FAILED_NO_ROLLBACK);
                 }
                 notifyPaymentFlowEvents();
+                completion.success(response.isSuccessful());
             }
 
             @Override
             public void onFailure(Call<PaymentCommitResponse> call, Throwable t) {
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
                 mPaymentCache.setFinishedWithError(true);
-                notifyPaymentFlowEvents();
+                if (!shouldRollbackIfUnsuccessful) notifyPaymentFlowEvents();
+                completion.success(false);
             }
         });
     }
@@ -298,6 +308,7 @@ public class MerchantRestClient {
             }
         });
     }
+
 
     private void parseErrorResponse(ResponseBody errorBody) {
         try {
