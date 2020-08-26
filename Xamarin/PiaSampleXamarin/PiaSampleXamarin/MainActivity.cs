@@ -53,17 +53,6 @@ namespace PiaSampleXamarin
 
         ProgressDialog progressDialog;
 
-        //#internal_code_section_start
-        string merchantIdTest = "12002835";
-        string merchantIdProd = "733255";
-        string merchantBaseUrlTest = "https://api-gateway-pp.nets.eu/pia/test/merchantdemo/v2/payment/";
-        string merchantBaseUrlProd = "https://api-gateway-pp.nets.eu/pia/merchantdemo/v2/payment/";
-        string tokenIdTest = "492500******0004";
-        SchemeType schemeIdTest = SchemeType.Visa;
-        string expiryDateTest = "12/22";
-        //#internal_code_section_end
-
-        /*#external_code_section_start
         string merchantIdTest = "YOUR TEST NETAXEPT MERCHANT ID HERE";
         string merchantIdProd = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE";
         string merchantBaseUrlTest = "YOUR TEST BACKEND BASE URL HERE";
@@ -71,7 +60,6 @@ namespace PiaSampleXamarin
         string tokenIdTest = "YOUR TEST TOKED ID";
         SchemeType schemeIdTest = "YOUR TEST CARD PROVIDER NAME";
         string expiryDateTest = "YOUR TEST CARD EXPIRY DATE";
-        #external_code_section_end*/
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
