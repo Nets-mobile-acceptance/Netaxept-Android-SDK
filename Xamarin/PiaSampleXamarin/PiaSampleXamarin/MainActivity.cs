@@ -53,6 +53,8 @@ namespace PiaSampleXamarin
 
         ProgressDialog progressDialog;
 
+
+
         string merchantIdTest = "YOUR TEST NETAXEPT MERCHANT ID HERE";
         string merchantIdProd = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE";
         string merchantBaseUrlTest = "YOUR TEST BACKEND BASE URL HERE";
@@ -60,6 +62,7 @@ namespace PiaSampleXamarin
         string tokenIdTest = "YOUR TEST TOKED ID";
         SchemeType schemeIdTest = "YOUR TEST CARD PROVIDER NAME";
         string expiryDateTest = "YOUR TEST CARD EXPIRY DATE";
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {

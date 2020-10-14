@@ -1,7 +1,6 @@
 package eu.nets.pia.sample;
 
 import android.app.Application;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
@@ -54,31 +53,14 @@ public class SampleApplication extends Application {
      */
     private void customizeSDK() {
         //SDK Configuration
-        PiaInterfaceConfiguration.getInstance().setLabelTextColor(ContextCompat.getColor(this, R.color.custom_orange_color));
-        PiaInterfaceConfiguration.getInstance().setFieldTextColor(Color.BLUE);
-        PiaInterfaceConfiguration.getInstance().setFieldBackgroundColor(ContextCompat.getColor(this, R.color.accent));
-        PiaInterfaceConfiguration.getInstance().setButtonTextColor(Color.WHITE);
-        PiaInterfaceConfiguration.getInstance().setSwitchThumbColor(ContextCompat.getColor(this, R.color.pia_green_color));
-        PiaInterfaceConfiguration.getInstance().setButtonBackgroundColor(R.drawable.pia_save_card_button);
-        PiaInterfaceConfiguration.getInstance().setToolbarActionButtonTextColor(ContextCompat.getColor(this, R.color.colorAccent));
         PiaInterfaceConfiguration.getInstance().setLabelFont(Typeface.SANS_SERIF);
         PiaInterfaceConfiguration.getInstance().setButtonFont(Typeface.SERIF);
         PiaInterfaceConfiguration.getInstance().setFieldFont(Typeface.MONOSPACE);
         PiaInterfaceConfiguration.getInstance().setSaveCardSwitchDefault(true);
         PiaInterfaceConfiguration.getInstance().setLogoDrawable(ContextCompat.getDrawable(this, R.drawable.pia_digital_payment_by_nets));
-        PiaInterfaceConfiguration.getInstance().setErrorFieldBorderColor(Color.YELLOW);
-        PiaInterfaceConfiguration.getInstance().setValidFieldBorderColor(Color.BLUE);
-        PiaInterfaceConfiguration.getInstance().setToolbarBackgroundColor(ContextCompat.getColor(this, R.color.light_gray));
-        PiaInterfaceConfiguration.getInstance().setToolbarTitleColor(ContextCompat.getColor(this, R.color.pia_black_color));
-        PiaInterfaceConfiguration.getInstance().setBodyBackgroundColor(Color.WHITE);
-        PiaInterfaceConfiguration.getInstance().setTokenCardCVCLayoutBackgroundColor(ContextCompat.getColor(this, R.color.light_gray));
 
         //Scan Card UI configuration
-        PiaInterfaceConfiguration.getInstance().setCardIOBackgroundColor(ContextCompat.getColor(this, R.color.custom_orange_color));
-        PiaInterfaceConfiguration.getInstance().setCardIOButtonTextColor(Color.RED);
         PiaInterfaceConfiguration.getInstance().setCardIOButtonTextFont(Typeface.SERIF);
-        PiaInterfaceConfiguration.getInstance().setCardIOTextColor(Color.YELLOW);
-        PiaInterfaceConfiguration.getInstance().setCardIOPreviewFrameColor(Color.RED);
         PiaInterfaceConfiguration.getInstance().setCardIOTextFont(Typeface.MONOSPACE);
 
         //PiaSDK localization language
@@ -95,13 +77,11 @@ public class SampleApplication extends Application {
         PiaInterfaceConfiguration.getInstance().setActionButtonRightMargin(50);
         PiaInterfaceConfiguration.getInstance().setActionButtonBottomMargin(50);
         PiaInterfaceConfiguration.getInstance().setFieldRoundCorner(50);
-        PiaInterfaceConfiguration.getInstance().setSwitchTurnOffColor(ContextCompat.getColor(this, R.color.custom_orange_color));
         PiaInterfaceConfiguration.getInstance().setButtonRoundCorner((int) getResources().getDimension(R.dimen.custom_button_radius));
         GradientDrawable drawable = new GradientDrawable();
         drawable.setColor(ContextCompat.getColor(this, R.color.light_gray));
         drawable.setCornerRadius(8);
         PiaInterfaceConfiguration.getInstance().setCardIOButtonBackgroundSelector(drawable);
-        PiaInterfaceConfiguration.getInstance().setInputTextHintColor(ContextCompat.getColor(this, R.color.custom_orange_color));
-        PiaInterfaceConfiguration.getInstance().setSwitchOnTrackColor(ContextCompat.getColor(this, R.color.light_gray));
     }
+
 }

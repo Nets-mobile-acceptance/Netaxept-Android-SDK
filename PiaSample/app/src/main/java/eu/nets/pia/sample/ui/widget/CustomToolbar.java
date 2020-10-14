@@ -48,7 +48,6 @@ public class CustomToolbar extends LinearLayout {
     //endregion
 
 
-
     public CustomToolbar(Context context) {
         this(context, null);
     }
@@ -166,7 +165,7 @@ public class CustomToolbar extends LinearLayout {
         params.width = 100;
         mLeftView.setLayoutParams(params);
 
-        view.setPadding(10,10,10,10);
+        view.setPadding(10, 10, 10, 10);
 
         mLeftViewContainer.removeAllViews();
         mLeftViewContainer.addView(view);

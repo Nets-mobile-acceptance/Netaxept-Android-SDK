@@ -59,8 +59,10 @@ import eu.nets.pia.sample.ui.fragment.FragmentCallback;
 import eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment;
 import eu.nets.pia.ui.main.PiaActivity;
 import eu.nets.pia.utils.LogUtils;
-import eu.nets.pia.wallets.MobilePayError;
-import eu.nets.pia.wallets.MobilePayListener;
+import eu.nets.pia.wallets.MobileWallet;
+import eu.nets.pia.wallets.MobileWalletError;
+import eu.nets.pia.wallets.MobileWalletListener;
+import eu.nets.pia.wallets.PaymentProcess;
 import eu.nets.pia.wallets.Presenter;
 import eu.nets.pia.wallets.WalletPaymentRegistration;
 import eu.nets.pia.wallets.WalletURLCallback;
@@ -89,7 +91,7 @@ import static eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment.ID_SWISH;
 
 
 public class MainActivity extends AppCompatActivity implements MerchantRestClient.PaymentFlowCallback,
-        FragmentCallback, MobilePayListener {
+        FragmentCallback, MobileWalletListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final String ORDER_NUMBER = "PiaSDK-Android";
@@ -529,12 +531,6 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
             case PAY_PAL:
                 PiaSDK.getInstance().startPayPalProcess(this, bundle, mRegisterPaymentHandler);
                 break;
-            case VIPPS:
-                PiaSDK.getInstance().startVippsProcess(this, bundle, mRegisterPaymentHandler);
-                break;
-            case SWISH:
-                PiaSDK.getInstance().startSwishProcess(this, bundle, mRegisterPaymentHandler);
-                break;
             case AKTIA:
             case ALANDSBANKEN:
             case DANSKEBANK:
@@ -547,19 +543,33 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
             case SAASTOPANKKI_FINLAND:
                 initPaytrailPayment(bundle, mRegisterPaymentHandler);
                 break;
+            case VIPPS:
+            case SWISH:
             case MOBILE_PAY:
-                Boolean mobilePay = PiaSDK.initiateMobilePay(
-                        new Presenter(this),
-                        this,
-                        Uri.parse(String.format("%1$s://piasdk_mobilepay",
-                                BuildConfig.APPLICATION_ID)), // TODO: Use constant
-                        mobilePayRegistration
-                );
-                if (!mobilePay) { // MobilePay is not installed, lead user to a different payment method
-                    Toast.makeText(this, "Mobile Pay is not installed", Toast.LENGTH_LONG).show();
+                MobileWallet wallet = MobileWallet.MOBILEPAY;
+                PaymentProcess.WalletPayment walletProcess = null;
+
+                if (method.getType() == PaymentMethodType.MOBILE_PAY) {
+                    walletProcess = PaymentProcess.mobilePay(this);
+                }
+
+                if (method.getType() == PaymentMethodType.SWISH) {
+                    walletProcess = PaymentProcess.swish(this);
+                }
+
+                if (method.getType() == PaymentMethodType.VIPPS) {
+                    walletProcess = PaymentProcess.vipps(PiaSampleSharedPreferences.isPiaTestMode(), this);
+                }
+
+                Boolean canLaunch = PiaSDK.initiateMobileWallet(walletProcess, mobileWalletRegistration);
+
+                if (!canLaunch) {
+                    Toast.makeText(this, "Wallet is not installed", Toast.LENGTH_LONG).show();
                     return;
                 }
+
                 break;
+
             default:
                 PiaSDK.getInstance().start(this, bundle, mRegisterPaymentHandler);
         }
@@ -568,28 +578,27 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
     }
 
-    WalletPaymentRegistration mobilePayRegistration = new WalletPaymentRegistration() {
+    WalletPaymentRegistration mobileWalletRegistration = new WalletPaymentRegistration() {
         @Override
         public void registerPayment(final WalletURLCallback callback) {
-            final PaymentFlowCache paymentFlowCache = PaymentFlowCache.getInstance();
             final PaymentRegisterRequest paymentRegisterRequest = mPaymentCache.getPaymentRegisterRequest();
             paymentRegisterRequest.setStoreCard(false);
             new Thread() {
                 @Override
                 public void run() {
                     MerchantRestClient.getInstance().registerPayment(paymentRegisterRequest);
-                    PaymentRegisterResponse paymentRegisterResponse = paymentFlowCache.getPaymentRegisterResponse();
+                    PaymentRegisterResponse paymentRegisterResponse = mPaymentCache.getPaymentRegisterResponse();
                     if (paymentRegisterResponse != null && paymentRegisterResponse.getWalletUrl() != null) {
-                        callback.walletURL(Uri.parse(paymentRegisterResponse.getWalletUrl()));
+                        callback.successWithWalletURL(Uri.parse(paymentRegisterResponse.getWalletUrl()));
                     } else {
-                        callback.walletURL(null);
+                        callback.failureWithError(null);
                     }
                 }
             }.start();
 
         }
     };
-
+    
     /**
      * Override the OnActivityResult, to receive the payment result from PiaSDK
      * <p>
@@ -654,12 +663,12 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
     }
 
     @Override
-    public void onMobilePayRedirect() {
+    public void onMobileWalletRedirect(MobileWallet wallet) {
         commitMobilePay(true, dismissSdkProgressIndicator);
     }
 
     @Override
-    public void onMobilePayRedirectInterrupted() {
+    public void onMobileWalletRedirectInterrupted(MobileWallet wallet) {
         commitMobilePay(false, dismissSdkProgressIndicator);
     }
 
@@ -671,7 +680,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
     };
 
     @Override
-    public void onMobilePayAppSwitchFailure(MobilePayError error) {
+    public void onMobileWalletAppSwitchFailure(MobileWallet wallet, MobileWalletError error) {
         switch (error) {
             case INVALID_WALLET_URL: // The Wallet URL is invalid, typically null
             case NETWORK_ERROR: // Check `error.data` for detail error response

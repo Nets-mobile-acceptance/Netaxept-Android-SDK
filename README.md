@@ -1,4 +1,4 @@
-# PiA - Netaxept Android SDK v1.8.0
+# PiA - Netaxept Android SDK v2.0.0
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -14,7 +14,7 @@ PiA Netaxept Android SDK is a library that provides the native In-App interactio
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:1.8.0') { transitive = true; changing=true; }
+implementation('eu.nets.pia:pia-sdk:2.0.0') { transitive = true; changing=true; }
 ```
 
 **Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
@@ -66,109 +66,6 @@ Supported payment methods:
 - Vipps
 - Swish
 - MobilePay
-
-# Usage
-----
-Depending on your selected payment method, the SDK can be launched in multiple functionalities: **Register Card, Basic Payment, Easy Payment, PayPal Payment** etc. Please check our full [documentation](documentation/) to see more.
-
-In the example below, the SDK is launched to perform a payment with a new card.
-
-- Create you own RegisterPayment handler, implementing the SDK's `RegisterPaymentHandler`
-
-```java
-    public class RegisterPaymentHandlerImpl implements RegisterPaymentHandler {
-         @Override
-        public TransactionInfo doRegisterPaymentRequest(boolean saveCard) {
-            PaymentFlowCache paymentFlowCache = PaymentFlowCache.getInstance();
-            PaymentRegisterRequest paymentRegisterRequest = paymentFlowCache.getPaymentRegisterRequest();
-            paymentRegisterRequest.setStoreCard(saveCard);
-
-            MerchantRestClient.getInstance().registerPayment(paymentRegisterRequest);
-
-            if (!paymentFlowCache.isFinishedWithError()) {
-                PaymentRegisterResponse paymentRegisterResponse = paymentFlowCache.getPaymentRegisterResponse();
-                return new TransactionInfo(paymentRegisterResponse.getTransactionId(),
-                        paymentRegisterResponse.getRedirectOK());
-            }
-
-            return null;
-        }
-    }
-```
-
-- Initialize and launch SDK to perform payment:
-
-```java
-    public class MainActivity extends AppCompatActivity {
-
-        private RegisterPaymentHandler mRegisterPaymentHandler;
-        private static final String CURRENCY = "EUR";
-        private static final String ORDER_NUMBER = "PiaSDK-Android";
-
-         @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            mRegisterPaymentHandler = new RegisterPaymentHandlerImpl();
-
-        }
-
-        private MerchantInfo getMerchantInfo() {
-            boolean testMode = true; //Notify the SDK to use the test environment
-            return new MerchantInfo(BuildConfig.MERCHANT_ID, testMode);
-        }
-
-        private OrderInfo getOrderInfo() {
-            String priceString = mPriceView.getText().toString();
-            double price = priceString.isEmpty() ? 0 : Double.parseDouble(priceString);
-
-            return new OrderInfo(
-            price,
-            CURRENCY
-            );
-        }
-
-        private void callPiaSDK(PaymentMethod method) {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, getMerchantInfo());
-            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, getOrderInfo());
-            PiaSDK.getInstance().start(MainActivity.this, bundle, mRegisterPaymentHandler);
-        }
-    }
-```
-
-- In the activity which launched the SDK, override the `onActivityResult()` to handle the SDK result:
-
-```java
-...
-        @Override
-        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-            if (requestCode != PiaSDK.PIA_SDK_REQUEST) {
-                super.onActivityResult(requestCode, resultCode, data);
-                return;
-            }
-
-            //in case user cancelLed
-            Bundle bundle = new Bundle();
-            if (resultCode == RESULT_CANCELED) {
-                rollbackTransaction();
-                return;
-            }
-
-            if (resultCode == RESULT_OK) {
-                PiaResult result = data.getParcelableExtra(PiaActivity.BUNDLE_COMPLETE_RESULT);
-                if (result.isSuccess()) {
-                    //in case of success, commit the payment
-                    mRestClient.commitPayment(
-                                mPaymentCache.getPaymentRegisterResponse().getTransactionId()
-                            );
-                } else {
-                    // Otherwise, handle the failure case
-                }
-            }
-        }
-...
-```
 
 
 # Contact

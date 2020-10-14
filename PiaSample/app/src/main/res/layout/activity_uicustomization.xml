@@ -161,7 +161,7 @@
                 <ImageView
                     android:id="@+id/nets_button_background"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/pia_custom_blue_tint_color"
+                    android:background="@color/dark_custom_blue_tint_color"
                     android:contentDescription="@string/button_text_color" />
 
                 <ImageView
@@ -244,6 +244,7 @@
 
             </LinearLayout>
 
+
             <LinearLayout
                 android:id="@+id/holder_text_field_background_color"
                 style="@style/UICustomizationHolderSectionStyle"
@@ -281,7 +282,7 @@
                 <ImageView
                     android:id="@+id/nets_text_on_hint_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/light_gray"
+                    android:background="@color/pia_light_gray_color"
                     android:contentDescription="@string/text_on_hint_color" />
 
                 <ImageView
@@ -353,7 +354,7 @@
                 <ImageView
                     android:id="@+id/default_text_border_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/light_gray"
+                    android:background="@color/pia_light_gray_color"
                     android:contentDescription="@string/input_text_border_color" />
 
                 <ImageView
@@ -425,7 +426,7 @@
                 <ImageView
                     android:id="@+id/nets_switch_turn_off_color"
                     style="@style/UICustomizationColorItemStyle"
-                    android:background="@color/accent"
+                    android:background="@color/pia_gray_color"
                     android:contentDescription="@string/switch_turn_off_color_text" />
 
                 <ImageView
@@ -686,7 +687,7 @@
                     <ImageView
                         android:id="@+id/nets_cardio_frame_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:background="@android:color/white"
+                        android:background="@android:color/black"
                         android:contentDescription="@string/cardio_frame_color" />
 
                     <ImageView
@@ -734,7 +735,7 @@
                     <ImageView
                         android:id="@+id/nets_cardio_button_text_color"
                         style="@style/UICustomizationColorItemStyle"
-                        android:background="@color/primary"
+                        android:background="@android:color/black"
                         android:contentDescription="@string/cardio_button_text_color" />
 
                     <ImageView
