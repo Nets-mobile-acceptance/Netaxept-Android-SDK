@@ -124,6 +124,43 @@ The SDK can be started in 4 ways, depending on the content of the Bundle
         
         PiaSDK.Instance.StartPayPalProcess(this, bundle, new Handler());
         ```
+	5. Pay with Paytrail
+    
+        ```java
+        MerchantInfo merchant = new MerchantInfo(merchantIdTest, true);
+        
+        Bundle bundle = new Bundle();
+        bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
+        bundle.PutParcelable(PiaSDK.BundleOrderInfo, order);
+        
+		//transactionInfo details will be receied from doing the register call for registering the transaction.
+        bundle.PutParcelable(PiaSDK.BundleTransactionInfo, transactionInfo);
+        PiaSDK.Instance.StartPaytrailProcess(this, bundle);
+        ```
+
+	6. Pay with Mobile Wallet
+    
+        ```java
+        /* Vipps Payment
+		* 
+        * isTestMode - true if Test environment and false for Production.
+        */
+        PaymentProcess.WalletPayment walletProcess = PaymentProcess.Vipps(true, this);
+
+
+        /*
+        * Swish Payment
+        */
+        PaymentProcess.WalletPayment walletProcess = PaymentProcess.Swish(this);
+
+
+        /*
+        * MobilePay Payment
+        */
+        PaymentProcess.WalletPayment walletProcess = PaymentProcess.MobilePay(this);
+
+        bool canLaunch = PiaSDK.InitiateMobileWallet(walletProcess, this);
+        ```
 
 For technical information, please check our detailed overview documentation on our [GitHub Page](../).
 
@@ -131,3 +168,4 @@ For technical information, please check our detailed overview documentation on o
 ---
 - [Naxam.Retrofit2.ConvertGson.Droid](https://github.com/NAXAM/retrofit2-convertgson-android-binding)
 - [RetrofitScalarsBinding](https://github.com/square/retrofit/tree/master/retrofit-converters/scalars)
+- [Xamarin.Kotlin.StdLib] (Nugat package)

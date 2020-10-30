@@ -31,11 +31,13 @@ import java.util.List;
 
 public class RNSDKPackage implements ReactPackage {
 
+    public SDKModule sdkModule;
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
+        sdkModule = new SDKModule(reactContext);
         List<NativeModule> modules = new ArrayList<>();
         //and the Pia SDK bridge module in the list 
-        modules.add(new SDKModule(reactContext));
+        modules.add(sdkModule);
         return modules;
     }
 

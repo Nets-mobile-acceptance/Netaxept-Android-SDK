@@ -3,7 +3,9 @@ package com.piasample;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
@@ -11,6 +13,9 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.module.annotations.ReactModule;
+
+import org.jetbrains.annotations.NotNull;
 
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
@@ -22,6 +27,12 @@ import eu.nets.pia.data.model.SchemeType;
 import eu.nets.pia.data.model.TokenCardInfo;
 import eu.nets.pia.data.model.TransactionInfo;
 import eu.nets.pia.ui.main.PiaActivity;
+import eu.nets.pia.wallets.MobileWallet;
+import eu.nets.pia.wallets.MobileWalletError;
+import eu.nets.pia.wallets.MobileWalletListener;
+import eu.nets.pia.wallets.PaymentProcess;
+import eu.nets.pia.wallets.WalletPaymentRegistration;
+import eu.nets.pia.wallets.WalletURLCallback;
 
 
 /**
@@ -62,11 +73,14 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     //end
 
 
+    Callback registerPaymentCallback;
+    WalletURLCallback walletURLCallback;
+    String walletType;
+
+
     public SDKModule(final ReactApplicationContext reactContext) {
         super(reactContext);
-
         reactContext.addActivityEventListener(this);
-
     }
 
     /**
@@ -92,7 +106,6 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
                     } else {
                         paymentResult.reject("Unknown error");
                     }
-
                 }
             }
         }
@@ -172,6 +185,11 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     @ReactMethod
     public void buildTokenCardInfo(String tokenId, String schemeId, String expiryDate, boolean cvcRequired) {
         tokenCardInfo = new TokenCardInfo(tokenId, mapToSchemeIdFromPaymentResponse(schemeId), expiryDate, cvcRequired);
+    }
+
+    @ReactMethod
+    public void setWalletType(String walletType) {
+        this.walletType = walletType;
     }
 
     /**
@@ -336,70 +354,6 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
      * This callback will notify you when the register payment API call is required to be done from your application.
      * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
-     *
-     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
-     */
-    @ReactMethod
-    public void startVippsProcess(final Callback registerPaymentCallback) {
-        Bundle bundle = new Bundle();
-        if (merchantInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
-        }
-        if (orderInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
-        }
-        PiaSDK.getInstance().startVippsProcess(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
-            @Override
-            public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {
-                registerPaymentCallback.invoke(saveCard);
-                try {
-
-                    return getTransactionInfo();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    threadSynchronizator.notify();
-                    return null;
-                }
-            }
-        });
-    }
-
-    /**
-     * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
-     * This callback will notify you when the register payment API call is required to be done from your application.
-     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
-     *
-     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
-     */
-    @ReactMethod
-    public void startSwishProcess(final Callback registerPaymentCallback) {
-        Bundle bundle = new Bundle();
-        if (merchantInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
-        }
-        if (orderInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
-        }
-        PiaSDK.getInstance().startSwishProcess(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
-            @Override
-            public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {
-                registerPaymentCallback.invoke(saveCard);
-                try {
-
-                    return getTransactionInfo();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    threadSynchronizator.notify();
-                    return null;
-                }
-            }
-        });
-    }
-
-    /**
-     * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
-     * This callback will notify you when the register payment API call is required to be done from your application.
-     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
      */
     @ReactMethod
     public void startPaytrailProcess() {
@@ -415,6 +369,64 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
         }
         PiaSDK.getInstance().startPaytrailProcess(getCurrentActivity(), bundle);
     }
+
+
+
+ /*   @ReactMethod
+    public void setInterruptReceiver(Callback interruptResultReceiver){
+        this.interruptResultReceiver = interruptResultReceiver;
+    }*/
+    /**
+     * Single Api for initiating all wallet payments, call this method and instantiate the Callback Parameter
+     * walletType should be set before calling this method
+     * This callback will notify you when the register payment API call is required to be done from your application.
+     *
+     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
+     */
+    @ReactMethod
+    public void startWalletPayment(final Callback registerPaymentCallback) {
+
+        this.registerPaymentCallback = registerPaymentCallback;
+        MainActivity mainActivity = (MainActivity) getCurrentActivity();
+        PaymentProcess.WalletPayment walletProcess = null;
+        if (walletType.equals("MobilePay")) {
+            walletProcess = PaymentProcess.mobilePay(mainActivity);
+        }
+
+        boolean canLaunch = PiaSDK.initiateMobileWallet(walletProcess, mobileWalletRegistration);
+
+        if (!canLaunch) paymentResult.resolve("Wallet App not installed");
+
+    }
+
+    WalletPaymentRegistration mobileWalletRegistration = new WalletPaymentRegistration() {
+        @Override
+        public void registerPayment(final WalletURLCallback callback) {
+            walletURLCallback = callback;
+            registerPaymentCallback.invoke();
+        }
+    };
+
+    /**
+     * Returns the result back to SDK
+     * @param walletUrl - Wallet Url received on register api call
+     */
+    @ReactMethod
+    public void openWalletApp(String walletUrl) {
+        if (walletUrl != null) {
+            walletURLCallback.successWithWalletURL(Uri.parse(walletUrl));
+        }else
+            walletURLCallback.failureWithError(null);
+    }
+
+    public void returnSuccessfulRedirectResult(String result) {
+        paymentResult.resolve(result);
+    }
+
+    public void returnInterruption(String result) {
+        paymentResult.reject(result);
+    }
+
 
     /**
      * Method used to clear the local variabled after a payment process has ended (either success, error or cancel)

@@ -1,6 +1,20 @@
 package com.piasample;
 
+import android.util.Log;
+
 import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactNativeHost;
+import com.facebook.react.ReactPackage;
+import com.facebook.react.bridge.NativeModule;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import eu.nets.pia.wallets.MobileWallet;
+import eu.nets.pia.wallets.MobileWalletError;
+import eu.nets.pia.wallets.MobileWalletListener;
 
 /**
  * MIT License
@@ -21,7 +35,7 @@ import com.facebook.react.ReactActivity;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-public class MainActivity extends ReactActivity {
+public class MainActivity extends ReactActivity implements MobileWalletListener {
 
     /**
      * Returns the name of the main component registered from JavaScript.
@@ -31,4 +45,25 @@ public class MainActivity extends ReactActivity {
     protected String getMainComponentName() {
         return "PiaSample";
     }
+
+    /* Here in the overridden methods we need to access the SDKModule to pass the result back to App.js*/
+ 
+    @Override
+    public void onMobileWalletAppSwitchFailure(MobileWallet mobileWallet, MobileWalletError mobileWalletError) {
+        RNSDKPackage reactPackage = (RNSDKPackage) this.getReactNativeHost().getReactInstanceManager().getPackages().get(2);
+        reactPackage.sdkModule.returnSuccessfulRedirectResult("ERROR");
+    }
+
+    @Override
+    public void onMobileWalletRedirect(MobileWallet mobileWallet) {
+        RNSDKPackage reactPackage = (RNSDKPackage) this.getReactNativeHost().getReactInstanceManager().getPackages().get(2);
+        reactPackage.sdkModule.returnSuccessfulRedirectResult("SUCCESS");
+    }
+
+    @Override
+    public void onMobileWalletRedirectInterrupted(MobileWallet mobileWallet) {
+        RNSDKPackage reactPackage = (RNSDKPackage) this.getReactNativeHost().getReactInstanceManager().getPackages().get(2);
+        reactPackage.sdkModule.returnInterruption("INTERRUPTED");
+    }
+
 }

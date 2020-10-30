@@ -58,7 +58,7 @@
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         ...
         
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.0.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.0.1'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         
         ...
         }
@@ -588,7 +588,7 @@
 	    }
 	 }</code></pre>
 	 
-<p>Vipps and MobilePay payment also support AUTH+CAPTURE process. If autoSale is set to “true�?, Netaxept authorizes and immediately captures the amount set in the REGISTER call. It is optional and default value is false (authorization only and capture from the backend with additional process call). </p>	 
+<p>Vipps and MobilePay payment also support AUTH+CAPTURE process. If autoSale is set to true, Netaxept authorizes and immediately captures the amount set in the REGISTER call. It is optional and default value is false (authorization only and capture from the backend with additional process call). </p>	 
 	 
 	 <strong>Vipps Payment Registration</strong>
 <p>In case of Vipps, user's phone number is an optional parameter. If you choose not to pass the phone number, you need to additionally pass the isApp = true parameter in the registration request body. If choosing to pass user's phone number, use the following format: (Norwegian prefix): phoneNumber = +4711111111. Netaxept REST API expects URL encoded phone number. The encoding can take place in the client or merchant backend.</p>
@@ -1472,17 +1472,24 @@ The above copyright notice and this permission notice shall be included in all c
 </ul>
 
 <h4><a id="v180_Released_02JULY2020_664"></a>v1.8.0 Released: 02-JULY-2020</h4>
-<h4><a id="Release_notes_736"></a>Release notes:</h4>
+<h4><a id="Release_notes_737"></a>Release notes:</h4>
 <ul>
 	<li>The SDK now supports MobilePay payment flow. Refer to <a href="#MobilePay_payment_flow_description">our documentation</a> for more information.</li>
 </ul>
 
-<h4><a id="v200_Released_02JULY2020_664"></a>v2.0.0 Released: 14-OCTOBER-2020</h4>
-<h4><a id="Release_notes_736"></a>Release notes:</h4>
+<h4><a id="v200_Released_14OCTOBER2020_665"></a>v2.0.0 Released: 14-OCTOBER-2020</h4>
+<h4><a id="Release_notes_738"></a>Release notes:</h4>
 <ul>
 		<li>Added new UI customization API to create or customize your theme for light and dark modes, check <a href="https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/blob/master/documentation/START%20-%20Overview%20of%20Netaxept%20Android%20SDK.html">here</a>.</li>
 		<li>Unified Wallet Payment APIs to have a single API for initiating all wallet payment.</li>
 		<li>Replaced some Generic Error codes with more specific error codes and descriptions.</li>
+</ul>
+
+<h4><a id="v201_Released_02NOVEMBER2020_666"></a>v2.0.1 Released: 02-NOVEMBER-2020</h4>
+<h4><a id="Release_notes_739"></a>Release notes:</h4>
+<ul>
+		<li>Added ReactNative support for new unified APIs to initiate wallet payment and new UI customization APIs to create or customize your theme for light and dark modes.</li>
+		<li>Added Xamarin support for new unified APIs to initiate wallet payment and new UI customization APIs to create or customize your theme for light and dark modes.</li>
 </ul>
 						
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>

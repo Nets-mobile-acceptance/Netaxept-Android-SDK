@@ -66,10 +66,7 @@ export default class App extends Component<Props> {
             <Button style={styles.button} onPress={this.payViaPaypal} title="Paypal" />
           </View>
           <View style={styles.button}>
-            <Button style={styles.button} onPress={this.payViaVipps} title="Vipps" />
-          </View>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.payViaSwish} title="Swish" />
+            <Button style={styles.button} onPress={this.payViaMobilePay} title="MobilePay Payment" />
           </View>
           <View style={styles.button}>
             <Button style={styles.button} onPress={this.paySavedCardWithSkipConfirm} title="Pay 10 EUR - Saved Card(Skip Confirmation)" />
@@ -176,62 +173,46 @@ export default class App extends Component<Props> {
     });
   }
 
-  payViaVipps = () => {
+  payViaMobilePay = () => {
 
-    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, false);
-    piaSDKModule.buildOrderInfo(1, "NOK");
-    //set the payment result promise
-    piaSDKModule.handleSDKResult().then(() => {
-      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+   let walletType = "MobilePay"
+
+   //Set wallet type before initiating the wallet payment using startWalletPayment
+   piaSDKModule.setWalletType(walletType);
+
+  
+   //set the payment result promise
+   piaSDKModule.handleSDKResult().then((result) => {
+    ToastAndroid.show(result, ToastAndroid.SHORT);
+  }).catch((error) => {
+    ToastAndroid.show('Interruption', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
     }).catch((error) => {
-      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+      ToastAndroid.show(error, ToastAndroid.SHORT);
     });
+  });
 
-    piaSDKModule.startVippsProcess((saveCardBool) => {
+
+
+    //Same api for initiating all wallet payments
+    piaSDKModule.startWalletPayment(() => {
+
       fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
         method: 'POST',
         headers: {
           'Accept': 'application/json;charset=utf-8;version=2.0',
           'Content-Type': 'application/json;charset=utf-8;version=2.0'
         },
-        body: '{"amount":{"currencyCode":"NOK","totalAmount":100,"vatAmount":0},"customerId":"000013","method":{"id":"Vipps"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:Vipps}]","phoneNumber":"+4748059560","redirectUrl":"eu.nets.pia.sample://piasdk","storeCard":false}'
+        body: '{"amount":{"currencyCode":"EUR","totalAmount":1000,"vatAmount":0},"customerId":"000013","method":{"id":"MobilePay"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:MobilePay}]","redirectUrl":"com.piasample://piasdk_mobilepay","storeCard":false}'
+            
       }).then((response) => response.json())
         .then((responseJson) => {
-          piaSDKModule.buildTransactionInfo(responseJson.transactionId, null, responseJson.walletUrl);
+          piaSDKModule.openWalletApp(responseJson.walletUrl);
         })
         .catch((error) => {
           console.error(error);
-          piaSDKModule.buildTransactionInfo(null, null, null);
-        });
-    });
-  }
-
-  payViaSwish = () => {
-
-    piaSDKModule.buildMerchantInfo(netsProduction.merchantIdProd, false, false);
-    piaSDKModule.buildOrderInfo(1, "SEK");
-    //set the payment result promise
-    piaSDKModule.handleSDKResult().then(() => {
-      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
-    }).catch((error) => {
-      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
-    });
-
-    piaSDKModule.startSwishProcess((saveCardBool) => {
-      fetch(netsProduction.backendUrlProd + "v2/payment/" + netsProduction.merchantIdProd + "/register", {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json;charset=utf-8;version=2.0',
-          'Content-Type': 'application/json;charset=utf-8;version=2.0'
-        },
-        body: '{"amount":{"currencyCode":"SEK","totalAmount":100,"vatAmount":0},"customerId":"000013","method":{"id":"SwishM"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:SwishM}]","redirectUrl":"eu.nets.pia.sample://piasdk","storeCard":false}'
-      }).then((response) => response.json())
-        .then((responseJson) => {
-          piaSDKModule.buildTransactionInfo(responseJson.transactionId, null, responseJson.walletUrl);
-        })
-        .catch((error) => {
-          console.error(error);
-          piaSDKModule.buildTransactionInfo(null, null, null);
+          piaSDKModule.openWalletApp(null);
         });
     });
   }
