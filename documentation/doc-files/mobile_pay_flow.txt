@@ -1,0 +1,65 @@
+@startuml
+skinparam backgroundColor transparent
+actor "User"
+skinparam BoxPadding 30
+box "Mobile device" #LightCyan
+activate "3rd party app" #gold
+activate "PiA SDK" #cyan
+end box
+box "Merchant backend" #LightCyan
+activate "Merchant backend" #gold
+activate "NetAxept client" #cyan
+end box
+group Initialization and app switch
+"User" -> "3rd party app": Click Buy
+"3rd party app"->"Merchant backend": Retrieve payment method list
+"Merchant backend"->"3rd party app": Available payment method list
+"3rd party app"->"3rd party app": Show payment method list
+"User" -> "3rd party app": Select MobilePay as payment method
+"3rd party app"->"PiA SDK": Initialize PiA SDK with register callback
+"PiA SDK" --> "3rd party app": Callback to register the transaction synchronously
+"3rd party app"->"Merchant backend": Provide register data for MobilePay
+"Merchant backend"->"NetAxept client": Register payment
+"NetAxept client"->"NetAxept": **Register API call** with RegisterRequest serviceType=M \n&paymentMethodActionList=[{"PaymentMethod":"MobilePay"}]\n&currencyCode=DKK&autoSale=false\n&redirectUrl=appId://piasdk_mobilepay&token=**Merchant API token**
+activate "NetAxept" #white
+"NetAxept"->"MobilePay Backend": Initiate payment
+activate "MobilePay Backend" #gold
+"MobilePay Backend"->"NetAxept": Initiate success
+"NetAxept"->"NetAxept client": OK with Transaction id & WalletUrl
+"NetAxept client"->"Merchant backend": OK with Transaction id & WalletUrl
+"Merchant backend"->"3rd party app": OK with Transaction id &\nWalletUrl
+"3rd party app"->"PiA SDK": Return WalletUrl
+"PiA SDK" -> "MobilePay App": Launch MobilePay app  
+activate "MobilePay App" #cyan
+end
+group Complete payment
+"User" -> "MobilePay App": Confirm payment request
+"MobilePay App" --> "MobilePay Backend": AcceptRequest
+"MobilePay Backend" -> "NetAxept": AuthorizeStarted 
+"NetAxept"->"NetAxept": Automatic authorization
+"NetAxept"->"MobilePay Backend": Result OK
+"MobilePay Backend"->"MobilePay App": Result OK
+"MobilePay App" -> "User": Show result 
+"MobilePay App" -> "PiA SDK": Automatic App-switch
+deactivate "MobilePay App"
+deactivate "MobilePay Backend"
+"PiA SDK" -> "3rd party app": Result OK 
+"3rd party app"->"Merchant backend": Process payment
+"Merchant backend"->"NetAxept client": Process payment
+...
+group Netaxept Callback
+"NetAxept" -> "NetAxept client": Callback with Transaction id
+"NetAxept client"->"NetAxept": **Query API call** with Transaction id&\n**Merchant API token**
+"NetAxept"->"NetAxept client": Authorization OK
+"NetAxept client"->NetAxept: **Process API call** with Transaction id&\nOperation=CAPTURE &\n**Merchant API token**
+NetAxept->"NetAxept client": Result OK
+"NetAxept client"->"NetAxept": **Query API call** with Transaction id&\n**Merchant API token**
+"NetAxept"->"NetAxept client": Transaction OK
+deactivate "NetAxept"
+end
+"NetAxept client"->"Merchant backend": Transaction OK
+"Merchant backend"->"3rd party app": Transaction OK
+"3rd party app"->"User": Payment is successful!
+note over "3rd party app": Show "Payment success!"
+end
+@enduml

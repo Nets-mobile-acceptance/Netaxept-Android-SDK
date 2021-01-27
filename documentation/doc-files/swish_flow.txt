@@ -1,0 +1,62 @@
+@startuml
+skinparam backgroundColor transparent
+actor "User"
+skinparam BoxPadding 30
+box "Mobile device" #LightCyan
+activate "3rd party app" #gold
+end box
+box "Merchant backend" #LightCyan
+activate "Merchant backend" #gold
+activate "NetAxept client" #cyan
+end box
+
+group Initialization and app switch
+"User" -> "3rd party app": Click Buy
+"3rd party app"->"Merchant backend": Retrieve payment method list
+"Merchant backend"->"3rd party app": Available payment method list
+"3rd party app"->"3rd party app": Show payment method list
+"User" -> "3rd party app": Select Swish as payment method
+"3rd party app"->"Merchant backend": Provide register data for Swish
+"Merchant backend"->"NetAxept client": Register payment
+activate "NetAxept" #cyan
+"NetAxept client"->"NetAxept": **Register API call** with RegisterRequest serviceType=M \n&paymentMethodActionList=[{"PaymentMethod":"SwishM"}]\n&currencyCode=SEK\n&redirectUrl=piasdk://piasdk.redirect&token=**Merchant API token**
+"NetAxept"->"NetAxept client": OK with Transaction id & WalletUrl
+"NetAxept client"->"Merchant backend": OK with Transaction id & WalletUrl
+"Merchant backend"->"3rd party app": OK with Transaction id &\nWalletUrl
+activate "Swish App" #cyan
+"3rd party app"->"Swish App": Launch Swish App
+deactivate "Swish App"
+end
+
+group Complete payment
+"User" -> "Swish App": Confirm payment request
+activate "BankID App" #cyan
+"Swish App" -> "BankID App": App switch to BankID
+"User" -> "BankID App": Approve payment
+"BankID App" -> "3rd party app": App switch
+deactivate "BankID App"
+"3rd party app" -> "Merchant backend": Get Swish transaction status 
+"Merchant backend" -> "Merchant backend": Hang until callback is received from Netaxept or until timeout
+deactivate "BankID App"
+deactivate "Swish App"
+
+group Netaxept Callback
+"NetAxept" -> "NetAxept client": Callback with Transaction status changed
+"NetAxept client"->"NetAxept": Perform Query API call with Transaction id
+"NetAxept"->"NetAxept client": Query response with transaction status
+"NetAxept client"->"NetAxept client": Check if Query response contains \n**AUTHORIZED=true** amd **AmountCaptured > 0** if not, \ndo not deliver the response and wait for next callback \nand repeat this whole block
+
+deactivate "NetAxept"
+end
+
+"NetAxept client"->"Merchant backend": Transaction OK
+"Merchant backend"->"3rd party app": Transaction OK
+"3rd party app"->"User": Payment is successful!
+note over "3rd party app": Show "Payment success!"
+end
+
+
+deactivate "Merchant backend"
+deactivate "NetAxept client"
+deactivate "3rd party app"
+@enduml

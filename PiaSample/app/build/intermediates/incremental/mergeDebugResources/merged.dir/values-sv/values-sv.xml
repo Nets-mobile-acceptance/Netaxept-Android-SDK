@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <string msgid="5976598919945601918" name="abc_action_bar_home_description">"Navigera hem"</string>
+    <string msgid="8388173803310557296" name="abc_action_bar_up_description">"Navigera uppåt"</string>
+    <string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"Fler alternativ"</string>
+    <string msgid="4692188335987374352" name="abc_action_mode_done">"Klar"</string>
+    <string msgid="1189761859438369441" name="abc_activity_chooser_view_see_all">"Visa alla"</string>
+    <string msgid="2165779757652331008" name="abc_activitychooserview_choose_application">"Välj en app"</string>
+    <string msgid="4215997306490295099" name="abc_capital_off">"AV"</string>
+    <string msgid="884982626291842264" name="abc_capital_on">"PÅ"</string>
+    <string msgid="8833365367933412986" name="abc_menu_alt_shortcut_label">"Alt + "</string>
+    <string msgid="2223301931652355242" name="abc_menu_ctrl_shortcut_label">"Ctrl + "</string>
+    <string msgid="838001238306846836" name="abc_menu_delete_shortcut_label">"delete"</string>
+    <string msgid="7986526966204849475" name="abc_menu_enter_shortcut_label">"retur"</string>
+    <string msgid="375214403600139847" name="abc_menu_function_shortcut_label">"Funktion + "</string>
+    <string msgid="4192209724446364286" name="abc_menu_meta_shortcut_label">"Meta + "</string>
+    <string msgid="4741552369836443843" name="abc_menu_shift_shortcut_label">"Skift + "</string>
+    <string msgid="5473865519181928982" name="abc_menu_space_shortcut_label">"blanksteg"</string>
+    <string msgid="6180552449598693998" name="abc_menu_sym_shortcut_label">"Symbol + "</string>
+    <string msgid="5520303668377388990" name="abc_prepend_shortcut_label">"Meny + "</string>
+    <string msgid="7208076849092622260" name="abc_search_hint">"Sök …"</string>
+    <string msgid="3741173234950517107" name="abc_searchview_description_clear">"Ta bort frågan"</string>
+    <string msgid="693312494995508443" name="abc_searchview_description_query">"Sökfråga"</string>
+    <string msgid="3417662926640357176" name="abc_searchview_description_search">"Sök"</string>
+    <string msgid="1486535517437947103" name="abc_searchview_description_submit">"Skicka fråga"</string>
+    <string msgid="2293578557972875415" name="abc_searchview_description_voice">"Röstsökning"</string>
+    <string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"Dela med"</string>
+    <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Dela med <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
+    <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Komprimera"</string>
+    <string name="alert_ok">OK</string>
+    <string name="app_name">PiaSample</string>
+    <string name="card_expire_soon">Utår snart!</string>
+    <string name="card_expired">Utgånget!</string>
+    <string name="card_expired_message">Kortet utgånget. Välj ett giltigt kort! </string>
+    <string name="card_saved_success">Ditt kort\nhar sparats.</string>
+    <string msgid="8585111718777012708" name="common_google_play_services_enable_button">"Aktivera"</string>
+    <string msgid="7045129128108380659" name="common_google_play_services_enable_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> fungerar inte om du inte aktiverar Google Play-tjänster."</string>
+    <string msgid="3147157405986503375" name="common_google_play_services_enable_title">"Aktivera Google Play-tjänster"</string>
+    <string msgid="9115728400623041681" name="common_google_play_services_install_button">"Installera"</string>
+    <string msgid="8179894293032530091" name="common_google_play_services_install_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> kan inte köras utan Google Play-tjänsterna, som saknas på enheten."</string>
+    <string msgid="7442193194585196676" name="common_google_play_services_install_title">"Hämta Google Play-tjänster"</string>
+    <string msgid="4293541511340436975" name="common_google_play_services_notification_channel_name">"Tillgänglighet för Google Plays tjänster"</string>
+    <string msgid="180394615667698242" name="common_google_play_services_notification_ticker">"Fel på Google Play-tjänster"</string>
+    <string msgid="2518680582564677258" name="common_google_play_services_unknown_issue">"Det har uppstått ett fel mellan <ns1:g id="APP_NAME">%1$s</ns1:g> och Google Play-tjänsterna. Försök igen."</string>
+    <string msgid="5501187292256987189" name="common_google_play_services_unsupported_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> fungerar inte utan Google Play-tjänsterna, som inte stöds på enheten."</string>
+    <string msgid="8172070149091615356" name="common_google_play_services_update_button">"Uppdatera"</string>
+    <string msgid="7773943415006962566" name="common_google_play_services_update_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> kan inte köras om du inte uppdaterar Google Play-tjänsterna."</string>
+    <string msgid="8706675115216073244" name="common_google_play_services_update_title">"Uppdatera Google Play-tjänster"</string>
+    <string msgid="7894275749778928941" name="common_google_play_services_updating_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> kan inte köras utan Google Play-tjänster, och dessa uppdateras för närvarande."</string>
+    <string msgid="2804989272736383918" name="common_google_play_services_wear_update_text">"En ny version av Google Play-tjänster krävs. Den uppdateras automatiskt inom kort."</string>
+    <string msgid="5201977337835724196" name="common_open_on_phone">"Öppna på mobilen"</string>
+    <string msgid="3441753203274453993" name="common_signin_button_text">"Logga in"</string>
+    <string msgid="669893613918351210" name="common_signin_button_text_long">"Logga in med Google"</string>
+    <string name="currency_eur">EUR</string>
+    <string name="currency_sek">SEK</string>
+    <string name="customer_id_is_invalid">Vänligen ange kundnummer.</string>
+    <string name="enter_customer_id">Ange kundnummer</string>
+    <string msgid="4133737464567140336" name="fcm_fallback_notification_channel_label">"Diverse"</string>
+    <string name="payment_amount">10.00</string>
+    <string name="payment_buy_btn">KÖP</string>
+    <string name="payment_description">Tack för att du handlar hos BikBok!</string>
+    <string name="payment_enter_total_amount">Ange totalt belopp</string>
+    <string name="payment_method_credit_cards">Kort</string>
+    <string name="payment_method_not_supported">Betalmetod stöds ej. </string>
+    <string name="payment_method_other">Andra</string>
+    <string name="payment_method_title">Välj betalmetod</string>
+    <string name="payment_rollback_error">Ett fel inträffade vid reversering av transaktionen.</string>
+    <string name="payment_total">Total</string>
+    <string name="payment_value_zero">Var vänlig ange ett värde större än noll.</string>
+    <string name="pia_action_cancel">Avbryt</string>
+    <string name="pia_action_close">Stäng</string>
+    <string name="pia_alert_ok_action">OK</string>
+    <string name="pia_alert_settings_action">Inställningar</string>
+    <string name="pia_bank_id_error_open">Kan inte starta eller hitta BankID-appen. Vänligen starta BankID-appen själv, identifiera dig där och byt tillbaka till den här appen.</string>
+    <string name="pia_cvc_entry_subsequent">Säkerhetskod (CVC/CVV/CID)</string>
+    <string name="pia_denied_by_3ds">Denied by 3D Secure authentication</string>
+    <string name="pia_denied_permission_message">Du gav inte appen tillstånd att använda kameran för att scanna kortuppgifter. Vänligen ge appen tillstånd för kameraanvändning under appinställningar.</string>
+    <string name="pia_denied_permission_title">Kameraanvändning</string>
+    <string name="pia_dismiss_action">Avbryt</string>
+    <string name="pia_error_msg_missing_required_data_merchant">Missing required bundled extras containing MerchantInfo.</string>
+    <string name="pia_error_msg_missing_tokenized_card_param">Missing required bundled extras containing the tokenized card request.</string>
+    <string name="pia_error_title">Fel</string>
+    <string name="pia_expired">Kort utgånget</string>
+    <string name="pia_expires">Går ut</string>
+    <string name="pia_expires_soon">Går ut snart</string>
+    <string name="pia_failed_attempt_lock_screen">Transaktionen kan inte slutföras. Vänligen avbryt.</string>
+    <string name="pia_form_label_card_number">Kortnummer</string>
+    <string name="pia_form_label_expiration_date">Utgångsdatum</string>
+    <string name="pia_form_label_expiry_date">Utgångsdatum</string>
+    <string name="pia_generic_error">There was an unexpected error.  Please contact customer service if the problem persists.</string>
+    <string name="pia_hint_card_number">•••• •••• •••• ••••</string>
+    <string name="pia_hint_cvc_length_3">•••</string>
+    <string name="pia_hint_cvc_length_4">••••</string>
+    <string name="pia_hint_expiry_date">MM/ÅÅ</string>
+    <string name="pia_invalid_card_number">Invalid card number</string>
+    <string name="pia_kid_invalid">KID invalid or Field missing PAN</string>
+    <string name="pia_label_required">*</string>
+    <string name="pia_merchant_timeout">Transaction reached merchant timeout value</string>
+    <string name="pia_netaxept_internal_failure">Internal failure</string>
+    <string name="pia_no_lock_screen_error">För att aktivera snabba betalningar, vänligen konfigurera ett skärmlås i Inställningar.</string>
+    <string name="pia_no_transaction">No transaction</string>
+    <string name="pia_original_transaction_rejected">Original transaction rejected</string>
+    <string name="pia_pay_btn">Betala</string>
+    <string name="pia_pay_btn_amount_and_currency">Betala %1$.2f %2$s</string>
+    <string name="pia_protect_your_card">Skydda ditt kort</string>
+    <string name="pia_request_failed">There was a problem sending your request.  Please contact customer service if the problem persists.</string>
+    <string name="pia_save_card_btn">Spara kort</string>
+    <string name="pia_save_card_for_later_use">Spara kortet säkert för senare användning</string>
+    <string name="pia_save_card_title">Spara kort</string>
+    <string name="pia_scan_button_manual_entry">Skriv in kortuppgifter manuellt</string>
+    <string name="pia_scan_instruction">Placera kortet i rutan.\nDet scannas automatiskt</string>
+    <string name="pia_scan_toolbar_title">Scanna kort</string>
+    <string name="pia_sec_verification_not_complete">Säkerhetsverifiering misslyckades</string>
+    <string name="pia_security_code">Säkerhetskod (%1$s)</string>
+    <string name="pia_string_off">OFF</string>
+    <string name="pia_string_on">ON</string>
+    <string name="pia_transaction_already_processed">Transaction already processed</string>
+    <string name="pia_transaction_already_reversed">Transaction already reversed</string>
+    <string name="pia_transaction_not_found">Transaction not found</string>
+    <string name="pia_unknown_error">Several errors can result in this error code. Refer to the Response text for details</string>
+    <string name="pia_validation_msg_invalid_card_number">Kortnumret är inte giltigt</string>
+    <string name="pia_validation_msg_invalid_cvc">Koden måste vara %1$d siffror lång.\nDen finns på baksidan av ditt kort.</string>
+    <string name="pia_validation_msg_invalid_cvc_not_supported_type">Koden måste vara 3 eller 4 siffror lång.\nDen finns på baksidan av ditt kort.</string>
+    <string name="pia_validation_msg_invalid_expiry_date">Ogiltigt utgångsdatum MM/ÅÅ eller ogiltig månad eller år.</string>
+    <string name="process_cancelled">Bearbetning avbruten.</string>
+    <string name="process_error">Ett fel inträffade.\nFörsök igen senare.</string>
+    <string msgid="6264217191555673260" name="search_menu_title">"Sök"</string>
+    <string name="setting_menu">Inställningar</string>
+    <string name="share_menu">Dela</string>
+    <string name="sign_up">Registrera</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="thanks_for_shopping">Tack för att du handlar</string>
+    <string name="toolbar_title_cancelled">Avbrutet</string>
+    <string name="toolbar_title_failed">Fel</string>
+    <string name="toolbar_title_success_pay">Betalning klar</string>
+    <string name="toolbar_title_success_save">Kort sparat</string>
+</resources>

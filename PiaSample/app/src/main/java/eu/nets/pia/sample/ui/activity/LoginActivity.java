@@ -5,15 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +28,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,10 +46,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
+import eu.nets.pia.ProcessResult;
 import eu.nets.pia.RegisterPaymentHandler;
+import eu.nets.pia.card.CardProcessActivityLauncherInput;
+import eu.nets.pia.card.CardProcessActivityResultContract;
+import eu.nets.pia.card.CardTokenizationRegistration;
+import eu.nets.pia.card.TransactionCallback;
 import eu.nets.pia.data.model.MerchantInfo;
 import eu.nets.pia.data.model.PiaLanguage;
-import eu.nets.pia.data.model.PiaResult;
 import eu.nets.pia.sample.BuildConfig;
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.RegisterPaymentHandlerImpl;
@@ -54,11 +64,12 @@ import eu.nets.pia.sample.network.MerchantRestClient;
 import eu.nets.pia.sample.network.model.Amount;
 import eu.nets.pia.sample.network.model.PaymentMethodsResponse;
 import eu.nets.pia.sample.network.model.PaymentRegisterRequest;
+import eu.nets.pia.sample.network.model.PaymentRegisterResponse;
 import eu.nets.pia.sample.ui.activity.main.MainActivity;
 import eu.nets.pia.sample.ui.adapter.LanguageAdapter;
-import eu.nets.pia.sample.ui.data.PaymentMethod;
 import eu.nets.pia.sample.ui.widget.CustomToolbar;
 import eu.nets.pia.ui.main.PiaActivity;
+import eu.nets.pia.wallets.PaymentProcess;
 
 /**
  * MIT License
@@ -129,6 +140,12 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     private MerchantRestClient mRestClient = MerchantRestClient.getInstance();
     private PaymentFlowCache mPaymentCache;
     private RegisterPaymentHandler mRegisterPaymentHandler;
+
+
+    ActivityResultLauncher<CardProcessActivityLauncherInput> cardStorageActivityLauncher = registerForActivityResult(
+            new CardProcessActivityResultContract(),
+            this::transactionCompleteResult
+    );
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -413,19 +430,127 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     }
 
     /**
-     * This is the Save Card functionality; As mentioned in the {@link MainActivity#callPiaSDK(PaymentMethod)}
-     * Calling {@link eu.nets.pia.PiaSDK#start(Activity, Bundle, RegisterPaymentHandler)}, provide in the bundle
-     * only the {@link eu.nets.pia.data.model.MerchantInfo}
+     * This is the Save Card functionality;
      */
     @OnClick(R.id.save_card)
     public void onSaveCardBtnClicked() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, getMerchantInfo());
-
         //store in cache the payment request -- for register, a payment with zero amount is requred
         mPaymentCache.setPaymentRegisterRequest(getPaymentRequest());
 
-        PiaSDK.getInstance().start(this, bundle, mRegisterPaymentHandler);
+        String merchantID = getMerchantInfo().getMerchantId();
+        PiaSDK.Environment environment = getMerchantInfo().isTestMode() ?
+                PiaSDK.Environment.TEST : PiaSDK.Environment.PROD;
+
+        PiaSDK.startCardProcessActivity(
+                cardStorageActivityLauncher,
+                PaymentProcess.cardTokenization(
+                        Pair.create(merchantID, environment),
+                        cardStorageRegistration
+                ),
+                getMerchantInfo().isCvcRequired()
+        );
+
+    }
+
+    /**
+     * This is the Save S-Business Card functionality;
+     */
+    @OnClick(R.id.save_sgroup_card)
+    public void onSaveSGroupCardBtnClicked() {
+        //store in cache the payment request -- for register, a payment with zero amount is requred
+        mPaymentCache.setPaymentRegisterRequest(getPaymentRequest());
+
+        String merchantID = getMerchantInfo().getMerchantId();
+        PiaSDK.Environment environment = getMerchantInfo().isTestMode() ?
+                PiaSDK.Environment.TEST : PiaSDK.Environment.PROD;
+
+        PiaSDK.startSBusinessCardProcessActivity(
+                cardPaymentActivityLauncher,
+                PaymentProcess.cardTokenization(
+                        Pair.create(merchantID, environment),
+                        cardStorageRegistration
+                ),
+                getMerchantInfo().isCvcRequired()
+        );
+
+    }
+
+    ActivityResultLauncher<CardProcessActivityLauncherInput> cardPaymentActivityLauncher = registerForActivityResult(
+            new CardProcessActivityResultContract(),
+            this::transactionCompleteResult
+    );
+
+    CardTokenizationRegistration cardStorageRegistration = new CardTokenizationRegistration() {
+        @Override
+        public void registerPayment(@NotNull TransactionCallback callbackWithTransaction) {
+            final PaymentRegisterRequest paymentRegisterRequest = mPaymentCache.getPaymentRegisterRequest();
+            paymentRegisterRequest.setStoreCard(true);
+            new Thread() {
+                @Override
+                public void run() {
+                    MerchantRestClient.getInstance().registerPayment(paymentRegisterRequest);
+                    PaymentRegisterResponse paymentRegisterResponse = mPaymentCache.getPaymentRegisterResponse();
+                    if (paymentRegisterResponse != null && paymentRegisterResponse.getTransactionId() != null) {
+                        callbackWithTransaction.successWithTransactionIDAndRedirectURL(paymentRegisterResponse.getTransactionId(), Uri.parse(paymentRegisterResponse.getRedirectOK()));
+                    } else {
+                        callbackWithTransaction.failureWithError(null);
+                    }
+                }
+            }.start();
+        }
+    };
+
+    void transactionCompleteResult(ProcessResult result) {
+        if (result instanceof ProcessResult.Success) {
+            ProcessResult success = (ProcessResult.Success) result;
+
+            mProgressBar.setVisibility(View.VISIBLE);
+            //call /storeCard API with the transaction ID
+
+            /*
+             *Transaction ID from SDK for rollback call
+             */
+            String transactionId = ((ProcessResult.Success) result).getTransactionID();
+
+            /**
+             * If the result is success, call verifyPayment (storeCard API) on your backend
+             */
+            mRestClient.verifyPayment(transactionId, new MerchantRestClient.Completion() {
+                @Override
+                public void success(boolean isSuccess) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showPaymentResult(ConfirmationActivity.Result.SUCCESS, getString(R.string.toolbar_title_success_save), getString(R.string.card_saved_success));
+                        }
+                    });
+                }
+            });
+
+        } else if (result instanceof ProcessResult.Cancellation) {
+            /*
+             *Cancellation message to be displayed in Confirmation page
+             */
+            String message = ((ProcessResult.Cancellation) result).getReason();
+
+            /*
+             *Transaction ID from SDK for rollback call
+             */
+            String transactionId = ((ProcessResult.Cancellation) result).getTransactionID();
+
+            if (transactionId != null) {
+                mRestClient.transactionRollback(transactionId);
+            }
+
+            showPaymentResult(ConfirmationActivity.Result.CANCELLATION, getString(R.string.toolbar_title_cancelled), message);
+        } else {
+            /*
+             *Failure message to be displayed in Confirmation page
+             */
+            String message = ((ProcessResult.Failure) result).getProcessError().toString();
+
+            showPaymentResult(ConfirmationActivity.Result.FAILURE, getString(R.string.toolbar_title_failed), message);
+        }
     }
 
     private PaymentRegisterRequest getPaymentRequest() {
@@ -445,71 +570,12 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
         return paymentRequest;
     }
 
-
-    /**
-     * Override the OnActivityResult, to receive the payment result from PiaSDK
-     * <p>
-     * The result will have the requestCode == {@link eu.nets.pia.PiaSDK#PIA_SDK_REQUEST}
-     * <p>
-     * If the resultCode = RESULT_OK, the intent will contain a {@link eu.nets.pia.data.model.PiaResult}
-     * parcelable object under {@link eu.nets.pia.ui.main.PiaActivity#BUNDLE_COMPLETE_RESULT}
-     *
-     * @param requestCode -
-     * @param resultCode  -
-     * @param data        -
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != PiaSDK.PIA_SDK_REQUEST) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-
-        Log.d(TAG, "[onActivityResult] result from Pia SDK: " +
-                "[requestCode=" + requestCode + "]");
-
-        //in case user canceled
-        Bundle bundle = new Bundle();
-        if (resultCode == RESULT_CANCELED) {
-            /**
-             * If the result was cancelled, there is no need to rollback the transaction (no transactionId was created) a this point
-             */
-            bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_CANCELED, true);
-            displayConfirmationScreen(bundle);
-            return;
-        }
-
-        if (resultCode == RESULT_OK) {
-            /**
-             * If resultCode is OK, check the PiaResult object
-             */
-            PiaResult result = data.getParcelableExtra(PiaActivity.BUNDLE_COMPLETE_RESULT);
-            if (result.isSuccess()) {
-                //in case of success commit the payment
-                mProgressBar.setVisibility(View.VISIBLE);
-                //call /storeCard API with the transaction ID
-                /**
-                 * If the result is success, call verifyPayment (storeCard API) on your backend
-                 */
-                mRestClient.verifyPayment(
-                        mPaymentCache.getPaymentRegisterResponse().getTransactionId()
-                );
-            } else {
-                /**
-                 * PiaResult is not successful (error occurred)
-                 * -handle as desired
-                 */
-                //save card has finished with error
-                bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, false);
-                bundle.putParcelable(ConfirmationActivity.BUNDLE_ERROR_OBJECT, result);
-                displayConfirmationScreen(bundle);
-            }
-        }
-    }
-
-    private void displayConfirmationScreen(Bundle bundle) {
+    private void showPaymentResult(ConfirmationActivity.Result result, String title, String message) {
         mProgressBar.setVisibility(View.GONE);
         Intent intent = new Intent(this, ConfirmationActivity.class);
-        intent.putExtras(bundle);
+        intent.putExtra(ConfirmationActivity.RESULT, result);
+        intent.putExtra(ConfirmationActivity.TITLE, title);
+        intent.putExtra(ConfirmationActivity.MESSAGE, message);
         startActivity(intent);
 
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
@@ -587,11 +653,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
         if (!mPaymentCache.isFinishedWithError()) {
             switch (mPaymentCache.getState()) {
                 case COMMIT_PAYMENT_CALL_FINISHED:
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, true);
-                    bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_MESSAGE, getString(R.string.card_saved_success));
-                    bundle.putString(ConfirmationActivity.BUNDLE_SUCCESS_TITLE, getString(R.string.toolbar_title_success_save));
-                    displayConfirmationScreen(bundle);
+                    showPaymentResult(ConfirmationActivity.Result.SUCCESS, getString(R.string.toolbar_title_success_save), getString(R.string.card_saved_success));
                     break;
                 case IDLE:
                     mProgressBar.setVisibility(View.GONE);
@@ -611,10 +673,9 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                 mPaymentCache.setFinishedWithError(false);
                 //rollback transaction
                 rollbackTransaction();
-                //display status screen
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(ConfirmationActivity.BUNDLE_PAYMENT_SUCCESS, false);
-                displayConfirmationScreen(bundle);
+
+                showPaymentResult(ConfirmationActivity.Result.FAILURE, getString(R.string.toolbar_title_failed), getString(R.string.process_error));
+
             } else {
                 Toast.makeText(this, getString(R.string.payment_rollback_error), Toast.LENGTH_SHORT).show();
             }

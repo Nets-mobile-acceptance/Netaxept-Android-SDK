@@ -44,6 +44,7 @@
     <string name="action_details">Details</string>
     <string name="features">Features</string>
     <string name="register_new_card">Register new card</string>
+    <string name="register_new__sbusiness_card">Register S-Business card</string>
     <string name="action_register_new_card">Add</string>
     <string name="configurations">Configurations</string>
     <string name="use_test_environment">Use test environment</string>

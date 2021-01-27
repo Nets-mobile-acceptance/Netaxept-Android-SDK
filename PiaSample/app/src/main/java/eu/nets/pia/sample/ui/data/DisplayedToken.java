@@ -29,14 +29,13 @@ public class DisplayedToken extends PaymentMethod {
     private String issuer;
     //date pattern assumed mm/yy
     private String expiryDate;
-    private Boolean cardVerificationRequired;
 
     public boolean getCardVerificationRequired() {
-        return cardVerificationRequired.booleanValue();
+        return isCvcRequired();
     }
 
     public void setCardVerificationRequired(Boolean cardVerificationRequired) {
-        this.cardVerificationRequired = cardVerificationRequired;
+        setCvcRequired(cardVerificationRequired);
     }
 
     public String getIssuer() {
@@ -86,6 +85,8 @@ public class DisplayedToken extends PaymentMethod {
                 return R.drawable.pia_maestro_icon;
             case PaymentMethodsFragment.ID_DINERS:
                 return R.drawable.pia_diners;
+            case PaymentMethodsFragment.ID_S_BUSINESS_CARD:
+                return R.drawable.ic_s_group_card;
             default:
                 return R.drawable.pia_visa;
         }

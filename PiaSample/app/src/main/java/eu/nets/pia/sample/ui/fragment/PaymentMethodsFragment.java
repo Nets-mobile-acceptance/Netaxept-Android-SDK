@@ -2,13 +2,14 @@ package eu.nets.pia.sample.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -68,6 +69,7 @@ public class PaymentMethodsFragment extends Fragment {
     public static final String ID_PAYTRAILSAASTOPANKKI = "PaytrailSaastopankki";
     public static final String ID_PAYTRAILSPANKKI = "PaytrailSPankki";
     public static final String ID_MOBILE_PAY = "MobilePay";
+    public static final String ID_S_BUSINESS_CARD = "SBusinessCard";
 
     @BindView(R.id.toolbar)
     CustomToolbar mToolbar;
@@ -166,7 +168,8 @@ public class PaymentMethodsFragment extends Fragment {
                     && !method.getId().contains(ID_PAYTRAILOP)
                     && !method.getId().contains(ID_PAYTRAILPOP)
                     && !method.getId().contains(ID_PAYTRAILSAASTOPANKKI)
-                    && !method.getId().contains(ID_PAYTRAILSPANKKI)) {
+                    && !method.getId().contains(ID_PAYTRAILSPANKKI)
+                    && !method.getId().contains(ID_S_BUSINESS_CARD)) {
                 supportedMethods.add(method);
             }
         }
@@ -224,6 +227,13 @@ public class PaymentMethodsFragment extends Fragment {
         creditCards.setId(getString(R.string.payment_method_credit_cards));
         creditCards.setCvcRequired(true);
         methods.add(creditCards);
+
+        PaymentMethod sBusinessGroup = new PaymentMethod();
+        sBusinessGroup.setType(PaymentMethodType.S_BUSINESS_CARD);
+        sBusinessGroup.setDisplayName("S-Business");
+        sBusinessGroup.setId(ID_S_BUSINESS_CARD);
+        sBusinessGroup.setCvcRequired(true);
+        methods.add(sBusinessGroup);
 
         PaymentMethod payPal = new PaymentMethod();
         payPal.setType(PaymentMethodType.PAY_PAL);

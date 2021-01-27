@@ -1,0 +1,63 @@
+@startuml
+skinparam backgroundColor transparent
+actor "User"
+skinparam BoxPadding 100
+box "Mobile device" #LightCyan
+activate "3rd party app" #gold
+activate "PiA SDK" #cyan
+end box
+box "Merchant backend" #LightCyan
+activate "Merchant backend" #gold
+activate "NetAxept client" #cyan
+end box
+
+group Register payment
+"User" -> "3rd party app": Click Buy
+"3rd party app"->"Merchant backend": Retrieve payment method list
+"Merchant backend"->"3rd party app": Available payment method list
+"3rd party app"->"3rd party app": Show payment method list
+"User" -> "3rd party app": Select finnish bank as payment method
+"3rd party app"->"Merchant backend": Provide register data for Paytrail
+"Merchant backend"->"NetAxept client": Register payment
+"NetAxept client"->"NetAxept": **Register API call** with RegisterRequest serviceType=B \n&customerEmail=bill.buyer@nets.eu\n&customerFirstName=Bill\n&customerLastName=Buyer\n&customerAddress1=Testaddress\n&customerPostCode=00510\n&customerTown=Helsinki\n&customerCountry=FI\n&paymentMethodActionList=[{"PaymentMethod":"PaytrailNordea"}]\n&currencyCode=EUR\n&redirectUrl=http://localhost/redirect.php\n&token=**Merchant API token**
+activate "NetAxept" #white
+"NetAxept"->"NetAxept client": OK with Transaction id
+"NetAxept client"->"Merchant backend": OK with Transaction id
+"Merchant backend"->"3rd party app": OK with Transaction id
+"3rd party app"->"PiA SDK": Initialize PiA SDK with merchant id & transaction id \nand redirectUrl=http://localhost/redirect.php
+"PiA SDK" -> "NetAxept": Terminal call with merchant id \n& transaction id
+"NetAxept" --> "PiA SDK": Redirect to paytrail web page
+"PiA SDK" -> "PiA SDK": Host paytrail within SDK Webview
+end
+
+group Process payment
+"User" -> "PiA SDK": Authenticate bank payment
+"PiA SDK"->"PiA SDK": Complete the authentication \nin paytrail web page
+"PiA SDK"->"NetAxept": Process payment
+"NetAxept"->"NetAxept": Run **AutoSale**
+...
+"NetAxept"->"PiA SDK": Redirect with result OK
+"PiA SDK"->"3rd party app": Result OK
+end
+
+group Complete Payment
+"3rd party app"->"Merchant backend":Get Payment status
+"Merchant backend"->"Merchant backend":Hang until callback is received from Netaxept \nor until timeout
+group Netaxept Callback
+"NetAxept" -> "NetAxept client": Callback with Transaction id
+"NetAxept client"->"NetAxept": **Query API call** with Transaction id&\n**Merchant API token**
+"NetAxept"->"NetAxept client": Transaction OK
+deactivate "NetAxept"
+end
+
+"NetAxept client"->"Merchant backend": Transaction OK
+"Merchant backend"->"3rd party app": Transaction OK
+"3rd party app"->"User": Payment is successful!
+note over "3rd party app": Show "Payment success!"
+end
+
+deactivate "Merchant backend"
+deactivate "NetAxept client"
+deactivate "3rd party app"
+deactivate "PiA SDK"
+@enduml

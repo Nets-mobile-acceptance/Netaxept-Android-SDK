@@ -5,15 +5,16 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableString;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

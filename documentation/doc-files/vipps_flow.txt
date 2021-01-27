@@ -1,0 +1,74 @@
+@startuml
+skinparam backgroundColor transparent
+actor "User"
+skinparam BoxPadding 30
+box "Mobile device" #LightCyan
+activate "3rd party app" #gold
+activate "PiA SDK" #cyan
+end box
+box "Merchant backend" #LightCyan
+activate "Merchant backend" #gold
+activate "NetAxept client" #cyan
+end box
+
+group Initialization and app switch
+"User" -> "3rd party app": Click Buy
+"3rd party app"->"Merchant backend": Retrieve payment method list
+"Merchant backend"->"3rd party app": Available payment method list
+"3rd party app"->"3rd party app": Show payment method list
+"User" -> "3rd party app": Select Vipps as payment method
+"3rd party app"->"PiA SDK": Initialize PiA SDK with register callback
+"PiA SDK" --> "3rd party app": Callback to register the transaction synchronously
+"3rd party app"->"Merchant backend": Provide register data for Vipps
+"Merchant backend"->"NetAxept client": Register payment
+"NetAxept client"->"NetAxept": **Register API call** with RegisterRequest serviceType=M \n&phoneNumber=+4741111111\n&paymentMethodActionList=[{"PaymentMethod":"Vipps"}]\n&currencyCode=NOK&autoSale=false\n&redirectUrl=piasdk://piasdk.redirect&token=**Merchant API token**
+activate "NetAxept" #white
+"NetAxept"->"Vipps Backend": Initiate payment
+activate "Vipps Backend" #gold
+"Vipps Backend"->"NetAxept": Initiate success
+"NetAxept"->"NetAxept client": OK with Transaction id & WalletUrl
+"NetAxept client"->"Merchant backend": OK with Transaction id & WalletUrl
+"Merchant backend"->"3rd party app": OK with Transaction id &\nWalletUrl
+"3rd party app"->"PiA SDK": Return WalletUrl
+"PiA SDK" -> "Vipps App": Launch Vipps app  
+activate "Vipps App" #cyan
+end
+
+group Complete payment
+"User" -> "Vipps App": Confirm payment request
+"Vipps Backend" -> "NetAxept": Make payment request 
+"NetAxept"->"NetAxept": Automatic authorization
+"NetAxept"->"Vipps Backend": Result OK
+"Vipps Backend"->"Vipps App": Result OK
+"Vipps App" -> "User": Show result 
+"Vipps App" -> "PiA SDK": Automatic App-switch with\nVipps App status code
+deactivate "Vipps App"
+deactivate "Vipps Backend"
+
+"PiA SDK" -> "3rd party app": Result OK with Vipps App status code
+"3rd party app"->"Merchant backend": Process payment
+"Merchant backend"->"NetAxept client": Process payment
+...
+group Netaxept Callback
+"NetAxept" -> "NetAxept client": Callback with Transaction id
+"NetAxept client"->"NetAxept": **Query API call** with Transaction id&\n**Merchant API token**
+"NetAxept"->"NetAxept client": Authorization OK
+"NetAxept client"->NetAxept: **Process API call** with Transaction id&\nOperation=CAPTURE &\n**Merchant API token**
+NetAxept->"NetAxept client": Result OK
+"NetAxept client"->"NetAxept": **Query API call** with Transaction id&\n**Merchant API token**
+"NetAxept"->"NetAxept client": Transaction OK
+deactivate "NetAxept"
+end
+
+"NetAxept client"->"Merchant backend": Transaction OK
+"Merchant backend"->"3rd party app": Transaction OK
+"3rd party app"->"User": Payment is successful!
+note over "3rd party app": Show "Payment success!"
+end
+
+
+deactivate "Merchant backend"
+deactivate "NetAxept client"
+deactivate "3rd party app"
+deactivate "PiA SDK"
+@enduml

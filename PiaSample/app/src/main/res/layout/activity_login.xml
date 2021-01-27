@@ -72,10 +72,10 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/customer_id_et"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/login_btn_bg"
                     android:text="@string/sign_up"
                     android:textColor="@android:color/white"
@@ -103,8 +103,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/customer_id_text"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/pia_text_normal" />
 
@@ -135,8 +135,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/app_version_text"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/pia_text_normal" />
 
@@ -206,8 +206,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/features_text"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
                     android:text="@string/register_new_card"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/pia_text_normal" />
@@ -224,10 +224,32 @@
                     android:textSize="@dimen/pia_text_normal" />
 
                 <TextView
+                    android:id="@+id/features_label_sgroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/features_label"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/register_new__sbusiness_card"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
+                    android:id="@+id/save_sgroup_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/features_label_sgroup"
+                    android:layout_toEndOf="@+id/features_label_sgroup"
+                    android:padding="5dp"
+                    android:text="@string/action_register_new_card"
+                    android:textColor="@color/custom_light_blue_color"
+                    android:textSize="@dimen/pia_text_normal" />
+
+                <TextView
                     android:id="@+id/configurations_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/features_label"
+                    android:layout_below="@+id/features_label_sgroup"
                     android:layout_marginTop="25dp"
                     android:text="@string/configurations"
                     android:textColor="@android:color/black"
@@ -250,7 +272,7 @@
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/pia_text_normal" />
 
-                    <android.support.v7.widget.SwitchCompat
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/url_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
@@ -274,7 +296,7 @@
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/pia_text_normal" />
 
-                    <android.support.v7.widget.SwitchCompat
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switch_sistem_auth"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
@@ -299,7 +321,7 @@
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/pia_text_normal" />
 
-                    <android.support.v7.widget.SwitchCompat
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switch_sample_skip_confirmation"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
@@ -323,7 +345,7 @@
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/pia_text_normal" />
 
-                    <android.support.v7.widget.SwitchCompat
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switch_disable_cardio"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
@@ -336,8 +358,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/disable_card_io"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
                     android:text="@string/change_merchant_info"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/pia_text_normal" />
@@ -358,8 +380,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/change_merchant_info"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
                     android:text="@string/customize_ui"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/pia_text_normal" />
@@ -379,8 +401,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/customize_ui"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 

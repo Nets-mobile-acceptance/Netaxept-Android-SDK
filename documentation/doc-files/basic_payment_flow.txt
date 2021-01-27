@@ -1,0 +1,66 @@
+@startuml
+skinparam backgroundColor transparent
+actor "User"
+skinparam BoxPadding 30
+box "Mobile device" #LightCyan
+activate "3rd party app" #gold
+activate "In app SDK" #cyan
+end box
+box "Merchant backend" #LightCyan
+activate "Merchant backend" #gold
+activate "NetAxept client" #cyan
+end box
+activate "NetAxept" #white
+group Payment method selection (only card for now)
+"User" -> "3rd party app": Click Buy
+"3rd party app"->"Merchant backend": Retrieve payment method list
+"Merchant backend"->"3rd party app": Available payment method list
+"3rd party app"->"3rd party app": Show payment method list
+"User"->"3rd party app": Select card payment
+"3rd party app"->"3rd party app": Set card payment
+end
+group Card data entry
+"3rd party app"->"In app SDK": Launch card entry screen,\npass callback to register the transaction
+"In app SDK"->"In app SDK": Show card entry\nnative UI
+"User"->"In app SDK": User fills card data
+end
+group Transaction initialization
+"User"->"In app SDK": Click Pay
+"In app SDK" --> "3rd party app": Callback to register the \ntransaction synchronously
+"3rd party app" -> "Merchant backend": Provide register data\n with consumerId
+"Merchant backend"->"NetAxept client": Register payment
+"NetAxept client"->"NetAxept": **Register API call** with RegisterRequest serviceType=M &\n force3DSecure=true & **Merchant API token**
+"NetAxept"->"NetAxept client": OK with Transaction id
+"NetAxept client"->"Merchant backend": OK with Transaction id
+"Merchant backend"->"3rd party app": OK with Transaction id &\nRedirect Urls
+"3rd party app" -> "In app SDK": Return Transaction id &\nRedirect Urls
+end
+group Post Card data
+"In app SDK"->"NetAxept": **Terminal API call** with Transaction id and card information
+group 3D Secure
+"NetAxept"->"In app SDK": Redirected to 3DS web page
+"In app SDK"->"In app SDK": Host 3DS within\nSDK WebView
+"User"->"In app SDK": Complete 3DS
+end
+"NetAxept"->"In app SDK": Result OK
+"In app SDK"->"3rd party app": Result OK
+end
+group Complete payment
+"3rd party app"->"Merchant backend": Complete transaction\n with Transaction id
+"Merchant backend"->"NetAxept client": Complete transaction\n with Transaction id
+"NetAxept client"->NetAxept: **Process API call** with Transaction id&\nOperation=AUTH &\n**Merchant API token**
+NetAxept->"NetAxept client": Result OK
+"NetAxept client"->NetAxept: **Process API call** with Transaction id&\nOperation=CAPTURE &\n**Merchant API token**
+NetAxept->"NetAxept client": Result OK
+"NetAxept client"->NetAxept: **Query API call** with Transaction id&\n**Merchant API token**
+NetAxept->"NetAxept client": Transaction OK
+"NetAxept client"->"Merchant backend": Transaction OK
+"Merchant backend"->"3rd party app": Transaction OK
+"3rd party app"->User: Transaction approved
+note over "3rd party app": Show "Transaction approved!"
+end
+deactivate "NetAxept"
+deactivate "Merchant backend"
+deactivate "In app SDK"
+deactivate "3rd party app"
+@enduml

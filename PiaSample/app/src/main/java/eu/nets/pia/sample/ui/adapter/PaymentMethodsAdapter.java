@@ -2,8 +2,6 @@ package eu.nets.pia.sample.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -14,6 +12,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -51,6 +52,7 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private final int VIEW_TOKEN_CARD = 1;
     private final int VIEW_HEADER = 2;
     private final int VIEW_OTHER_PAYMENT = 3;
+    private final int VIEW_S_BUSINESS_CARD = 4;
 
     private ArrayList<PaymentMethod> items = new ArrayList<>();
     private ArrayList<Method> supportedCardSchemes = new ArrayList<Method>();
@@ -82,6 +84,8 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 return new TokenMethodViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.payment_method_item_token, parent, false));
             case VIEW_NEW_CARD:
                 return new NewCardMethodViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.payment_method_item_new_card, parent, false));
+            case VIEW_S_BUSINESS_CARD:
+                return new SBusinessViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.payment_method_item_small_logo, parent, false));
             case VIEW_OTHER_PAYMENT:
                 return new OtherMethodViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.payment_method_item, parent, false));
             default:
@@ -96,6 +100,8 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ((TokenMethodViewHolder) holder).setupTokenCardHolder((DisplayedToken) items.get(position));
         } else if (getItemViewType(position) == VIEW_OTHER_PAYMENT) {
             ((OtherMethodViewHolder) holder).setupOtherPaymentHolder(items.get(position));
+        } else if (getItemViewType(position) == VIEW_S_BUSINESS_CARD) {
+            ((SBusinessViewHolder) holder).setupPaymentHolder(items.get(position));
         } else if (getItemViewType(position) == VIEW_NEW_CARD) {
             ((NewCardMethodViewHolder) holder).setupNewCardHolder(items.get(position));
         }
@@ -184,6 +190,31 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     if (mCallback != null) {
                         mCallback.onPaymentMethodSelected(method);
                     }
+                }
+            });
+        }
+    }
+
+    public class SBusinessViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.card_scheme_logo)
+        ImageView mCardLogo;
+
+        @BindView(R.id.payment_type_description)
+        TextView mPaymentTypeText;
+
+        public SBusinessViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+        public void setupPaymentHolder(final PaymentMethod method) {
+            mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_s_group));
+            mPaymentTypeText.setText(method.getDisplayName());
+
+            itemView.setOnClickListener(v -> {
+                if (mCallback != null) {
+                    mCallback.onPaymentMethodSelected(method);
                 }
             });
         }
@@ -305,6 +336,7 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     mCardLogo.setContentDescription("MobilePay");
                     break;
             }
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -334,6 +366,8 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             return VIEW_TOKEN_CARD;
         } else if (items.get(position).getType() == PaymentMethodType.CREDIT_CARDS) {
             return VIEW_NEW_CARD;
+        } else if (items.get(position).getType() == PaymentMethodType.S_BUSINESS_CARD) {
+            return VIEW_S_BUSINESS_CARD;
         } else {
             return VIEW_OTHER_PAYMENT;
         }

@@ -198,7 +198,6 @@ public class MerchantRestClient {
                     if (!shouldRollbackIfUnsuccessful)
                         mPaymentCache.setState(PaymentFlowState.CALL_COMMIT_FAILED_NO_ROLLBACK);
                 }
-                notifyPaymentFlowEvents();
                 completion.success(response.isSuccessful());
             }
 
@@ -206,7 +205,6 @@ public class MerchantRestClient {
             public void onFailure(Call<PaymentCommitResponse> call, Throwable t) {
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
                 mPaymentCache.setFinishedWithError(true);
-                if (!shouldRollbackIfUnsuccessful) notifyPaymentFlowEvents();
                 completion.success(false);
             }
         });
@@ -218,7 +216,7 @@ public class MerchantRestClient {
      *
      * @param transactionId The id of the transaction
      */
-    public void verifyPayment(String transactionId) {
+    public void verifyPayment(String transactionId, Completion completion) {
         LogUtils.logD(TAG, "[verifyPayment] [transactionId:" + transactionId + " merchantId:" + getMerchantId() + "]");
         mPaymentCache.setState(PaymentFlowState.SENDING_COMMIT_PAYMENT_CALL);
         mMerchantBackendAPI.processPayment(
@@ -236,14 +234,14 @@ public class MerchantRestClient {
                 } else {
                     parseErrorResponse(response.errorBody());
                 }
-                notifyPaymentFlowEvents();
+                completion.success(response.isSuccessful());
             }
 
             @Override
             public void onFailure(Call<PaymentCommitResponse> call, Throwable t) {
                 mPaymentCache.setState(PaymentFlowState.COMMIT_PAYMENT_CALL_FINISHED);
                 mPaymentCache.setFinishedWithError(true);
-                notifyPaymentFlowEvents();
+                completion.success(false);
             }
         });
     }

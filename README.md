@@ -1,4 +1,4 @@
-# PiA - Netaxept Android SDK v2.0.1
+# PiA - Netaxept Android SDK v2.1.0
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -14,7 +14,7 @@ PiA Netaxept Android SDK is a library that provides the native In-App interactio
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:2.0.1') { transitive = true; changing=true; }
+implementation('eu.nets.pia:pia-sdk:2.1.0') { transitive = true; changing=true; }
 ```
 
 **Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:

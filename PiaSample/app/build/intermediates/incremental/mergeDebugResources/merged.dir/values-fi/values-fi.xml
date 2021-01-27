@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <string msgid="5976598919945601918" name="abc_action_bar_home_description">"Siirry etusivulle"</string>
+    <string msgid="8388173803310557296" name="abc_action_bar_up_description">"Siirry ylös"</string>
+    <string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"Lisäasetukset"</string>
+    <string msgid="4692188335987374352" name="abc_action_mode_done">"Valmis"</string>
+    <string msgid="1189761859438369441" name="abc_activity_chooser_view_see_all">"Näytä kaikki"</string>
+    <string msgid="2165779757652331008" name="abc_activitychooserview_choose_application">"Valitse sovellus"</string>
+    <string msgid="4215997306490295099" name="abc_capital_off">"POIS PÄÄLTÄ"</string>
+    <string msgid="884982626291842264" name="abc_capital_on">"PÄÄLLÄ"</string>
+    <string msgid="8833365367933412986" name="abc_menu_alt_shortcut_label">"Alt+"</string>
+    <string msgid="2223301931652355242" name="abc_menu_ctrl_shortcut_label">"Ctrl+"</string>
+    <string msgid="838001238306846836" name="abc_menu_delete_shortcut_label">"delete"</string>
+    <string msgid="7986526966204849475" name="abc_menu_enter_shortcut_label">"enter"</string>
+    <string msgid="375214403600139847" name="abc_menu_function_shortcut_label">"Fn+"</string>
+    <string msgid="4192209724446364286" name="abc_menu_meta_shortcut_label">"Meta+"</string>
+    <string msgid="4741552369836443843" name="abc_menu_shift_shortcut_label">"Vaihto+"</string>
+    <string msgid="5473865519181928982" name="abc_menu_space_shortcut_label">"välilyönti"</string>
+    <string msgid="6180552449598693998" name="abc_menu_sym_shortcut_label">"Sym+"</string>
+    <string msgid="5520303668377388990" name="abc_prepend_shortcut_label">"Valikko+"</string>
+    <string msgid="7208076849092622260" name="abc_search_hint">"Haku…"</string>
+    <string msgid="3741173234950517107" name="abc_searchview_description_clear">"Tyhjennä kysely"</string>
+    <string msgid="693312494995508443" name="abc_searchview_description_query">"Hakukysely"</string>
+    <string msgid="3417662926640357176" name="abc_searchview_description_search">"Haku"</string>
+    <string msgid="1486535517437947103" name="abc_searchview_description_submit">"Lähetä kysely"</string>
+    <string msgid="2293578557972875415" name="abc_searchview_description_voice">"Puhehaku"</string>
+    <string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"Jaa…"</string>
+    <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Jaa: <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
+    <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Tiivistä"</string>
+    <string name="alert_ok">OK</string>
+    <string name="app_name">PiaSample</string>
+    <string name="app_version">Sovelluksen versio</string>
+    <string name="card_expire_soon">Vanhenee pian!</string>
+    <string name="card_expired">Vanhentunut!</string>
+    <string name="card_expired_message">Kortti ei ole voimassa. Ole hyvä, valitse voimassaoleva kortti.</string>
+    <string name="card_saved_success">Korttisi\non tallennettu.</string>
+    <string msgid="8585111718777012708" name="common_google_play_services_enable_button">"Ota käyttöön"</string>
+    <string msgid="7045129128108380659" name="common_google_play_services_enable_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> ei toimi, ellet ota Google Play Palveluita käyttöön."</string>
+    <string msgid="3147157405986503375" name="common_google_play_services_enable_title">"Ota Google Play Palvelut käyttöön"</string>
+    <string msgid="9115728400623041681" name="common_google_play_services_install_button">"Asenna"</string>
+    <string msgid="8179894293032530091" name="common_google_play_services_install_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> ei toimi ilman Google Play Palveluita, jotka puuttuvat laitteeltasi."</string>
+    <string msgid="7442193194585196676" name="common_google_play_services_install_title">"Asenna Google Play Palvelut"</string>
+    <string msgid="4293541511340436975" name="common_google_play_services_notification_channel_name">"Google Play Palveluiden saatavuus"</string>
+    <string msgid="180394615667698242" name="common_google_play_services_notification_ticker">"Virhe Google Play -palveluissa"</string>
+    <string msgid="2518680582564677258" name="common_google_play_services_unknown_issue">"Sovelluksella <ns1:g id="APP_NAME">%1$s</ns1:g> on ongelmia Google Play Palveluiden kanssa. Yritä uudelleen."</string>
+    <string msgid="5501187292256987189" name="common_google_play_services_unsupported_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> ei toimi ilman Google Play Palveluita, joita laitteesi ei tue."</string>
+    <string msgid="8172070149091615356" name="common_google_play_services_update_button">"Päivitä"</string>
+    <string msgid="7773943415006962566" name="common_google_play_services_update_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> ei toimi, ellet päivitä Google Play Palveluita."</string>
+    <string msgid="8706675115216073244" name="common_google_play_services_update_title">"Päivitä Google Play Palvelut"</string>
+    <string msgid="7894275749778928941" name="common_google_play_services_updating_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> ei toimi ilman Google Play Palveluita, joita päivitetään tällä hetkellä."</string>
+    <string msgid="2804989272736383918" name="common_google_play_services_wear_update_text">"Uusi Google Play Palveluiden versio tarvitaan. Se päivittyy pian."</string>
+    <string msgid="5201977337835724196" name="common_open_on_phone">"Avaa puhelimessa"</string>
+    <string msgid="3441753203274453993" name="common_signin_button_text">"Kirjaudu sisään"</string>
+    <string msgid="669893613918351210" name="common_signin_button_text_long">"Kirjaudu Google-tilille"</string>
+    <string name="currency_eur">EUR</string>
+    <string name="currency_sek">SEK</string>
+    <string name="customer_id_is_invalid">Täytä asiakas id.</string>
+    <string name="enter_customer_id">Syötä asiakas ID</string>
+    <string msgid="4133737464567140336" name="fcm_fallback_notification_channel_label">"Muut"</string>
+    <string name="payment_amount">10.00</string>
+    <string name="payment_buy_btn">Osta</string>
+    <string name="payment_description">Kiitos, että teit ostoksia BikBokissa!</string>
+    <string name="payment_enter_total_amount">Syötä kokonaissumma</string>
+    <string name="payment_method_credit_cards">Luottokortit</string>
+    <string name="payment_method_not_supported">Maksutapa ei ole tuettu.. </string>
+    <string name="payment_method_other">Muut</string>
+    <string name="payment_method_title">Valitse maksutapa</string>
+    <string name="payment_rollback_error">Virhe tapahtuman peruutuksessa.</string>
+    <string name="payment_total">Yhteensä</string>
+    <string name="payment_value_zero">Ole hyvä, syötä muu arvo kuin nolla.</string>
+    <string name="pia_action_cancel">Peruuta</string>
+    <string name="pia_action_close">Sulje</string>
+    <string name="pia_alert_ok_action">OK</string>
+    <string name="pia_alert_settings_action">Asetukset</string>
+    <string name="pia_bank_id_error_open">Avaa BankID sovellus ja tunnistaudu sillä.</string>
+    <string name="pia_cvc_entry_subsequent">Turvakoodi (CVC/CVV/CID)</string>
+    <string name="pia_denied_by_3ds">Denied by 3D Secure authentication</string>
+    <string name="pia_denied_permission_message">Anna ensin sovellukselle lupa käyttää kameraa asetuksissa.</string>
+    <string name="pia_denied_permission_title">Kameran käyttö</string>
+    <string name="pia_dismiss_action">Sulje</string>
+    <string name="pia_error_msg_missing_required_data_merchant">Missing required bundled extras containing MerchantInfo.</string>
+    <string name="pia_error_msg_missing_tokenized_card_param">Missing required bundled extras containing the tokenized card request.</string>
+    <string name="pia_error_title">Virhe</string>
+    <string name="pia_expired">Kortti vanhentunut</string>
+    <string name="pia_expires">Voimassaolo</string>
+    <string name="pia_expires_soon">Vanhenee pian</string>
+    <string name="pia_failed_attempt_lock_screen">Tapahtumaa ei voitu suorittaa. Peruuta ja palaa.</string>
+    <string name="pia_form_label_card_number">Kortin numero</string>
+    <string name="pia_form_label_expiration_date">Voimassa asti</string>
+    <string name="pia_form_label_expiry_date">Voimassa asti</string>
+    <string name="pia_generic_error">There was an unexpected error.  Please contact customer service if the problem persists.</string>
+    <string name="pia_hint_card_number">•••• •••• •••• ••••</string>
+    <string name="pia_hint_cvc_length_3">•••</string>
+    <string name="pia_hint_cvc_length_4">••••</string>
+    <string name="pia_hint_expiry_date">KK/VV</string>
+    <string name="pia_invalid_card_number">Invalid card number</string>
+    <string name="pia_kid_invalid">KID invalid or Field missing PAN</string>
+    <string name="pia_label_required">*</string>
+    <string name="pia_merchant_timeout">Transaction reached merchant timeout value</string>
+    <string name="pia_netaxept_internal_failure">Internal failure</string>
+    <string name="pia_no_lock_screen_error">Mahdollistaaksesi nopeat maksut, ota käyttöön näytön lukitus asetuksista.</string>
+    <string name="pia_no_transaction">No transaction</string>
+    <string name="pia_original_transaction_rejected">Original transaction rejected</string>
+    <string name="pia_pay_btn">Maksa</string>
+    <string name="pia_pay_btn_amount_and_currency">Maksa %1$.2f %2$s</string>
+    <string name="pia_protect_your_card">Suojaa korttisi</string>
+    <string name="pia_request_failed">There was a problem sending your request.  Please contact customer service if the problem persists.</string>
+    <string name="pia_save_card_btn">Tallenna kortti</string>
+    <string name="pia_save_card_for_later_use">Tallenna kortti myöhempään käyttöön</string>
+    <string name="pia_save_card_title">Tallenna kortti</string>
+    <string name="pia_scan_button_manual_entry">Syötä kortin tiedot käsin</string>
+    <string name="pia_scan_instruction">Kohdista kortti kehykseen.\nSe luetaan automaattisesti</string>
+    <string name="pia_scan_toolbar_title">Lue kortti kameralla</string>
+    <string name="pia_sec_verification_not_complete">Turvallisuusvahvistus epäonnistui</string>
+    <string name="pia_security_code">Turvakoodi (%1$s)</string>
+    <string name="pia_string_off">POIS</string>
+    <string name="pia_string_on">PÄÄLLÄ</string>
+    <string name="pia_transaction_already_processed">Transaction already processed</string>
+    <string name="pia_transaction_already_reversed">Transaction already reversed</string>
+    <string name="pia_transaction_not_found">Transaction not found</string>
+    <string name="pia_unknown_error">Several errors can result in this error code. Refer to the Response text for details</string>
+    <string name="pia_validation_msg_invalid_card_number">Virheellinen korttinumero.</string>
+    <string name="pia_validation_msg_invalid_cvc">Koodin on oltava %1$d merkkiä pitkä.\nSe löytyy kortin kääntöpuolelta.</string>
+    <string name="pia_validation_msg_invalid_cvc_not_supported_type">Koodi on 3 tai 4 numeroinen.\nSe löytyy kortin kääntöpuolelta.</string>
+    <string name="pia_validation_msg_invalid_expiry_date">Virheellinen voimassaoloaika.</string>
+    <string name="process_cancelled">Tapahtuma keskeytynyt.</string>
+    <string name="process_error">Virhe.\nYritä myöhemmin uudestaan.</string>
+    <string msgid="6264217191555673260" name="search_menu_title">"Haku"</string>
+    <string name="setting_menu">Asetukset</string>
+    <string name="share_menu">Jako</string>
+    <string name="sign_up">Rekisteröidy</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="thanks_for_shopping">Kiitos ostoksista</string>
+    <string name="toolbar_title_cancelled">Keskeytetty</string>
+    <string name="toolbar_title_failed">Epäonistunut</string>
+    <string name="toolbar_title_success_pay">Maksu valmis</string>
+    <string name="toolbar_title_success_save">Kortti tallennettu</string>
+</resources>

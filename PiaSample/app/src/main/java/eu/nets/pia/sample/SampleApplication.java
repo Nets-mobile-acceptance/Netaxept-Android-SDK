@@ -3,10 +3,11 @@ package eu.nets.pia.sample;
 import android.app.Application;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.TextAppearanceSpan;
+
+import androidx.core.content.ContextCompat;
 
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.data.model.PiaLanguage;

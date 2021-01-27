@@ -2,9 +2,6 @@ package eu.nets.pia.sample.ui.activity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +9,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

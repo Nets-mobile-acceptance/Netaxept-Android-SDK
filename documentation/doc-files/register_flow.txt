@@ -1,0 +1,58 @@
+@startuml
+skinparam backgroundColor transparent
+actor "User"
+skinparam BoxPadding 30
+box "Mobile device" #LightCyan
+activate "3rd party app" #gold
+activate "In app SDK" #cyan
+end box
+box "Merchant backend" #LightCyan
+activate "Merchant backend" #gold
+activate "NetAxept client" #cyan
+end box
+activate "NetAxept" #white
+group Add a card
+"User" -> "3rd party app": Click Save Card
+"3rd party app"->"In app SDK": Launch card entry screen,\npass callback to register the transaction
+"In app SDK"->"In app SDK": Show card entry\nnative UI
+"User"->"In app SDK": User scan/fills card data
+end
+group Initialization
+"User"->"In app SDK": Click Save
+"In app SDK" --> "3rd party app": Callback to register the \ntransaction synchronously \nwith storeCard=true
+"3rd party app" -> "Merchant backend": Provide register data\n with storeCard=true \nand amount=0
+"Merchant backend"->"NetAxept client": Register payment
+"NetAxept client"->"NetAxept": **Register API call** with RegisterRequest serviceType=M \n&updateStoredPaymentInfo=true & force3DSecure=true\n&recurringType=S **or** &recurringType=R&recurringFrequency=0&recurringExpiryDate(today + n days)\n&**Merchant API token**
+"NetAxept"->"NetAxept client": OK with Transaction id
+"NetAxept client"->"Merchant backend": OK with Transaction id
+"Merchant backend"->"3rd party app": OK with Transaction id &\nRedirect Urls
+"3rd party app" -> "In app SDK": Return Transaction id &\nRedirect Urls
+end
+group Post Card data
+"In app SDK"->"NetAxept": **Terminal API call** with Transaction id and card information
+group 3D Secure
+"NetAxept"->"In app SDK": Redirected to 3DS web page
+"In app SDK"->"In app SDK": Host 3DS within\nSDK WebView
+"User"->"In app SDK": Complete 3DS
+end
+"NetAxept"->"In app SDK": Result OK
+"In app SDK"->"3rd party app": Result OK
+end
+group Verification
+"3rd party app"->"Merchant backend": Verify the process\n with Transaction id
+"Merchant backend"->"NetAxept client": Verify the process\n with Transaction id
+"NetAxept client"->NetAxept: **Process API call** with Transaction id&\nOperation=VERIFY &\n**Merchant API token**
+NetAxept->"NetAxept client": Result OK
+"NetAxept client"->NetAxept: **Query API call** with Transaction id&\n**Merchant API token**
+NetAxept->"NetAxept client": Result OK with PanHash
+"NetAxept client"->"Merchant backend": Result OK\nwith PanHash
+"Merchant backend"->"Merchant backend": Save PanHash
+"Merchant backend"->"3rd party app": Save card OK
+"3rd party app"->User: Card is saved
+note over "3rd party app": Show "Your card has\nbeen saved!"
+end
+deactivate "NetAxept"
+deactivate "Merchant backend"
+deactivate "In app SDK"
+deactivate "3rd party app"
+@enduml

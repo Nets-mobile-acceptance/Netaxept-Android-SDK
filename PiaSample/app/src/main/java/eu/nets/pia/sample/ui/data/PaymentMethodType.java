@@ -36,5 +36,6 @@ public enum PaymentMethodType {
     POP_PANKKI_FINLAND,
     S_PANKKI,
     SAASTOPANKKI_FINLAND,
-    MOBILE_PAY
+    MOBILE_PAY,
+    S_BUSINESS_CARD
 }

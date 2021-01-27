@@ -468,7 +468,7 @@
                     style="@style/UICustomizationOptionStyle"
                     android:text="@string/use_sample_font_and_weight" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/use_sample_font"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -485,7 +485,7 @@
                     style="@style/UICustomizationOptionStyle"
                     android:text="@string/use_sample_image_for_logo" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/use_sample_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -502,7 +502,7 @@
                     style="@style/UICustomizationOptionStyle"
                     android:text="@string/disable_save_card_option" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/use_disable_save_card_option"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -519,7 +519,7 @@
                     style="@style/UICustomizationOptionStyle"
                     android:text="@string/turn_on_save_card_option" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_turn_on_save_card_option"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -536,7 +536,7 @@
                     style="@style/UICustomizationOptionStyle"
                     android:text="@string/use_action_button_left_margin" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_action_button_left_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -553,7 +553,7 @@
                     style="@style/UICustomizationOptionStyle"
                     android:text="@string/use_action_button_right_margin" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_action_button_right_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -570,7 +570,7 @@
                     style="@style/UICustomizationOptionStyle"
                     android:text="@string/use_action_button_bottom_margin" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_action_button_bottom_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -587,7 +587,7 @@
                     style="@style/UICustomizationOptionStyle"
                     android:text="@string/use_rounded_corner_field" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_field_rounded_corner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -604,7 +604,7 @@
                     style="@style/UICustomizationOptionStyle"
                     android:text="@string/use_rounded_corner_button" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_sample_button_rounded_corner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -756,7 +756,7 @@
                         style="@style/UICustomizationOptionStyle"
                         android:text="@string/cardio_text_font" />
 
-                    <android.support.v7.widget.SwitchCompat
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/use_cardio_text_font"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -773,7 +773,7 @@
                         style="@style/UICustomizationOptionStyle"
                         android:text="@string/cardio_button_text_font" />
 
-                    <android.support.v7.widget.SwitchCompat
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/use_button_cardio_text_font"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />

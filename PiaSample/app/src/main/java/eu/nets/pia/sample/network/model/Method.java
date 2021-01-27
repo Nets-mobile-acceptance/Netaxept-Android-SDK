@@ -88,6 +88,8 @@ public class Method implements Parcelable {
                 return R.drawable.jcb_logo;
             case PaymentMethodsFragment.ID_MAESTRO:
                 return R.drawable.maestro_logo;
+            case PaymentMethodsFragment.ID_S_BUSINESS_CARD:
+                return R.drawable.ic_s_group;
             default:
                 return R.drawable.pia_visa;
         }
