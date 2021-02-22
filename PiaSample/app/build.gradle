@@ -17,6 +17,7 @@ android {
 
     buildTypes {
         release {
+            //section-end-to-remove-by-script
             buildConfigField "String", "MERCHANT_ID_PROD", MERCHANT_ID_PROD
             buildConfigField "String", "MERCHANT_BACKEND_URL_PROD", MERCHANT_BACKEND_URL_PROD
             buildConfigField "String", "MERCHANT_ID_TEST", MERCHANT_ID_TEST
@@ -37,25 +38,12 @@ android {
         abortOnError false
     }
 
-    defaultConfig {
-        multiDexEnabled true
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
-//section-start-to-remove-by-script class=cache
-configurations.all {
-    // Gradle caches the contents and artifacts of changing modules. By default, these cached values
-    // are kept for 24 hours, after which the cached entry is expired and the module is resolved again.
-    // In this case, we force to check for updates every build and exclude it from the source code
-    // in the release package
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
-//section-end-to-remove-by-script
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -76,11 +64,6 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.3.0-beta01'
     implementation 'androidx.activity:activity:1.2.0-beta01'
     implementation 'androidx.fragment:fragment:1.3.0-beta01'
-    implementation "androidx.multidex:multidex:2.0.1"
-    implementation platform('com.google.firebase:firebase-bom:26.2.0')
-    implementation 'com.google.firebase:firebase-core'
-    implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-analytics'
-	implementation('eu.nets.pia:pia-sdk:2.1.0@aar') { transitive = true; changing=true; }
-
+	implementation('eu.nets.pia:pia-sdk:2.1.2@aar') { transitive = true; changing=true; }
 }
+apply plugin: 'com.google.gms.google-services'
