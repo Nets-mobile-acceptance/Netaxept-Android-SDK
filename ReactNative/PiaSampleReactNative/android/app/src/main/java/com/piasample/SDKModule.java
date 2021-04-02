@@ -4,8 +4,7 @@ package com.piasample;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
+import android.util.Pair;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
@@ -13,23 +12,23 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.module.annotations.ReactModule;
 
 import org.jetbrains.annotations.NotNull;
 
+import androidx.activity.result.ActivityResultLauncher;
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
-import eu.nets.pia.RegisterPaymentHandler;
+import eu.nets.pia.card.CardPaymentRegistration;
+import eu.nets.pia.card.CardTokenPaymentRegistration;
+import eu.nets.pia.card.CardTokenizationRegistration;
+import eu.nets.pia.card.PayPalPaymentRegistration;
+import eu.nets.pia.card.PaytrailPaymentRegistration;
+import eu.nets.pia.card.TransactionCallback;
 import eu.nets.pia.data.model.MerchantInfo;
 import eu.nets.pia.data.model.OrderInfo;
-import eu.nets.pia.data.model.PiaResult;
 import eu.nets.pia.data.model.SchemeType;
 import eu.nets.pia.data.model.TokenCardInfo;
 import eu.nets.pia.data.model.TransactionInfo;
-import eu.nets.pia.ui.main.PiaActivity;
-import eu.nets.pia.wallets.MobileWallet;
-import eu.nets.pia.wallets.MobileWalletError;
-import eu.nets.pia.wallets.MobileWalletListener;
 import eu.nets.pia.wallets.PaymentProcess;
 import eu.nets.pia.wallets.WalletPaymentRegistration;
 import eu.nets.pia.wallets.WalletURLCallback;
@@ -64,6 +63,8 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     private MerchantInfo merchantInfo;
     private TokenCardInfo tokenCardInfo;
     private TransactionInfo transactionInfo;
+    private String walletType;
+
     //end
     //Object used in thread synchronization
     private final Object threadSynchronizator = new Object();
@@ -72,10 +73,11 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     private Promise paymentResult;
     //end
 
-
+    //Objects used for handling results and callbacks
+    ActivityResultLauncher activityResultLauncher;
     Callback registerPaymentCallback;
     WalletURLCallback walletURLCallback;
-    String walletType;
+
 
 
     public SDKModule(final ReactApplicationContext reactContext) {
@@ -93,32 +95,16 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      */
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        if (paymentResult != null) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                paymentResult.reject("1", "Canceled");
-            } else if (resultCode == Activity.RESULT_OK) {
-                PiaResult result = data.getParcelableExtra(PiaActivity.BUNDLE_COMPLETE_RESULT);
-                if (result.isSuccess()) {
-                    paymentResult.resolve(true);
-                } else {
-                    if (result.getError() != null) {
-                        paymentResult.reject(result.getError().getCode().getStatusCode(), result.getError().getMessage(getReactApplicationContext().getApplicationContext()));
-                    } else {
-                        paymentResult.reject("Unknown error");
-                    }
-                }
-            }
-        }
+        MainActivity mainActivity = ((MainActivity) getCurrentActivity());
 
-        //clear local cache
+        /*Dispatching the result back to the callback provided to ActivityResultLauncher*/
+        mainActivity.getActivityResultRegistry().dispatchResult(requestCode, activityResultLauncher.getContract().parseResult(resultCode, data));
         clearCache();
     }
 
 
     @Override
-    public void onNewIntent(Intent intent) {
-
-    }
+    public void onNewIntent(Intent intent) {}
 
     @Override
     public String getName() {
@@ -238,13 +224,58 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     /**
      * Method to store here the paymentResult promise to be used inside the #onActivityResult method
      * Call this method from JavaScript before calling #start()
-     *
      * @param paymentResult
      */
     @ReactMethod
     public void handleSDKResult(Promise paymentResult) {
         this.paymentResult = paymentResult;
     }
+
+    CardPaymentRegistration cardPaymentRegistration = (shouldStoreCard, callbackWithTransaction) -> {
+        try {
+            registerPaymentCallback.invoke(shouldStoreCard);
+            TransactionInfo transactionInfo = getTransactionInfo();
+            if (transactionInfo != null && transactionInfo.getTransactionId() != null) {
+                callbackWithTransaction.successWithTransactionIDAndRedirectURL(transactionInfo.getTransactionId(), Uri.parse(transactionInfo.getRedirectUrl()));
+            } else {
+                callbackWithTransaction.failureWithError(null);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    };
+
+    CardTokenPaymentRegistration cardTokenPaymentRegistration = new CardTokenPaymentRegistration() {
+        @Override
+        public void registerPayment(@NotNull TransactionCallback callbackWithTransaction) {
+            try {
+                registerPaymentCallback.invoke();
+                TransactionInfo transactionInfo = getTransactionInfo();
+                if (transactionInfo != null && transactionInfo.getTransactionId() != null) {
+                    callbackWithTransaction.successWithTransactionIDAndRedirectURL(transactionInfo.getTransactionId(), Uri.parse(transactionInfo.getRedirectUrl()));
+                } else {
+                    callbackWithTransaction.failureWithError(null);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
+    private Pair<String, PiaSDK.Environment> merchantIDAndEnvironmentPair(MerchantInfo merchantInfo) {
+        String merchantID = merchantInfo.getMerchantId();
+        return Pair.create(merchantID, merchantInfo.isTestMode() ? PiaSDK.Environment.TEST : PiaSDK.Environment.PROD);
+    }
+
+    private Pair<Integer, String> amountAndCurrencyCodePair(OrderInfo orderInfo) {
+        String amount = String.valueOf(orderInfo.getAmount());
+        int amountInCents = (int) (Double.parseDouble(
+                (amount == null || amount.isEmpty() ? "0" : amount)) * 100
+        );
+        return Pair.create(amountInCents, orderInfo.currencyCode);
+    }
+
 
     /**
      * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
@@ -255,32 +286,91 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      */
     @ReactMethod
     public void start(final Callback registerPaymentCallback) {
-        Bundle bundle = new Bundle();
-        if (merchantInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
-        }
-        if (orderInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
-        }
-        if (tokenCardInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_TOKEN_CARD_INFO, tokenCardInfo);
-        }
 
+        this.registerPaymentCallback = registerPaymentCallback;
 
-        PiaSDK.getInstance().start(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
+
+        PiaSDK.startCardProcessActivity(
+                ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
+                PaymentProcess.cardPayment(
+                        merchantIDAndEnvironmentPair(merchantInfo),
+                        amountAndCurrencyCodePair(orderInfo),
+                        cardPaymentRegistration
+                ),
+                merchantInfo.isCvcRequired()
+        );
+    }
+
+    /**
+     * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
+     * This callback will notify you when the register payment API call is required to be done from your application.
+     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
+     *
+     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
+     */
+    @ReactMethod
+    public void saveCard(final Callback registerPaymentCallback) {
+
+        this.registerPaymentCallback = registerPaymentCallback;
+
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
+
+        CardTokenizationRegistration cardStorageRegistration = new CardTokenizationRegistration() {
             @Override
-            public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {
-                registerPaymentCallback.invoke(saveCard);
+            public void registerPayment(@NotNull TransactionCallback callbackWithTransaction) {
                 try {
-                    return getTransactionInfo();
+                    registerPaymentCallback.invoke();
+                    TransactionInfo transactionInfo = getTransactionInfo();
+                    if (transactionInfo != null && transactionInfo.getTransactionId() != null) {
+                        callbackWithTransaction.successWithTransactionIDAndRedirectURL(transactionInfo.getTransactionId(), Uri.parse(transactionInfo.getRedirectUrl()));
+                    } else {
+                        callbackWithTransaction.failureWithError(null);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    threadSynchronizator.notify();
-                    return null;
                 }
             }
-        });
+        };
+
+        String merchantID = merchantInfo.getMerchantId();
+        PiaSDK.Environment environment = merchantInfo.isTestMode() ?
+                PiaSDK.Environment.TEST : PiaSDK.Environment.PROD;
+
+        PiaSDK.startCardProcessActivity(
+                activityResultLauncher,
+                PaymentProcess.cardTokenization(
+                        Pair.create(merchantID, environment),
+                        cardStorageRegistration
+                ),
+                merchantInfo.isCvcRequired()
+        );
     }
+
+    /**
+     * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
+     * This callback will notify you when the register payment API call is required to be done from your application.
+     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
+     *
+     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
+     */
+    @ReactMethod
+    public void startSBusinessCard(final Callback registerPaymentCallback) {
+        this.registerPaymentCallback = registerPaymentCallback;
+
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
+
+        PiaSDK.startSBusinessCardProcessActivity(
+                ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
+                PaymentProcess.cardPayment(
+                        merchantIDAndEnvironmentPair(merchantInfo),
+                        amountAndCurrencyCodePair(orderInfo),
+                        cardPaymentRegistration
+                ),
+                merchantInfo.isCvcRequired()
+        );
+    }
+
 
     /**
      * After you set all required local object through above setters, call this method to skip the confirmation and instantiate the Callback Parameter
@@ -291,32 +381,48 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      */
     @ReactMethod
     public void startSkipConfirmation(final Callback registerPaymentCallback) {
-        Bundle bundle = new Bundle();
-        if (merchantInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
-        }
-        if (orderInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
-        }
-        if (tokenCardInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_TOKEN_CARD_INFO, tokenCardInfo);
-        }
+
+        this.registerPaymentCallback = registerPaymentCallback;
 
         PiaInterfaceConfiguration.getInstance().setSkipConfirmationSelected(true);
-        PiaSDK.getInstance().start(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
-            @Override
-            public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {
-                registerPaymentCallback.invoke(saveCard);
-                try {
-                    return getTransactionInfo();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    threadSynchronizator.notify();
-                    return null;
-                }
-            }
-        });
+
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
+
+        PiaSDK.startCardProcessActivity(
+                ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
+                PaymentProcess.cardTokenPayment(
+                        merchantIDAndEnvironmentPair(merchantInfo),
+                        amountAndCurrencyCodePair(orderInfo),
+                        tokenCardInfo.getTokenId(),
+                        tokenCardInfo.getSchemeId(),
+                        tokenCardInfo.getExpiryDate(),
+                        cardTokenPaymentRegistration
+                ),
+                merchantInfo.isCvcRequired()
+        );
     }
+
+    @ReactMethod
+    public void startTokenPayment(final Callback registerPaymentCallback) {
+
+        this.registerPaymentCallback = registerPaymentCallback;
+
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
+
+        PiaSDK.startCardProcessActivity(
+                ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
+                PaymentProcess.cardTokenPayment(
+                        merchantIDAndEnvironmentPair(merchantInfo),
+                        amountAndCurrencyCodePair(orderInfo),
+                        tokenCardInfo.getTokenId(),
+                        tokenCardInfo.getSchemeId(),
+                        tokenCardInfo.getExpiryDate(),
+                        cardTokenPaymentRegistration
+                ),
+                merchantInfo.isCvcRequired()
+        );
+    }
+
 
     /**
      * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
@@ -327,27 +433,27 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      */
     @ReactMethod
     public void startPayPalProcess(final Callback registerPaymentCallback) {
-        Bundle bundle = new Bundle();
-        if (merchantInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
-        }
-        if (orderInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
-        }
-        PiaSDK.getInstance().startPayPalProcess(getCurrentActivity(), bundle, new RegisterPaymentHandler() {
-            @Override
-            public TransactionInfo doRegisterPaymentRequest(final boolean saveCard) {
-                registerPaymentCallback.invoke(saveCard);
-                try {
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).payPalActivityLauncher;
 
-                    return getTransactionInfo();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    threadSynchronizator.notify();
-                    return null;
+        PayPalPaymentRegistration payPalPaymentRegistration = callbackWithTransaction -> {
+            try {
+                registerPaymentCallback.invoke();
+                TransactionInfo transactionInfo = getTransactionInfo();
+                if (transactionInfo != null && transactionInfo.getTransactionId() != null) {
+                    callbackWithTransaction.successWithTransactionIDAndRedirectURL(transactionInfo.getTransactionId(), Uri.parse(transactionInfo.getRedirectUrl()));
+                } else {
+                    callbackWithTransaction.failureWithError(null);
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
+        };
+
+        PiaSDK.startPayPalPayment(
+                ((MainActivity) getCurrentActivity()).payPalActivityLauncher,
+                merchantIDAndEnvironmentPair(merchantInfo),
+                payPalPaymentRegistration
+        );
     }
 
     /**
@@ -356,18 +462,30 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
      */
     @ReactMethod
-    public void startPaytrailProcess() {
-        Bundle bundle = new Bundle();
-        if (merchantInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, merchantInfo);
-        }
-        if (orderInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, orderInfo);
-        }
-        if (transactionInfo != null) {
-            bundle.putParcelable(PiaActivity.BUNDLE_TRANSACTION_INFO, transactionInfo);
-        }
-        PiaSDK.getInstance().startPaytrailProcess(getCurrentActivity(), bundle);
+    public void startPaytrailProcess(final Callback registerPaymentCallback) {
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).paytrailActivityLauncher;
+
+        PaytrailPaymentRegistration paytrailPaymentRegistration = callbackWithTransaction -> {
+            try {
+                registerPaymentCallback.invoke();
+                TransactionInfo transactionInfo = getTransactionInfo();
+                if (transactionInfo != null && transactionInfo.getTransactionId() != null) {
+                    callbackWithTransaction.successWithTransactionIDAndRedirectURL(transactionInfo.getTransactionId(), Uri.parse(transactionInfo.getRedirectUrl()));
+                } else {
+                    callbackWithTransaction.failureWithError(null);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+
+        PiaSDK.startPaytrailPayment(
+                ((MainActivity) getCurrentActivity()).paytrailActivityLauncher    ,
+                merchantIDAndEnvironmentPair(merchantInfo),
+                paytrailPaymentRegistration
+        );
+
     }
 
 
@@ -376,6 +494,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     public void setInterruptReceiver(Callback interruptResultReceiver){
         this.interruptResultReceiver = interruptResultReceiver;
     }*/
+
     /**
      * Single Api for initiating all wallet payments, call this method and instantiate the Callback Parameter
      * walletType should be set before calling this method
@@ -409,13 +528,14 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
 
     /**
      * Returns the result back to SDK
+     *
      * @param walletUrl - Wallet Url received on register api call
      */
     @ReactMethod
     public void openWalletApp(String walletUrl) {
         if (walletUrl != null) {
             walletURLCallback.successWithWalletURL(Uri.parse(walletUrl));
-        }else
+        } else
             walletURLCallback.failureWithError(null);
     }
 
@@ -461,5 +581,17 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
         String log = transactionInfo != null ? transactionInfo.getTransactionId() + " " + transactionInfo.getRedirectUrl() + " " + transactionInfo.getCancelRedirectUrl() : "TransactionInfo : null";
         System.out.println("onTransactionInfo:" + log);
         return transactionInfo;
+    }
+
+    public void returnSuccess() {
+        paymentResult.resolve("SUCCESS");
+    }
+
+    public void returnFailure(String message) {
+        paymentResult.resolve(message);
+    }
+
+    public void returnCancellation(String message) {
+        paymentResult.resolve(message);
     }
 }

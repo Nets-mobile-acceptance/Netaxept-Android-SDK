@@ -58,7 +58,7 @@
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         
        
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.1.3'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.2.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         
         
         }
@@ -1441,6 +1441,17 @@ The above copyright notice and this permission notice shall be included in all c
 <h4><a id="Release_notes_742"></a>Release notes:</h4>
 <ul>
 		<li><strong>Important!</strong> Bug fix - support of amount's decimals in card payment entry view </li>
+</ul>
+
+<h4><a id="v213_Released_03MARCH2021_668"></a>v2.2.0 Released: 31-March-2021</h4>
+<h4><a id="Release_notes_742"></a>Release notes:</h4>
+<ul>
+
+		<li>The SDK UI for card entry now supports 19 digits. This allows to assess 3DS2 experience via a simulator. Compatible test cards for 3DS2 are available <a href="https://shop.nets.eu/web/partners/test-cards" title="here">here</a>.</li>
+		<li>Added ReactNative support for new declarative APIs to initiate Card, Paypal and Paytrail Direct Bank payments.</li>
+		<li>Added Xamarin support for new declarative APIs to initiate Card, Paypal and Paytrail Direct Bank payments.</li>
+		<li>Added an alternative text label "Reserve". Select this option for pre-authorization use cases (like mobile fueling for example)..</li>
+		<li>Minor bug fixes.</li>
 </ul>
 		
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>

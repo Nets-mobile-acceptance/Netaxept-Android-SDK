@@ -8,13 +8,17 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,6 +29,7 @@ import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 import eu.nets.pia.sample.ui.widget.CustomToolbar;
 import eu.nets.pia.ui.themes.PiaSDKTheme;
+import eu.nets.pia.utils.validator.PayButtonTextLabelOption;
 
 /**
  * MIT License
@@ -55,6 +60,9 @@ public class UICustomizationActivity extends AppCompatActivity {
 
     @BindView(R.id.nets_save_card_text)
     EditText mSaveCardText;
+
+    @BindView(R.id.use_button_pay_text_label)
+    AppCompatSpinner mPayButtonTextLabel;
 
     private PiaSDKTheme customTheme;
     private PiaSDKTheme netsTheme;
@@ -91,7 +99,7 @@ public class UICustomizationActivity extends AppCompatActivity {
 
         handleGeneralUICustomizationSwitches();
         handleCardIoCustomizationSwitches();
-
+        handlePayButtonTextLabel();
         handlePreviousSelection();
     }
 
@@ -239,6 +247,15 @@ public class UICustomizationActivity extends AppCompatActivity {
         });
     }
 
+    private void handlePayButtonTextLabel() {
+        ArrayList<String> payTextArrayList = new ArrayList<>();
+        payTextArrayList.add(PayButtonTextLabelOption.PAY.toString());
+        payTextArrayList.add(PayButtonTextLabelOption.RESERVE.toString());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, payTextArrayList);
+        mPayButtonTextLabel.setAdapter(adapter);
+    }
+
     private void handlePreviousSelection() {
         PiaInterfaceConfiguration configuration = PiaInterfaceConfiguration.getInstance();
         if (configuration.getLogoDrawable() != null) {
@@ -289,6 +306,11 @@ public class UICustomizationActivity extends AppCompatActivity {
         } else {
             ((SwitchCompat) findViewById(R.id.switch_sample_button_rounded_corner)).setChecked(false);
         }
+        if (configuration.getPayButtonText() == PayButtonTextLabelOption.PAY) {
+            mPayButtonTextLabel.setSelection(0);
+        } else {
+            mPayButtonTextLabel.setSelection(1);
+        }
 
         //end section
     }
@@ -325,6 +347,9 @@ public class UICustomizationActivity extends AppCompatActivity {
         if (configuration.getButtonRoundCorner() != null) {
             configuration.setButtonRoundCorner((int) getResources().getDimension(R.dimen.custom_button_radius));
         }
+        configuration.setPayButtonText((mPayButtonTextLabel.getSelectedItem().toString().equals("PAY"))
+                ? PayButtonTextLabelOption.PAY : PayButtonTextLabelOption.RESERVE);
+
     }
 
     private void setupToolbar() {

@@ -31,12 +31,12 @@
     <string name="alert_ok">OK</string>
 
     <!-- Confirmation Screen -->
-    <string name="process_cancelled">Tapahtuma keskeytynyt.</string>
+    <!--<string name="process_cancelled">Tapahtuma keskeytynyt.</string>
     <string name="process_error">Virhe.\nYritä myöhemmin uudestaan.</string>
     <string name="card_saved_success">Korttisi\non tallennettu.</string>
     <string name="thanks_for_shopping">Kiitos ostoksista</string>
     <string name="toolbar_title_cancelled">Keskeytetty</string>
     <string name="toolbar_title_failed">Epäonistunut</string>
     <string name="toolbar_title_success_save">Kortti tallennettu</string>
-    <string name="toolbar_title_success_pay">Maksu valmis</string>
+    <string name="toolbar_title_success_pay">Maksu valmis</string>-->
 </resources>

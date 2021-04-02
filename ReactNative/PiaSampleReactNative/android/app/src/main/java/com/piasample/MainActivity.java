@@ -3,15 +3,15 @@ package com.piasample;
 import android.util.Log;
 
 import com.facebook.react.ReactActivity;
-import com.facebook.react.ReactNativeHost;
-import com.facebook.react.ReactPackage;
-import com.facebook.react.bridge.NativeModule;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import androidx.activity.result.ActivityResultLauncher;
+import eu.nets.pia.ProcessResult;
+import eu.nets.pia.card.CardProcessActivityLauncherInput;
+import eu.nets.pia.card.CardProcessActivityResultContract;
+import eu.nets.pia.card.PayPalActivityLauncherInput;
+import eu.nets.pia.card.PayPalActivityResultContract;
+import eu.nets.pia.card.PaytrailActivityLauncherInput;
+import eu.nets.pia.card.PaytrailActivityResultContract;
 import eu.nets.pia.wallets.MobileWallet;
 import eu.nets.pia.wallets.MobileWalletError;
 import eu.nets.pia.wallets.MobileWalletListener;
@@ -46,9 +46,23 @@ public class MainActivity extends ReactActivity implements MobileWalletListener 
         return "PiaSample";
     }
 
+    ActivityResultLauncher<PayPalActivityLauncherInput> payPalActivityLauncher = registerForActivityResult(
+            new PayPalActivityResultContract(),
+            this::transactionCompleteResult
+    );
+
+    ActivityResultLauncher<PaytrailActivityLauncherInput> paytrailActivityLauncher = registerForActivityResult(
+            new PaytrailActivityResultContract(),
+            this::transactionCompleteResult
+    );
+
+    ActivityResultLauncher<CardProcessActivityLauncherInput> cardPaymentActivityLauncher = registerForActivityResult(
+            new CardProcessActivityResultContract(),
+            this::transactionCompleteResult
+    );
+
     /* Here in the overridden methods we need to access the SDKModule to pass the result back to App.js*/
- 
-    @Override
+ @Override
     public void onMobileWalletAppSwitchFailure(MobileWallet mobileWallet, MobileWalletError mobileWalletError) {
         RNSDKPackage reactPackage = (RNSDKPackage) this.getReactNativeHost().getReactInstanceManager().getPackages().get(2);
         reactPackage.sdkModule.returnSuccessfulRedirectResult("ERROR");
@@ -65,5 +79,47 @@ public class MainActivity extends ReactActivity implements MobileWalletListener 
         RNSDKPackage reactPackage = (RNSDKPackage) this.getReactNativeHost().getReactInstanceManager().getPackages().get(2);
         reactPackage.sdkModule.returnInterruption("INTERRUPTED");
     }
+
+    void transactionCompleteResult(ProcessResult result) {
+        RNSDKPackage reactPackage = (RNSDKPackage) this.getReactNativeHost().getReactInstanceManager().getPackages().get(2);
+
+        if (result instanceof ProcessResult.Success) {
+
+            /*
+             *Transaction ID from SDK for rollback call
+             */
+            String transactionId = ((ProcessResult.Success) result).getTransactionID();
+
+            reactPackage.sdkModule.returnSuccess();
+
+        } else if (result instanceof ProcessResult.Failure) {
+            /*
+             *Failure message to be displayed in Confirmation page
+             */
+            String message = ((ProcessResult.Failure) result).getProcessError().toString();
+
+            reactPackage.sdkModule.returnFailure(message);
+
+
+        } else if (result instanceof ProcessResult.Cancellation) {
+
+            ProcessResult.Cancellation cancellation = (ProcessResult.Cancellation) result;
+            /*
+             *Cancellation message to be displayed in Confirmation page
+             */
+            String message =  cancellation.getReason();
+            /*
+             *Transaction ID from SDK for rollback call
+             */
+            String transactionId = cancellation.getTransactionID();
+
+            reactPackage.sdkModule.returnCancellation(message);
+
+
+        }
+    }
+
+
+
 
 }

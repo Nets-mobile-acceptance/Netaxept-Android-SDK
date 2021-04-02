@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.data.model.PiaLanguage;
 import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
+import eu.nets.pia.utils.validator.PayButtonTextLabelOption;
 
 /**
  * MIT License
@@ -83,6 +84,7 @@ public class SampleApplication extends Application {
         drawable.setColor(ContextCompat.getColor(this, R.color.light_gray));
         drawable.setCornerRadius(8);
         PiaInterfaceConfiguration.getInstance().setCardIOButtonBackgroundSelector(drawable);
+        PiaInterfaceConfiguration.getInstance().setPayButtonText(PayButtonTextLabelOption.RESERVE);
     }
 
 }

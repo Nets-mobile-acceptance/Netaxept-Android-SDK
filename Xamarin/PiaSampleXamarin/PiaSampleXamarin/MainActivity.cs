@@ -8,18 +8,21 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Icu.Text;
 using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.V7.App;
+using AndroidX.AppCompat.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Activity.Result;
 using EU.Nets.Pia;
+using EU.Nets.Pia.Card;
 using EU.Nets.Pia.Data.Model;
 using EU.Nets.Pia.Wallets;
 using Java.Lang;
 using Java.Util;
 using Newtonsoft.Json;
 using PiaSampleXamarin.Model;
+using AndroidX.Activity.Result.Contract;
+using AndroidX.Core.App;
 
 /**
  * MIT License
@@ -42,10 +45,30 @@ using PiaSampleXamarin.Model;
 
 namespace PiaSampleXamarin
 {
+
+    public class PiaActivityResultCallback : Java.Lang.Object, IActivityResultCallback
+    {
+        Action<ProcessResult> onProcessResult;
+
+        public PiaActivityResultCallback(Action<ProcessResult> onProcessResul)
+        {
+            this.onProcessResult = onProcessResul;
+        }
+
+        public void OnActivityResult(Java.Lang.Object p0)
+        {
+            onProcessResult((ProcessResult)p0);
+        }
+
+    }
+
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity, IMobileWalletListener, IWalletPaymentRegistration
     {
-        
+
+        ActivityResultLauncher cardPaymentActivityLauncher, paypalPaymentActivityLauncher, paytrailPaymentActivityLauncher;
+
+
         Button btnPay;
         Button btnPayWithSavedCard;
         Button btnSaveCard;
@@ -53,6 +76,7 @@ namespace PiaSampleXamarin
         Button btnSkipConfirmation;
         Button btnPaytrailNordea;
         Button btnMobilePay;
+        Button btnSBusinessCard;
         public RelativeLayout progressBar;
 
 
@@ -67,11 +91,12 @@ namespace PiaSampleXamarin
         string expiryDateTest = "YOUR TEST CARD EXPIRY DATE";
 
 
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-            
+
             btnPay = FindViewById<Button>(Resource.Id.pay);
             btnPayWithSavedCard = FindViewById<Button>(Resource.Id.paySavedCard);
             btnSaveCard = FindViewById<Button>(Resource.Id.saveCard);
@@ -79,6 +104,7 @@ namespace PiaSampleXamarin
             btnSkipConfirmation = FindViewById<Button>(Resource.Id.skipConfirmationBtn);
             btnPaytrailNordea = FindViewById<Button>(Resource.Id.paytrailNordea);
             btnMobilePay = FindViewById<Button>(Resource.Id.mobilePay);
+            btnSBusinessCard = FindViewById<Button>(Resource.Id.sBusinessCard);
             progressBar = FindViewById<RelativeLayout>(Resource.Id.progressBarLayout);
 
             btnPay.Click += onPayWithNewCard;
@@ -88,10 +114,87 @@ namespace PiaSampleXamarin
             btnSkipConfirmation.Click += onSkipConfirmation;
             btnPaytrailNordea.Click += onPayViaPaytrail;
             btnMobilePay.Click += payWithMobileWallet;
+            btnSBusinessCard.Click += payWithSBusinessCard;
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            AndroidX.AppCompat.Widget.Toolbar toolbar = FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-            
+
+            cardPaymentActivityLauncher = RegisterForActivityResult(
+                PiaSDK.CardPaymentActivityContractXamarin(),
+                new PiaActivityResultCallback(processResult => {
+
+                    switch (processResult) {
+
+                        case ProcessResult.Success:
+                            Toast.MakeText(this, "Success", ToastLength.Short).Show();
+                            break;
+
+                        case ProcessResult.Failure:
+                            Toast.MakeText(this, "Failure", ToastLength.Short).Show();
+                            break;
+
+                        case ProcessResult.Cancellation:
+                            Toast.MakeText(this, "Cancelled", ToastLength.Short).Show();
+                            break;
+
+                        default:
+                            break;
+
+                    }
+                })
+            );
+
+            paypalPaymentActivityLauncher = RegisterForActivityResult(
+                PiaSDK.PaypalPaymentActivityContractXamarin(),
+                new PiaActivityResultCallback(processResult => {
+
+                    switch (processResult)
+                    {
+
+                        case ProcessResult.Success:
+                            Toast.MakeText(this, "Success", ToastLength.Short).Show();
+                            break;
+
+                        case ProcessResult.Failure:
+                            Toast.MakeText(this, "Failure", ToastLength.Short).Show();
+                            break;
+
+                        case ProcessResult.Cancellation:
+                            Toast.MakeText(this, "Cancelled", ToastLength.Short).Show();
+                            break;
+
+                        default:
+                            break;
+
+                    }
+                })
+            );
+
+            paytrailPaymentActivityLauncher = RegisterForActivityResult(
+                PiaSDK.PaytrailPaymentActivityContractXamarin(),
+                new PiaActivityResultCallback(processResult => {
+
+                    switch (processResult)
+                    {
+
+                        case ProcessResult.Success:
+                            Toast.MakeText(this, "Success", ToastLength.Short).Show();
+                            break;
+
+                        case ProcessResult.Failure:
+                            Toast.MakeText(this, "Failure", ToastLength.Short).Show();
+                            break;
+
+                        case ProcessResult.Cancellation:
+                            Toast.MakeText(this, "Cancelled", ToastLength.Short).Show();
+                            break;
+
+                        default:
+                            break;
+
+                    }
+                })
+            );
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -154,173 +257,107 @@ namespace PiaSampleXamarin
 
         private void onPayWithNewCard(object sender, EventArgs eventArgs)
         {
-            /**
-                Build the MerchantInfo object with the following parameters:
-                -merchantId 
-                -testMode
-                -cvcRequired
-            */
-            MerchantInfo merchant = new MerchantInfo(merchantIdTest, true);
-            /**
-             *   Build the OrderInfo object with the following parameters:
-             *  -amount 
-             *  -currencyCode
-             */
-            OrderInfo order = new OrderInfo(1, "DKK");
+            PiaSDK.StartCardProcessActivity(
+                cardPaymentActivityLauncher,
+                PaymentProcess.CardPayment(
+                    merchantIDAndEnvironmentPair(),
+                    Pair.Create(100, "NOK"),
+                new CardPaymentRegistration(
+                    merchantBaseUrlTest,
+                    merchantIdTest,
+                    PaymentMode.NEW_CARD)),
+                (Java.Lang.Boolean)true);
+        }
 
-            /**
-            * Put the objects in the bundle; access the keys in the PiaSDK class
-            */
-            Bundle bundle = new Bundle();
-            bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
-            bundle.PutParcelable(PiaSDK.BundleOrderInfo, order);
+        private Pair merchantIDAndEnvironmentPair()
+        {
+            bool isTest = true;
+            string merchantID = merchantIdTest;
+            return Pair.Create(merchantID, isTest ? PiaSDK.Environment.Test : PiaSDK.Environment.Prod);
+        }
 
-            PiaSDK.Instance.Start(this, bundle, new HandlerClass(PaymentMode.NEW_CARD.ToString(), merchantBaseUrlTest, merchantIdTest));
+        private Pair amountAndCurrencyCodePair()
+        {
+            int amountInCents = 1 * 100;
+            string currency = "DKK";
+            return Pair.Create(amountInCents, currency);
         }
 
         private void onPayWithSavedCard(object sender, EventArgs eventArgs)
         {
-            /**
-                Build the MerchantInfo object with the following parameters:
-                -merchantId 
-                -testMode
-                -cvcRequired
-            */
-            MerchantInfo merchant = new MerchantInfo(merchantIdTest, true);
-            /**
-             *   Build the OrderInfo object with the following parameters:
-             *  -amount 
-             *  -currencyCode
-             */
-            OrderInfo order = new OrderInfo(1, "DKK");
-            /**
-            *   Build the TokenCardInfo object with the following parameters:
-            *  -card token pan 
-            *  -Scheme type
-            *  -expiration date
-            *  -cardVerificationRequired (if CVV/CVC will be asked)
-            *  -useSystemAuth (if CVV/CVC is not required, the option to confirm payment with unlock screen will be prompted if this flag is true) 
-            */
-            TokenCardInfo tokenCardInfo = new TokenCardInfo(tokenIdTest, schemeIdTest, expiryDateTest, true);
-
+           
             PiaInterfaceConfiguration.Instance.SkipConfirmationSelected = false;
 
-            /**
-            * Put the objects in the bundle; access the keys in the PiaSDK class
-            */
-            Bundle bundle = new Bundle();
-            bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
-            bundle.PutParcelable(PiaSDK.BundleOrderInfo, order);
-            bundle.PutParcelable(PiaSDK.BundleTokenCardInfo, tokenCardInfo);
+            PiaSDK.StartCardProcessActivity(cardPaymentActivityLauncher,
+                PaymentProcess.CardTokenPayment(
+                    merchantIDAndEnvironmentPair(),
+                    amountAndCurrencyCodePair(),
+                    tokenIdTest,
+                    schemeIdTest,
+                    expiryDateTest,
+                new CardTokenPaymentRegistration(
+                    merchantBaseUrlTest, 
+                    merchantIdTest)),
+                (Java.Lang.Boolean)true);
 
-            PiaSDK.Instance.Start(this, bundle, new HandlerClass(PaymentMode.SAVED_CARD.ToString(), merchantBaseUrlTest, merchantIdTest));
         }
 
         private void onSaveCard(object sender, EventArgs eventArgs)
         {
-            /**
-                Build the MerchantInfo object with the following parameters:
-                -merchantId 
-                -testMode
-                -cvcRequired
-            */
-            MerchantInfo merchant = new MerchantInfo(merchantIdTest, true);
-            /**
-            * Put the objects in the bundle; access the keys in the PiaSDK class
-            */
-            Bundle bundle = new Bundle();
-            bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
+            
+            PiaSDK.StartCardProcessActivity(
+                cardPaymentActivityLauncher,
+                PaymentProcess.CardTokenization(
+                    Pair.Create(
+                        merchantIdTest, 
+                        PiaSDK.Environment.Test),
+                new CardTokenizationRegistration(merchantBaseUrlTest, 
+                    merchantIdTest)), 
+                (Java.Lang.Boolean)true);
 
-            PiaSDK.Instance.Start(this, bundle, new HandlerClass(PaymentMode.SAVE_CARD.ToString(), merchantBaseUrlTest, merchantIdTest));
         }
 
         private void onPayWithPaypal(object sender, EventArgs eventArgs)
         {
-            /**
-                Build the MerchantInfo object with the following parameters:
-                -merchantId 
-                -testMode
-                -cvcRequired
-            */
-            MerchantInfo merchant = new MerchantInfo(merchantIdProd, false);
-            /**
-            * Put the objects in the bundle; access the keys in the PiaSDK class
-            */
-            Bundle bundle = new Bundle();
-            bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
-
-            PiaSDK.Instance.StartPayPalProcess(this, bundle, new HandlerClass(PaymentMode.PAYPAL.ToString(), merchantBaseUrlProd, merchantIdProd));
+            PiaSDK.StartPayPalPayment(
+                paypalPaymentActivityLauncher,
+                    Pair.Create(merchantIdProd, PiaSDK.Environment.Prod),
+                    new PaypalPaymentRegistration(
+                        merchantBaseUrlProd,
+                        merchantIdProd));
+            
         }
 
         private void onSkipConfirmation(object sender, EventArgs eventArgs)
         {
-            /**
-                Build the MerchantInfo object with the following parameters:
-                -merchantId 
-                -testMode
-                -cvcRequired
-            */
-            MerchantInfo merchant = new MerchantInfo(merchantIdTest, true, true);
-            /**
-             *   Build the OrderInfo object with the following parameters:
-             *  -amount 
-             *  -currencyCode
-             */
-            OrderInfo order = new OrderInfo(1, "EUR");
-            /**
-            *   Build the TokenCardInfo object with the following parameters:
-            *  -card token pan 
-            *  -Scheme type
-            *  -expiration date
-            *  -cardVerificationRequired (if CVV/CVC will be asked)
-            *  -useSystemAuth (if CVV/CVC is not required, the option to confirm payment with unlock screen will be prompted if this flag is true) 
-            */
-            TokenCardInfo tokenCardInfo = new TokenCardInfo(tokenIdTest, schemeIdTest, expiryDateTest, false);
 
             PiaInterfaceConfiguration.Instance.SkipConfirmationSelected = true;
 
-            /**
-            * Put the objects in the bundle; access the keys in the PiaSDK class
-            */
-            Bundle bundle = new Bundle();
-            bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
-            bundle.PutParcelable(PiaSDK.BundleOrderInfo, order);
-            bundle.PutParcelable(PiaSDK.BundleTokenCardInfo, tokenCardInfo);
+            PiaSDK.StartCardProcessActivity(
+                cardPaymentActivityLauncher,
+                PaymentProcess.CardTokenPayment(
+                    merchantIDAndEnvironmentPair(), 
+                    amountAndCurrencyCodePair(), 
+                    tokenIdTest,
+                    schemeIdTest,
+                    expiryDateTest,
+                new CardTokenPaymentRegistration(
+                    merchantBaseUrlTest, 
+                    merchantIdTest)), 
+                (Java.Lang.Boolean)false);
 
-            PiaSDK.Instance.Start(this, bundle, new HandlerClass(PaymentMode.SAVED_CARD_SKIP.ToString(), merchantBaseUrlTest, merchantIdTest));
         }
 
         private void onPayViaPaytrail(object sender, EventArgs eventArgs)
         {
-            /**
-                Build the MerchantInfo object with the following parameters:
-                -merchantId 
-                -testMode
-            */
-            MerchantInfo merchant = new MerchantInfo(merchantIdTest, true);
-            /**
-             *   Build the OrderInfo object with the following parameters:
-             *  -amount 
-             *  -currencyCode
-             */
-            OrderInfo order = new OrderInfo(1, "EUR");
-            /**
-            * Put the objects in the bundle; access the keys in the PiaSDK class
-            */
-
-            Bundle bundle = new Bundle();
-            bundle.PutParcelable(PiaSDK.BundleMerchantInfo, merchant);
-            bundle.PutParcelable(PiaSDK.BundleOrderInfo, order);
-            TransactionInfo transactionInfo = paytrailRegisterCall();
-            if (transactionInfo != null)
-            {
-                bundle.PutParcelable(PiaSDK.BundleTransactionInfo, transactionInfo);
-                PiaSDK.Instance.StartPaytrailProcess(this, bundle);
-            }
-            else
-            {
-                Toast.MakeText(this, "Paytrail register failed", ToastLength.Short).Show();
-            }
+            
+            PiaSDK.StartPaytrailPayment(
+                paytrailPaymentActivityLauncher, 
+                merchantIDAndEnvironmentPair(), 
+                new PaytrailPaymentRegistration(
+                    merchantBaseUrlTest, 
+                    merchantIdTest));
+            
         }
 
         //An algorithm to create reference number to your invoices as per Finnish Payment Guidelines.
@@ -361,32 +398,6 @@ namespace PiaSampleXamarin
 
         }
 
-        private TransactionInfo paytrailRegisterCall()
-        {
-            try
-            {
-                showLoader();
-                string paytrailRequest = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerAddress1\":\"Testaddress\",\"customerCountry\":\"FI\",\"customerEmail\":\"bill.buyer@nets.eu\",\"customerFirstName\":\"Bill\",\"customerId\":\"000012\",\"customerLastName\":\"Buyer\",\"customerPostCode\":\"00510\",\"customerTown\":\"Helsinki\",\"method\":{\"id\":\"PaytrailNordea\"},\"storeCard\":false,\"orderNumber\":" + getPaytrailOrderNumber() + "}";
-                HttpResponseMessage response = makeHttpCall(paytrailRequest, merchantIdTest, merchantBaseUrlTest);
-                if (response.IsSuccessStatusCode)
-                {
-                    string result = response.Content.ReadAsStringAsync().Result;
-                    if (result != null)
-                    {
-                        PaymentRegisterResponse paymentRegisterResponse = JsonConvert.DeserializeObject<PaymentRegisterResponse>(result);
-                        return new TransactionInfo(paymentRegisterResponse.transactionId, paymentRegisterResponse.redirectOK);
-                    }
-                }
-                cancelLoader();
-                return null;
-            }
-            catch (Java.Lang.Exception ex)
-            {
-                cancelLoader();
-                return null;
-            }
-        }
-
         private void showLoader()
         {
             if (progressBar != null) {
@@ -402,86 +413,6 @@ namespace PiaSampleXamarin
             }
         }
         
-        public class HandlerClass : Java.Lang.Object, IRegisterPaymentHandler
-        {
-            string payMode;
-            string baseUrl;
-            string merchantId;
-
-            public new void Dispose()
-            {
-                //do nothing
-            }
-
-            public HandlerClass(string payMode, string baseUrl, string merchantId)
-            {
-                this.payMode = payMode;
-                this.baseUrl = baseUrl;
-                this.merchantId = merchantId;
-            }
-
-            TransactionInfo IRegisterPaymentHandler.DoRegisterPaymentRequest(bool p0)
-            {
-                try
-                {
-                    string jsonData;
-                    if (payMode.Equals(PaymentMode.NEW_CARD.ToString()))
-                    {
-                        jsonData = "{\"storeCard\":true,\"orderNumber\":\"PiaSDK-Android\",\"customerId\":\"000003\",\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":\"100\",\"vatAmount\":0}}";
-                    }
-                    else if (payMode.Equals(PaymentMode.SAVED_CARD.ToString()))
-                    {
-                        jsonData = "{\"customerId\":\"000012\",\"orderNumber\":\"PiaSDK-Android\",\"amount\":{\"currencyCode\":\"EUR\",\"vatAmount\":0,\"totalAmount\":\"1000\"},\"method\":{\"id\":\"EasyPayment\",\"displayName\":\"\",\"fee\":\"\"},\"cardId\":\"492500******0004\",\"storeCard\":true,\"merchantId\":\"\",\"token\":\"\",\"serviceTyp\":\"\",\"paymentMethodActionList\":\"\",\"phoneNumber\":\"\",\"currencyCode\":\"\",\"redirectUrl\":\"\",\"language\":\"\"}";
-                    }
-                    else if (payMode.Equals(PaymentMode.SAVED_CARD_SKIP.ToString()))
-                    {
-                        jsonData = "{\"amount\":{\"currencyCode\":\"SEK\",\"totalAmount\":1000,\"vatAmount\":0},\"cardId\":\"492500******0004\",\"customerId\":\"000012\",\"method\":{\"id\":\"EasyPayment\"},\"orderNumber\":\"PiaSDK-Android\",\"storeCard\":false}";
-                    }
-                    else if (payMode.Equals(PaymentMode.VIPPS.ToString()))
-                    {
-                        jsonData = "{\"amount\":{\"currencyCode\":\"NOK\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000013\",\"method\":{\"id\":\"Vipps\"},\"orderNumber\":\"PiaSDK-Android\",\"paymentMethodActionList\":\"[{PaymentMethod:Vipps}]\",\"phoneNumber\":\"+4748059560\",\"redirectUrl\":\"PiaSampleXamarin.PiaSampleXamarin://piasdk\",\"storeCard\":false}";
-                    }
-                    else if (payMode.Equals(PaymentMode.PAYPAL.ToString()))
-                    {
-                        jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000012\",\"method\":{\"id\":\"PayPal\"},\"orderNumber\":\"PiaSDK-Android\",\"storeCard\":false}";
-                    }
-                    else
-                    {
-                        jsonData = "{\"storeCard\":true,\"orderNumber\":\"PiaSDK-Android\",\"customerId\":\"000003\",\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":\"100\",\"vatAmount\":0}}";
-                    }
-
-                    var client = new HttpClient();
-                    client.BaseAddress = new Uri(baseUrl);
-                    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync(merchantId + "/register", content).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string result = response.Content.ReadAsStringAsync().Result;
-                        if (result != null)
-                        {
-                            PaymentRegisterResponse paymentRegisterResponse = JsonConvert.DeserializeObject<PaymentRegisterResponse>(result);
-                            if (payMode.Equals(PaymentMode.VIPPS.ToString()) || payMode.Equals(PaymentMode.SWISH.ToString()))
-                            {
-                                return new TransactionInfo(paymentRegisterResponse.walletUrl);
-                            }
-                            else
-                            {
-                                return new TransactionInfo(paymentRegisterResponse.transactionId, paymentRegisterResponse.redirectOK);
-                            }
-                        }
-                        return null;
-                    }
-                    return null;
-                }
-                catch (Java.Lang.Exception ex)
-                {
-                    ex.PrintStackTrace();
-                    return null;
-                }
-            }
-        }
-
         private void payWithMobileWallet(object sender, EventArgs eventArgs)
         {
             
@@ -491,12 +422,10 @@ namespace PiaSampleXamarin
                  */
                 //PaymentProcess.WalletPayment walletProcess = PaymentProcess.Vipps(true, this);
 
-
                 /*
                  * Swish Payment
                  */
                 //PaymentProcess.WalletPayment walletProcess = PaymentProcess.Swish(this);
-
 
                 /*
                  * MobilePay Payment
@@ -511,6 +440,20 @@ namespace PiaSampleXamarin
                     return;
                 }
             
+        }
+
+        private void payWithSBusinessCard(object sender, EventArgs eventArgs)
+        {
+            PiaSDK.StartSBusinessCardProcessActivity(
+                        cardPaymentActivityLauncher,
+                        PaymentProcess.CardPayment(
+                                Pair.Create(merchantISBusinessTest, PiaSDK.Environment.Test ),
+                                Pair.Create(100, "EUR"),
+                                new CardPaymentRegistration(
+                                    merchantBaseUrlTest, 
+                                    merchantISBusinessTest,
+                                    PaymentMode.S_BUSINESS)
+                        ), (Java.Lang.Boolean)true);
         }
 
         public void RegisterPayment(IWalletURLCallback callback)
@@ -564,7 +507,7 @@ namespace PiaSampleXamarin
             HttpResponseMessage response = client.PostAsync(merchantId + "/register", content).Result;
             return response;
         }
-        
+
         enum PaymentMode
         {
             NEW_CARD,
@@ -574,7 +517,204 @@ namespace PiaSampleXamarin
             PAYPAL,
             VIPPS,
             SWISH,
-            PAYTRAIL
+            PAYTRAIL,
+            S_BUSINESS
+        }
+
+        class CardPaymentRegistration : Java.Lang.Object, ICardPaymentRegistration
+        {
+            string merchantBaseUrlTest;
+            string merchantIdTest;
+            PaymentMode paymentMode;
+
+            public CardPaymentRegistration(string merchantBaseUrlTest, string merchantIdTest, PaymentMode paymentMode) {
+                this.merchantBaseUrlTest = merchantBaseUrlTest;
+                this.merchantIdTest = merchantIdTest;
+                this.paymentMode = paymentMode;
+            }
+
+            public void RegisterPayment(bool shouldStoreCard, ITransactionCallback callbackWithTransaction)
+            {
+                string jsonData;
+                if (paymentMode.Equals(PaymentMode.S_BUSINESS)) {
+                    jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000011\",\"orderNumber\":\"PiaSDK-Android\",\"paymentMethodActionList\":\"[{PaymentMethod:SBusinessCard}]\"}";
+                } else {
+                    jsonData = "{\"storeCard\":true,\"orderNumber\":\"PiaSDK-Android\",\"customerId\":\"000003\",\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":\"100\",\"vatAmount\":0}}";
+                }
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(merchantBaseUrlTest);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync(merchantIdTest + "/register", content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string result = response.Content.ReadAsStringAsync().Result;
+                    if (result != null)
+                    {
+                        PaymentRegisterResponse paymentRegisterResponse = JsonConvert.DeserializeObject<PaymentRegisterResponse>(result);
+                        if (paymentRegisterResponse != null && paymentRegisterResponse.transactionId != null)
+                        {
+                            callbackWithTransaction.SuccessWithTransactionIDAndRedirectURL(paymentRegisterResponse.transactionId, Android.Net.Uri.Parse(paymentRegisterResponse.redirectOK));
+                        }
+                        else
+                        {
+                            callbackWithTransaction.FailureWithError(null);
+                        }
+                    }
+                }
+            }
+        }
+
+        class PaypalPaymentRegistration : Java.Lang.Object, IPayPalPaymentRegistration
+        {
+            string merchantBaseUrlTest;
+            string merchantIdTest;
+
+            public PaypalPaymentRegistration(string merchantBaseUrlTest, string merchantIdTest)
+            {
+                this.merchantBaseUrlTest = merchantBaseUrlTest;
+                this.merchantIdTest = merchantIdTest;
+            }
+
+            public void RegisterPayment(ITransactionCallback callbackWithTransaction)
+            {
+                string jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000011\",\"method\":{\"id\":\"PayPal\"},\"orderNumber\":\"PiaSDK-Android\"}";
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(merchantBaseUrlTest);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync(merchantIdTest + "/register", content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string result = response.Content.ReadAsStringAsync().Result;
+                    if (result != null)
+                    {
+                        PaymentRegisterResponse paymentRegisterResponse = JsonConvert.DeserializeObject<PaymentRegisterResponse>(result);
+                        if (paymentRegisterResponse != null && paymentRegisterResponse.transactionId != null)
+                        {
+                            callbackWithTransaction.SuccessWithTransactionIDAndRedirectURL(paymentRegisterResponse.transactionId, Android.Net.Uri.Parse(paymentRegisterResponse.redirectOK));
+                        }
+                        else
+                        {
+                            callbackWithTransaction.FailureWithError(null);
+                        }
+                    }
+                }
+            }
+        }
+
+        class PaytrailPaymentRegistration : Java.Lang.Object, IPaytrailPaymentRegistration
+        {
+            string merchantBaseUrlTest;
+            string merchantIdTest;
+
+            public PaytrailPaymentRegistration(string merchantBaseUrlTest, string merchantIdTest)
+            {
+                this.merchantBaseUrlTest = merchantBaseUrlTest;
+                this.merchantIdTest = merchantIdTest;
+            }
+
+            public void RegisterPayment(ITransactionCallback callbackWithTransaction)
+            {
+                string jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerAddress1\":\"Testaddress\",\"customerCountry\":\"FI\",\"customerEmail\":\"bill.buyer@nets.eu\",\"customerFirstName\":\"Bill\",\"customerId\":\"000012\",\"customerLastName\":\"Buyer\",\"customerPostCode\":\"00510\",\"customerTown\":\"Helsinki\",\"method\":{\"id\":\"PaytrailNordea\"},\"storeCard\":false,\"orderNumber\":" + new MainActivity().getPaytrailOrderNumber() + "}";
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(merchantBaseUrlTest);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync(merchantIdTest + "/register", content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string result = response.Content.ReadAsStringAsync().Result;
+                    if (result != null)
+                    {
+                        PaymentRegisterResponse paymentRegisterResponse = JsonConvert.DeserializeObject<PaymentRegisterResponse>(result);
+                        if (paymentRegisterResponse != null && paymentRegisterResponse.transactionId != null)
+                        {
+                            callbackWithTransaction.SuccessWithTransactionIDAndRedirectURL(paymentRegisterResponse.transactionId, Android.Net.Uri.Parse(paymentRegisterResponse.redirectOK));
+                        }
+                        else
+                        {
+                            callbackWithTransaction.FailureWithError(null);
+                        }
+                    }
+                }
+            }
+        }
+
+        class CardTokenizationRegistration : Java.Lang.Object, ICardTokenizationRegistration
+        {
+            string merchantBaseUrlTest;
+            string merchantIdTest;
+
+            public CardTokenizationRegistration(string merchantBaseUrlTest, string merchantIdTest)
+            {
+                this.merchantBaseUrlTest = merchantBaseUrlTest;
+                this.merchantIdTest = merchantIdTest;
+            }
+
+            public void RegisterPayment(ITransactionCallback callbackWithTransaction)
+            {
+                string jsonData = "{\"customerId\":\"000012\",\"orderNumber\":\"PiaSDK-Android\",\"amount\":{\"currencyCode\":\"EUR\",\"vatAmount\":0,\"totalAmount\":\"1000\"},\"method\":{\"id\":\"EasyPayment\",\"displayName\":\"\",\"fee\":\"\"},\"cardId\":\"492500******0004\",\"storeCard\":true,\"merchantId\":\"\",\"token\":\"\",\"serviceTyp\":\"\",\"paymentMethodActionList\":\"\",\"phoneNumber\":\"\",\"currencyCode\":\"\",\"redirectUrl\":\"\",\"language\":\"\"}";
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(merchantBaseUrlTest);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync(merchantIdTest + "/register", content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string result = response.Content.ReadAsStringAsync().Result;
+                    if (result != null)
+                    {
+                        PaymentRegisterResponse paymentRegisterResponse = JsonConvert.DeserializeObject<PaymentRegisterResponse>(result);
+                        if (paymentRegisterResponse != null && paymentRegisterResponse.transactionId != null)
+                        {
+                            callbackWithTransaction.SuccessWithTransactionIDAndRedirectURL(paymentRegisterResponse.transactionId, Android.Net.Uri.Parse(paymentRegisterResponse.redirectOK));
+                        }
+                        else
+                        {
+                            callbackWithTransaction.FailureWithError(null);
+                        }
+                    }
+                }
+            }
+        }
+
+        class CardTokenPaymentRegistration : Java.Lang.Object, ICardTokenPaymentRegistration
+        {
+            string merchantBaseUrlTest;
+            string merchantIdTest;
+
+            public CardTokenPaymentRegistration(string merchantBaseUrlTest, string merchantIdTest)
+            {
+                this.merchantBaseUrlTest = merchantBaseUrlTest;
+                this.merchantIdTest = merchantIdTest;
+            }
+
+            public void RegisterPayment(ITransactionCallback callbackWithTransaction)
+            {
+                string jsonData = "{\"amount\":{\"currencyCode\":\"SEK\",\"totalAmount\":1000,\"vatAmount\":0},\"cardId\":\"492500******0004\",\"customerId\":\"000012\",\"method\":{\"id\":\"EasyPayment\"},\"orderNumber\":\"PiaSDK-Android\",\"storeCard\":false}";
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(merchantBaseUrlTest);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync(merchantIdTest + "/register", content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string result = response.Content.ReadAsStringAsync().Result;
+                    if (result != null)
+                    {
+                        PaymentRegisterResponse paymentRegisterResponse = JsonConvert.DeserializeObject<PaymentRegisterResponse>(result);
+                        if (paymentRegisterResponse != null && paymentRegisterResponse.transactionId != null)
+                        {
+                            callbackWithTransaction.SuccessWithTransactionIDAndRedirectURL(paymentRegisterResponse.transactionId, Android.Net.Uri.Parse(paymentRegisterResponse.redirectOK));
+                        }
+                        else
+                        {
+                            callbackWithTransaction.FailureWithError(null);
+                        }
+                    }
+                }
+            }
         }
 
     }

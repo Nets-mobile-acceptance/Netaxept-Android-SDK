@@ -5,20 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-		android:id = "@+id/toolBarLayout"
+    <com.google.android.material.appbar.AppBarLayout
+		android:id="@+id/toolBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
+		android:theme="@style/AppTheme.AppBarOverlay">
+	
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/toolbar"
+			android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-			app:popupTheme="@style/AppTheme.PopupOverlay" />
+			android:background="?attr/colorPrimary"
+			app:popupTheme="@style/AppTheme.PopupOverlay"/>
+	
+	</com.google.android.material.appbar.AppBarLayout>/>
 
-    </android.support.design.widget.AppBarLayout>
 
 	<LinearLayout 
 		android:id="@+id/buttonLayout"
@@ -33,50 +34,58 @@
 			android:id="@+id/pay"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
-			android:text="Pay" />
+			android:layout_marginTop="15dp"
+			android:text="Pay with Card" />
+
+		
+		<Button
+			android:id="@+id/saveCard"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="15dp"
+			android:text="Save Card" />
 
 		<Button
 			android:id="@+id/paySavedCard"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
+			android:layout_marginTop="15dp"
 			android:text="Pay wih Saved Card (Unskip Confirmation)" />
-
-		<Button
-			android:id="@+id/saveCard"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
-			android:text="Save Card" />
-
+		
 		<Button
 			android:id="@+id/paypal"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
+			android:layout_marginTop="15dp"
 			android:text="PayPal" />
 
 		<Button
 			android:id="@+id/skipConfirmationBtn"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
+			android:layout_marginTop="15dp"
 			android:text="Pay wih Saved Card (Skip Confirmation)" />
 
 		<Button
 			android:id="@+id/paytrailNordea"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
+			android:layout_marginTop="15dp"
 			android:text="Paytrail" />
 
 		<Button
 			android:id="@+id/mobilePay"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
+			android:layout_marginTop="15dp"
 			android:text="MobilePay" />
+
+		<Button
+			android:id="@+id/sBusinessCard"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="15dp"
+			android:text="Pay withS-Business Card" />
 
 	</LinearLayout>
 

@@ -1,0 +1,6 @@
+$dokka.format:html
+$dokka.linkExtension:html
+
+eu.nets.pia
+eu.nets.pia.card
+eu.nets.pia.wallets

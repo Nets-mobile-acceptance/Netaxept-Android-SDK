@@ -48,6 +48,7 @@ const netsTest = {
 
 };
 
+
 type Props = {};
 export default class App extends Component<Props> {
   render() {
@@ -57,7 +58,10 @@ export default class App extends Component<Props> {
           <Text style={styles.welcome}>Welcome to Pia Sample app React Native!</Text>
           <Text style={styles.instructions}>Check our basic implementation here!</Text>
           <View style={styles.button}>
-            <Button style={styles.button} onPress={this.pay} title="Buy  " />
+            <Button style={styles.button} onPress={this.pay} title="Buy" />
+          </View>
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.sBusiness} title="S-Business" />
           </View>
           <View style={styles.button}>
             <Button style={styles.button} onPress={this.saveCard} title="Save Card" />
@@ -83,12 +87,12 @@ export default class App extends Component<Props> {
 
   pay = () => {
     //for pay with new card, set only the MechantInfo and Order info objects
-    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/true);
     piaSDKModule.buildOrderInfo(1, "EUR");
 
     //set the payment result promise
-    piaSDKModule.handleSDKResult().then(() => {
-      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
     }).catch((error) => {
       ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
@@ -100,7 +104,7 @@ export default class App extends Component<Props> {
           'Accept': 'application/json;charset=utf-8;version=2.0',
           'Content-Type': 'application/json;charset=utf-8;version=2.0'
         },
-        body: '{"storeCard": true,"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
+        body: '{"storeCard": ' + saveCardBool +',"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
       }).then((response) => response.json())
         .then((responseJson) => {
           console.log('onResponse' + responseJson.transactionId)
@@ -113,18 +117,54 @@ export default class App extends Component<Props> {
     });
   }
 
-  saveCard = () => {
-    //for save card only MerchantInfo object is required
-    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+  sBusiness = () => {
+    //for pay with new card, set only the MechantInfo and Order info objects
+    piaSDKModule.buildMerchantInfo(netsTest.sBusinessMerchantIdTest,  /*isTestMode*/true, /*isCvcRequired*/true);
+    piaSDKModule.buildOrderInfo(1, "EUR");
 
     //set the payment result promise
-    piaSDKModule.handleSDKResult().then(() => {
-      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
     }).catch((error) => {
       ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
 
-    piaSDKModule.start((saveCardBool) => {
+    piaSDKModule.startSBusinessCard((saveCardBool) => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.sBusinessMerchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"storeCard": ' + saveCardBool +',"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          console.log('onResponse' + responseJson.transactionId)
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
+    });
+  }
+
+
+
+  saveCard = () => {
+    //for save card only MerchantInfo object is required
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/true);
+
+
+      //set the payment result promise
+      piaSDKModule.handleSDKResult().then((result) => {
+        ToastAndroid.show(result, ToastAndroid.SHORT);
+      }).catch((error) => {
+        ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+      });
+  
+
+    piaSDKModule.saveCard(() => {
       fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
         method: 'POST',
         headers: {
@@ -145,16 +185,17 @@ export default class App extends Component<Props> {
 
   payViaPaypal = () => {
     //for PayPal set only the MerchantInfo object
-    piaSDKModule.buildMerchantInfo(netsProduction.merchantIdProd, false, true);
+    piaSDKModule.buildMerchantInfo(netsProduction.merchantIdProd, /*isTestMode*/false, /*isCvcRequired*/true);
+   
 
     //set the payment result promise
-    piaSDKModule.handleSDKResult().then(() => {
-      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
     }).catch((error) => {
       ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
 
-    piaSDKModule.startPayPalProcess((saveCardBool) => {
+    piaSDKModule.startPayPalProcess(() => {
       fetch(netsProduction.backendUrlProd + "v2/payment/" + netsProduction.merchantIdProd + "/register", {
         method: 'POST',
         headers: {
@@ -218,17 +259,18 @@ export default class App extends Component<Props> {
   }
 
   paySavedCardWithSkipConfirm = () => {
-    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/false);
+   
     piaSDKModule.buildOrderInfo(1, "EUR");
     piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, false);
     //set the payment result promise
-    piaSDKModule.handleSDKResult().then(() => {
-      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
     }).catch((error) => {
       ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
 
-    piaSDKModule.startSkipConfirmation((saveCardBool) => {
+    piaSDKModule.startSkipConfirmation(() => {
       fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
         method: 'POST',
         headers: {
@@ -252,17 +294,18 @@ export default class App extends Component<Props> {
 
   paySavedCardWithoutSkipConfirm = () => {
 
-    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, true);
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/true);
+   
     piaSDKModule.buildOrderInfo(10, "EUR");
     piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, true);
     //set the payment result promise
-    piaSDKModule.handleSDKResult().then(() => {
-      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
     }).catch((error) => {
       ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
 
-    piaSDKModule.start((saveCardBool) => {
+    piaSDKModule.startTokenPayment(() => {
       fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
         method: 'POST',
         headers: {
@@ -283,10 +326,12 @@ export default class App extends Component<Props> {
 
   payViaPaytrailNordea = () => {
     piaSDKModule.buildOrderInfo(10, "EUR");
-    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, true, false);
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/false);
+   
+
     //set the payment result promise
-    piaSDKModule.handleSDKResult().then(() => {
-      ToastAndroid.show('SUCCESS', ToastAndroid.SHORT);
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result , ToastAndroid.SHORT);
     }).catch((error) => {
       ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
@@ -294,6 +339,7 @@ export default class App extends Component<Props> {
     var orderId = this.getOrderId();
     console.log('orderId ' + orderId);
 
+  piaSDKModule.startPaytrailProcess(() => {
     fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
       method: 'POST',
       headers: {
@@ -304,13 +350,14 @@ export default class App extends Component<Props> {
     }).then((response) => response.json())
       .then((responseJson) => {
         piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
-        piaSDKModule.startPaytrailProcess();
       })
       .catch((error) => {
         console.error(error);
         piaSDKModule.buildTransactionInfo(null, null, null);
       });
+});
   }
+
 
   getOrderId() {
     var checkDigit = -1;

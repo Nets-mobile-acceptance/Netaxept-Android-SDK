@@ -611,12 +611,29 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/holder_pay_button_text_label"
+                style="@style/UICustomizationHolderSectionStyle"
+                android:layout_below="@+id/sample_button_rounded_corner_container">
+
+                <TextView
+                    android:id="@+id/pay_button_text_label"
+                    style="@style/UICustomizationOptionStyle"
+                    android:text="@string/cardio_button_text_font" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/use_button_pay_text_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
             <!-- section start card io customization -->
             <RelativeLayout
                 android:id="@+id/cardio_related_customization"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/sample_button_rounded_corner_container"
+                android:layout_below="@+id/holder_pay_button_text_label"
                 android:layout_marginTop="10dp">
 
                 <TextView
