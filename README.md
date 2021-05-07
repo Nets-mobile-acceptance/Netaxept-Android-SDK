@@ -4,7 +4,7 @@
 
 PiA Netaxept Android SDK is a library that provides the native In-App interaction of performing the Netaxept payment directly from an app on the Android device and minimizes PCI DSS requirements for you.
 
-**Detailed documentation can be found [here](https://htmlpreview.github.io/?https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/blob/master/documentation/START%20-%20Overview%20of%20Netaxept%20Android%20SDK.html).
+**Detailed documentation can be found** [here](https://htmlpreview.github.io/?https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/blob/master/documentation/START%20-%20Overview%20of%20Netaxept%20Android%20SDK.html).
 
 **PiA - Netaxept iOS SDK** can also be found [here](https://github.com/Nets-mobile-acceptance/Netaxept-iOS-SDK)
 
