@@ -52,15 +52,43 @@
     
     <h1><a id="Installation"></a>Installation</h1>
     <hr>
+    <!-- section-start-to-remove-by-script -->
+    <ul>
+        <li>Please add to the <strong>gradle.properties</strong> file the values for the following variables as provided by Nets</li>
+    </ul>
+    <pre><code class="language-gradle">    ## Required Maven URLs and Credentials ##
+        MAVEN_URL_PIA=provided value <span class="hljs-keyword">for</span> URL to PiA SDK
+        
+        MAVEN_REPO_USERNAME=providedUsername
+        MAVEN_REPO_PASSWORD=providedPassword
+    </code></pre>
+    <ul>
+        <li>Please add code below to the <code>build.gradle</code> file under your App project folder.</li>
+    </ul>
+    <pre><code class="language-gradle"> <span class="hljs-keyword">allprojects</span> {
+        <span class="hljs-keyword">repositories</span> {
+			google()
+			jcenter()
+        
+			maven {
+			url MAVEN_URL_PIA
+			credentials {
+				username MAVEN_REPO_USERNAME
+				password MAVEN_REPO_PASSWORD
+			}
+			}
+        }
+        }
+    </code></pre>
     <ul>
         <li>Please add dependency on the following library to the <code>build.gradle</code> file.</li>
     </ul>
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
         
        
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.2.1'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
-        
-        
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.2.2'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+
+         
         }
     </code></pre>
     <ul>
@@ -672,6 +700,27 @@
                         </tr>
                     </tbody>
                 </table>
+				
+				
+				
+<strong>Android 11 privacy changes</strong>
+<p>In Android 11 (API 30), there has been a change in the privacy related to calling 3rd party apps. It is mandatory to add the package names of all the 3rd party apps that you will be calling from your app. Currently we are using VIPPS, SWISH and MobilePay, so their package names must be listed as fllows:-</p>
+<pre>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">queries</span>&gt;</span></code>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">package</span> <span class="hljs-attribute">android:name</span>=<span class="hljs-value">"fi.danskebank.mobilepay"</span>/&gt;</span>
+</code>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">package</span> <span class="hljs-attribute">android:name</span>=<span class="hljs-value">"dk.danskebank.mobilepay.vendor.sprint"</span>/&gt;</span>
+</code>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">package</span> <span class="hljs-attribute">android:name</span>=<span class="hljs-value">"no.dnb.vipps.mt"</span>/&gt;</span>
+</code>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">package</span> <span class="hljs-attribute">android:name</span>=<span class="hljs-value">"no.dnb.vipps</span>/&gt;</span>
+</code>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">package</span> <span class="hljs-attribute">android:name</span>=<span class="hljs-value">"se.bankgirot.swish"</span>/&gt;</span>
+</code>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">/queries</span>&gt;</span></code>
+</pre>
+				
+				
 				
 <h1><a id="Direct_bank_payment_via_paytrail"></a>Finland - Direct bank payment (via Paytrail)</h1>
 <hr>
@@ -1452,6 +1501,14 @@ The above copyright notice and this permission notice shall be included in all c
 		<li>Added Xamarin support for new declarative APIs to initiate Card, Paypal and Paytrail Direct Bank payments.</li>
 		<li>Added an alternative text label "Reserve". Select this option for pre-authorization use cases (like mobile fueling for example)..</li>
 		<li>Minor bug fixes.</li>
+</ul>
+
+<h4><a id="v213_Released_03MARCH2021_668"></a>v2.2.2 Released: 18-May-2021</h4>
+<h4><a id="Release_notes_742"></a>Release notes:</h4>
+<ul>
+		<li>Fixes issue with Android 11+ privacy changes for package visibility of <strong>third-party wallet apps.</strong></li>
+		<li>Fixes a bug in CVC text field constraint <strong>on card entry UI.</strong></li>
+		<li>Fixes bug in corner case for synchronous registration callback before app switch.</li>
 </ul>
 		
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>

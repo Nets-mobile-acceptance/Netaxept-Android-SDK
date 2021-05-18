@@ -4,6 +4,14 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <queries>
+        <package android:name="fi.danskebank.mobilepay" />
+        <package android:name="dk.danskebank.mobilepay.vendor.sprint" />
+        <package android:name="no.dnb.vipps.mt" />
+        <package android:name="no.dnb.vipps" />
+        <package android:name="se.bankgirot.swish" />
+    </queries>
+
     <application
         android:name=".SampleApplication"
         android:allowBackup="true"
