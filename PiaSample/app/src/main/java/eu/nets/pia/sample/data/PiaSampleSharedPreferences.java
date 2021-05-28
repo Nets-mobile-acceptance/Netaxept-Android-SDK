@@ -3,6 +3,11 @@ package eu.nets.pia.sample.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import eu.nets.pia.card.CardScheme;
 import eu.nets.pia.sample.BuildConfig;
 
 /**
@@ -39,6 +44,7 @@ public class PiaSampleSharedPreferences {
     private static final String MERCHANT_ID_PROD = "merchant_id_prod";
     private static final String DISABLE_SAVE_CARD_OPTION = "disable_save_card_option";
     private static final String CUSTOMER_PHONE_NUMBER = "customer_phone_number";
+    private static final String EXCLUDED_CARD_SCHEME_SET = "excluded_card_scheme_set";
 
     private static SharedPreferences mSharedPrefs;
 
@@ -168,6 +174,28 @@ public class PiaSampleSharedPreferences {
         SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
         prefsEditor.putString(CUSTOMER_PHONE_NUMBER, phoneNumber);
         prefsEditor.commit();
+    }
+
+    public static void setExcludedCardSchemeSet(Set<CardScheme> excludedCardSchemeSet) {
+        SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
+
+        HashSet excludeSchemeSet = new HashSet<String>();
+        for (CardScheme cardScheme : excludedCardSchemeSet) {
+            excludeSchemeSet.add(cardScheme.name());
+        }
+
+        prefsEditor.putStringSet(EXCLUDED_CARD_SCHEME_SET, excludeSchemeSet);
+        prefsEditor.commit();
+    }
+
+    public static Set<CardScheme> getExcludedCardSchemeSet() {
+        Set<String> excludeSchemeSet = mSharedPrefs.getStringSet(EXCLUDED_CARD_SCHEME_SET, new HashSet());
+
+        Set<CardScheme> excludedCardSchemeSet = new HashSet<>();
+        for (String cardScheme : excludeSchemeSet) {
+            excludedCardSchemeSet.add(CardScheme.valueOf(cardScheme));
+        }
+        return excludedCardSchemeSet; 
     }
 
     public static String getPhoneNumber() {

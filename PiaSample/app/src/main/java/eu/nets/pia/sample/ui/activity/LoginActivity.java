@@ -1,6 +1,5 @@
 package eu.nets.pia.sample.ui.activity;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -39,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,6 +50,7 @@ import eu.nets.pia.ProcessResult;
 import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.card.CardProcessActivityLauncherInput;
 import eu.nets.pia.card.CardProcessActivityResultContract;
+import eu.nets.pia.card.CardScheme;
 import eu.nets.pia.card.CardTokenizationRegistration;
 import eu.nets.pia.card.TransactionCallback;
 import eu.nets.pia.data.model.MerchantInfo;
@@ -68,7 +69,6 @@ import eu.nets.pia.sample.network.model.PaymentRegisterResponse;
 import eu.nets.pia.sample.ui.activity.main.MainActivity;
 import eu.nets.pia.sample.ui.adapter.LanguageAdapter;
 import eu.nets.pia.sample.ui.widget.CustomToolbar;
-import eu.nets.pia.ui.main.PiaActivity;
 import eu.nets.pia.wallets.PaymentProcess;
 
 /**
@@ -115,6 +115,8 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     SwitchCompat mUrlSwitch;
     @BindView(R.id.switch_sistem_auth)
     SwitchCompat mSystemAuthSwitch;
+    @BindView(R.id.switch_disable_visa)
+    SwitchCompat disableVisaSwitch;
     //section-start-to-remove-by-script
     @BindView(R.id.switch_disable_cardio)
     SwitchCompat mDisableCardIOSwitch;
@@ -140,7 +142,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     private MerchantRestClient mRestClient = MerchantRestClient.getInstance();
     private PaymentFlowCache mPaymentCache;
     private RegisterPaymentHandler mRegisterPaymentHandler;
-
 
     ActivityResultLauncher<CardProcessActivityLauncherInput> cardStorageActivityLauncher = registerForActivityResult(
             new CardProcessActivityResultContract(),
@@ -227,7 +228,20 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                     PiaInterfaceConfiguration.getInstance().setDisableCardIO(isChecked);
                 }
             });
+
+
             //section-end-to-remove-by-script
+
+            disableVisaSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                HashSet<CardScheme> excludeCardSchemes = new HashSet<>();
+                if (isChecked) {
+                    // Exclude all card schemes except `visa`
+                    excludeCardSchemes.addAll(Arrays.asList(CardScheme.values()));
+                    excludeCardSchemes.remove(CardScheme.visa);
+                }
+
+                PiaSampleSharedPreferences.setExcludedCardSchemeSet(excludeCardSchemes);
+            });
 
             mSkipConfirmationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -244,6 +258,8 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
             //section-start-to-remove-by-script
             mDisableCardIOSwitch.setChecked(PiaSampleSharedPreferences.isDisableCardIo());
             //section-end-to-remove-by-script
+
+            disableVisaSwitch.setChecked(!PiaSampleSharedPreferences.getExcludedCardSchemeSet().isEmpty());
 
             mSkipConfirmationSwitch.setChecked(PiaSampleSharedPreferences.getEnableSkipConfirmation());
 
@@ -445,6 +461,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                 cardStorageActivityLauncher,
                 PaymentProcess.cardTokenization(
                         Pair.create(merchantID, environment),
+                        PiaSampleSharedPreferences.getExcludedCardSchemeSet(),
                         cardStorageRegistration
                 ),
                 getMerchantInfo().isCvcRequired()
@@ -468,6 +485,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                 cardPaymentActivityLauncher,
                 PaymentProcess.cardTokenization(
                         Pair.create(merchantID, environment),
+                        PiaSampleSharedPreferences.getExcludedCardSchemeSet(),
                         cardStorageRegistration
                 ),
                 getMerchantInfo().isCvcRequired()

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
-using Android.Content.PM;
 using Android.Icu.Text;
 using Android.OS;
 using AndroidX.AppCompat.App;
@@ -21,8 +19,7 @@ using Java.Lang;
 using Java.Util;
 using Newtonsoft.Json;
 using PiaSampleXamarin.Model;
-using AndroidX.Activity.Result.Contract;
-using AndroidX.Core.App;
+using System.Collections.Generic;
 
 /**
  * MIT License
@@ -77,6 +74,7 @@ namespace PiaSampleXamarin
         Button btnPaytrailNordea;
         Button btnMobilePay;
         Button btnSBusinessCard;
+        Switch switchToVisaOnly;
         public RelativeLayout progressBar;
 
 
@@ -105,6 +103,7 @@ namespace PiaSampleXamarin
             btnPaytrailNordea = FindViewById<Button>(Resource.Id.paytrailNordea);
             btnMobilePay = FindViewById<Button>(Resource.Id.mobilePay);
             btnSBusinessCard = FindViewById<Button>(Resource.Id.sBusinessCard);
+            switchToVisaOnly = FindViewById<Switch>(Resource.Id.tbtnCardScheme);
             progressBar = FindViewById<RelativeLayout>(Resource.Id.progressBarLayout);
 
             btnPay.Click += onPayWithNewCard;
@@ -257,16 +256,29 @@ namespace PiaSampleXamarin
 
         private void onPayWithNewCard(object sender, EventArgs eventArgs)
         {
+
+            HashSet<CardScheme> excludeCardSchemes = new HashSet<CardScheme>();
+
+            if (switchToVisaOnly.Checked)
+            {
+                // Exclude all card schemes except `visa`
+                excludeCardSchemes = new HashSet<CardScheme>(CardScheme.Values());
+                excludeCardSchemes.Remove(CardScheme.Visa);
+            }
+
             PiaSDK.StartCardProcessActivity(
-                cardPaymentActivityLauncher,
-                PaymentProcess.CardPayment(
-                    merchantIDAndEnvironmentPair(),
-                    Pair.Create(100, "NOK"),
-                new CardPaymentRegistration(
-                    merchantBaseUrlTest,
-                    merchantIdTest,
-                    PaymentMode.NEW_CARD)),
-                (Java.Lang.Boolean)true);
+                        cardPaymentActivityLauncher,
+                        PaymentProcess.CardPayment(
+                                merchantIDAndEnvironmentPair(),
+                                excludeCardSchemes,
+                                amountAndCurrencyCodePair(),
+                                new CardPaymentRegistration(
+                                    merchantBaseUrlTest,
+                                    merchantIdTest,
+                                    PaymentMode.NEW_CARD)
+                                ),
+                        (Java.Lang.Boolean)true
+                );
         }
 
         private Pair merchantIDAndEnvironmentPair()
@@ -279,7 +291,7 @@ namespace PiaSampleXamarin
         private Pair amountAndCurrencyCodePair()
         {
             int amountInCents = 1 * 100;
-            string currency = "DKK";
+            string currency = "EUR";
             return Pair.Create(amountInCents, currency);
         }
 

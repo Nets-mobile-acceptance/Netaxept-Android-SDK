@@ -81,6 +81,7 @@
     <string name="action_ok">OK</string>
     <string name="merchant_be_settings_title">Merchant BE Settings</string>
     <string name="disable_cardio">Disable card scanner</string>
+    <string name="include_only_visa_scheme">Include only VISA Scheme</string>
 
     <!-- Customize UI Screen -->
     <string name="global_ui_customization">Global UI Customization</string>

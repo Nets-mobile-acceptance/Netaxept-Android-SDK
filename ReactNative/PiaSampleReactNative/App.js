@@ -61,6 +61,9 @@ export default class App extends Component<Props> {
             <Button style={styles.button} onPress={this.pay} title="Buy" />
           </View>
           <View style={styles.button}>
+            <Button style={styles.button} onPress={this.startCardPaymentWithOnlyVisa} title="Start CardPayment With Only Visa" />
+          </View>
+          <View style={styles.button}>
             <Button style={styles.button} onPress={this.sBusiness} title="S-Business" />
           </View>
           <View style={styles.button}>
@@ -356,6 +359,39 @@ export default class App extends Component<Props> {
         piaSDKModule.buildTransactionInfo(null, null, null);
       });
 });
+  }
+
+  startCardPaymentWithOnlyVisa = () => {
+
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/true);
+    piaSDKModule.buildOrderInfo(1, "EUR");
+
+    //set the payment result promise
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    });
+
+    piaSDKModule.startCardPaymentWithOnlyVisa((saveCardBool) => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"storeCard": ' + saveCardBool +',"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          console.log('onResponse' + responseJson.transactionId)
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
+    });
+
   }
 
 

@@ -1,112 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-		android:id="@+id/toolBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-		android:theme="@style/AppTheme.AppBarOverlay">
-	
-		<androidx.appcompat.widget.Toolbar
-			android:id="@+id/toolbar"
-			android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-			android:background="?attr/colorPrimary"
-			app:popupTheme="@style/AppTheme.PopupOverlay"/>
-	
-	</com.google.android.material.appbar.AppBarLayout>/>
-
-
-	<LinearLayout 
-		android:id="@+id/buttonLayout"
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:orientation="vertical"
-		android:layout_below="@id/toolBarLayout"
-		android:gravity="center_horizontal"
-		app:layout_behavior="@string/appbar_scrolling_view_behavior">
+		android:layout_height="wrap_content">
 
-		<Button
-			android:id="@+id/pay"
-			android:layout_width="wrap_content"
+		<com.google.android.material.appbar.AppBarLayout
+			android:id="@+id/toolBarLayout"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:text="Pay with Card" />
+			android:theme="@style/AppTheme.AppBarOverlay">
+	
+			<androidx.appcompat.widget.Toolbar
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"
+				android:background="?attr/colorPrimary"
+				app:popupTheme="@style/AppTheme.PopupOverlay"/>
+	
+		</com.google.android.material.appbar.AppBarLayout>/>
+
+
+		<LinearLayout 
+			android:id="@+id/buttonLayout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical"
+			android:layout_below="@id/toolBarLayout"
+			android:gravity="center_horizontal"
+			app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+			<Button
+				android:id="@+id/pay"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/pay_with_card" />
 
 		
-		<Button
-			android:id="@+id/saveCard"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:text="Save Card" />
+			<Button
+				android:id="@+id/saveCard"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/save_card" />
 
-		<Button
-			android:id="@+id/paySavedCard"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:text="Pay wih Saved Card (Unskip Confirmation)" />
+			<Button
+				android:id="@+id/paySavedCard"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/unskip_confirmation" />
 		
-		<Button
-			android:id="@+id/paypal"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:text="PayPal" />
+			<Button
+				android:id="@+id/paypal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/paypal" />
 
-		<Button
-			android:id="@+id/skipConfirmationBtn"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:text="Pay wih Saved Card (Skip Confirmation)" />
+			<Button
+				android:id="@+id/skipConfirmationBtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/skip_confirmation" />
 
-		<Button
-			android:id="@+id/paytrailNordea"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:text="Paytrail" />
+			<Button
+				android:id="@+id/paytrailNordea"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/paytrail" />
 
-		<Button
-			android:id="@+id/mobilePay"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:text="MobilePay" />
+			<Button
+				android:id="@+id/mobilePay"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/mobile_pay" />
 
-		<Button
-			android:id="@+id/sBusinessCard"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:text="Pay withS-Business Card" />
+			<Button
+				android:id="@+id/sBusinessCard"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/sbusiness_card" />
 
-	</LinearLayout>
+			<Switch 
+				android:id="@+id/tbtnCardScheme" 
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"				
+				android:layout_marginTop="15dp"
+				android:checked="false"
+				android:text="@string/visa_only"
+				android:gravity="center" />
+
+		</LinearLayout>
 
 
-	<RelativeLayout
-		android:id="@+id/progressBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-		android:layout_below="@id/toolBarLayout"
-        android:background="@color/custom_spinner_background_color"
-        android:visibility="invisible" >
+		<RelativeLayout
+			android:id="@+id/progressBarLayout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_below="@id/toolBarLayout"
+			android:background="@color/custom_spinner_background_color"
+			android:visibility="invisible" >
 
-		<ProgressBar 
-			android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminate="true"
-            android:indeterminateTint="@color/dark_blue"
-            android:indeterminateTintMode="src_atop"/>
+			<ProgressBar 
+				android:id="@+id/progress_bar"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true"
+				android:indeterminate="true"
+				android:indeterminateTint="@color/dark_blue"
+				android:indeterminateTintMode="src_atop"/>
+
+		</RelativeLayout>
 
 	</RelativeLayout>
 
-</RelativeLayout>
+</ScrollView>

@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">PiaSampleXamarin</string>
     <string name="action_settings">Settings</string>
+    <string name="pay_with_card">Pay with Card</string>
+    <string name="save_card">Save Card</string>
+    <string name="unskip_confirmation">Pay wih Saved Card (Unskip Confirmation)</string>
+    <string name="paypal">PayPal</string>
+    <string name="skip_confirmation">Pay wih Saved Card (Skip Confirmation)</string>
+    <string name="paytrail">Paytrail</string>
+    <string name="mobile_pay">MobilePay</string>
+    <string name="sbusiness_card">Pay withS-Business Card</string>
+    <string name="visa_only">Include only Visa</string>
+    <string name="all_cards">Include all cards</string>
 </resources>

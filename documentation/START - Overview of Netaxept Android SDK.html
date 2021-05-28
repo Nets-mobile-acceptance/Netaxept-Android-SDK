@@ -52,43 +52,13 @@
     
     <h1><a id="Installation"></a>Installation</h1>
     <hr>
-    <!-- section-start-to-remove-by-script -->
-    <ul>
-        <li>Please add to the <strong>gradle.properties</strong> file the values for the following variables as provided by Nets</li>
-    </ul>
-    <pre><code class="language-gradle">    ## Required Maven URLs and Credentials ##
-        MAVEN_URL_PIA=provided value <span class="hljs-keyword">for</span> URL to PiA SDK
-        
-        MAVEN_REPO_USERNAME=providedUsername
-        MAVEN_REPO_PASSWORD=providedPassword
-    </code></pre>
-    <ul>
-        <li>Please add code below to the <code>build.gradle</code> file under your App project folder.</li>
-    </ul>
-    <pre><code class="language-gradle"> <span class="hljs-keyword">allprojects</span> {
-        <span class="hljs-keyword">repositories</span> {
-			google()
-			jcenter()
-        
-			maven {
-			url MAVEN_URL_PIA
-			credentials {
-				username MAVEN_REPO_USERNAME
-				password MAVEN_REPO_PASSWORD
-			}
-			}
-        }
-        }
-    </code></pre>
     <ul>
         <li>Please add dependency on the following library to the <code>build.gradle</code> file.</li>
     </ul>
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
-        
-       
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.2.2'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
-
-         
+ 
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.3.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	
         }
     </code></pre>
     <ul>
@@ -257,7 +227,19 @@
         </tbody>
     </table>
 	
-
+	
+			<p><strong>Note:</strong> If you do not support certain card schemes that are supported by the SDK, pass an exclude-card-scheme set to exclude the card schemes and present user with "This card is not supported" message during card entry.</p>
+			
+	<pre><code class="language-java"> 
+		<span class="hljs-comment">// Exclude Amex and Visa from supported card scheme list. </span>
+            var cardPayment = PaymentProcess.CardPayment(
+                withMerchant: merchantDetails,
+                Set.of(CardScheme.visa, CardScheme.amex), 
+                amount: amountInCents,
+                currency: currencyCode,
+                cardPaymentRegistration: CardPaymentRegistration);
+	</code></pre>
+	
 
     <h1><a id="Basic_payment_flow_description"></a>Basic payment flow description</h1>
     <hr>
@@ -270,6 +252,8 @@
         <strong>PiA SDK</strong> also includes support for Nordea Visa Cards, which have an extra option inside the 3DS process: <strong>BankID Verification</strong>.<br>
         If the user chooses the BankID option from the WebView, the BankID application will be opened automatically to confirm the payment.<br>
         After the BankID authentication is complete, when returning back to the SDK, the web page will detect if the verification was performed and returns a proper result. If the user does not have the BankID app installed on his device, he will be prompted to <code>Play Store</code> to install it. After that, he can resume the 3DS process.</p>
+	
+               
         <h1><a id="Easy_payment_flow_description"></a>Easy payment flow description</h1>
         <hr>
         <p>Use this flow to allow users to save their card information during initial payment and skip card detail entry next time they pay with your app again. </p>
@@ -1509,6 +1493,13 @@ The above copyright notice and this permission notice shall be included in all c
 		<li>Fixes issue with Android 11+ privacy changes for package visibility of <strong>third-party wallet apps.</strong></li>
 		<li>Fixes a bug in CVC text field constraint <strong>on card entry UI.</strong></li>
 		<li>Fixes bug in corner case for synchronous registration callback before app switch.</li>
+</ul>
+
+<h4><a id="v230_Released_28MAY2021_669"></a>v2.3.0 Released: 28-May-2021</h4>
+<h4><a id="Release_notes_742"></a>Release notes:</h4>
+<ul>
+		<li>Improved UX: the card entry form can now detect unsupported card schemes. Users cannot initiate a transaction with unsupported cards. 
+		Available for Native, React Native and Xamarin. Check the [exclude-card-scheme] <a href="https://htmlpreview.github.io/?https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/blob/master/documentation/START%20-%20Overview%20of%20Netaxept%20Android%20SDK.html#Basic_payment_flow_description" title="here">here</a> feature.</li>
 </ul>
 		
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>

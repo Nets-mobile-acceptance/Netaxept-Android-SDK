@@ -35,9 +35,9 @@ import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.ProcessResult;
 import eu.nets.pia.RegisterPaymentHandler;
+import eu.nets.pia.card.CardPaymentRegistration;
 import eu.nets.pia.card.CardProcessActivityLauncherInput;
 import eu.nets.pia.card.CardProcessActivityResultContract;
-import eu.nets.pia.card.CardPaymentRegistration;
 import eu.nets.pia.card.CardTokenPaymentRegistration;
 import eu.nets.pia.card.PayPalActivityLauncherInput;
 import eu.nets.pia.card.PayPalActivityResultContract;
@@ -226,6 +226,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         //the application was put in background before the call finished - restore view state
         handlePaymentFlowState();
     }
+
 
     private void handleVisibleFragment() {
         //if stack size is greater than 1 it means that PaymentMethodsFragment is the visible one-- remove it from backstack and show checkout
@@ -588,6 +589,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                         cardPaymentActivityLauncher,
                         PaymentProcess.cardPayment(
                                 merchantIDAndEnvironmentPair(),
+                                PiaSampleSharedPreferences.getExcludedCardSchemeSet(),
                                 amountAndCurrencyCodePair(),
                                 cardPaymentRegistration
                         ),
@@ -602,6 +604,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                         cardPaymentActivityLauncher,
                         PaymentProcess.cardPayment(
                                 merchantIDAndEnvironmentPair(),
+                                PiaSampleSharedPreferences.getExcludedCardSchemeSet(),
                                 amountAndCurrencyCodePair(),
                                 cardPaymentRegistration
                         ),

@@ -16,9 +16,14 @@ import com.facebook.react.bridge.ReactMethod;
 import org.jetbrains.annotations.NotNull;
 
 import androidx.activity.result.ActivityResultLauncher;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.card.CardPaymentRegistration;
+import eu.nets.pia.card.CardScheme;
 import eu.nets.pia.card.CardTokenPaymentRegistration;
 import eu.nets.pia.card.CardTokenizationRegistration;
 import eu.nets.pia.card.PayPalPaymentRegistration;
@@ -273,7 +278,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
         int amountInCents = (int) (Double.parseDouble(
                 (amount == null || amount.isEmpty() ? "0" : amount)) * 100
         );
-        return Pair.create(amountInCents, orderInfo.currencyCode);
+        return Pair.create(amountInCents, orderInfo.getCurrency());
     }
 
 
@@ -281,6 +286,8 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
      * This callback will notify you when the register payment API call is required to be done from your application.
      * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
+     *
+     * This method proceeds ahead for the card payment with all card schemes included
      *
      * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
      */
@@ -295,6 +302,38 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
                 ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
                 PaymentProcess.cardPayment(
                         merchantIDAndEnvironmentPair(merchantInfo),
+                        amountAndCurrencyCodePair(orderInfo),
+                        cardPaymentRegistration
+                ),
+                merchantInfo.isCvcRequired()
+        );
+    }
+
+    /**
+     * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
+     * This callback will notify you when the register payment API call is required to be done from your application.
+     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
+     *
+     * This method excludes all card schemes except visa and proceeds ahead for the card payment
+     *
+     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
+     */
+    @ReactMethod
+    public void startCardPaymentWithOnlyVisa(final Callback registerPaymentCallback) {
+        HashSet<CardScheme> excludeCardSchemes = new HashSet<>();
+        // Exclude all card schemes except `visa`
+        excludeCardSchemes.addAll(Arrays.asList(CardScheme.values()));
+        excludeCardSchemes.remove(CardScheme.visa);
+
+        this.registerPaymentCallback = registerPaymentCallback;
+
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
+
+        PiaSDK.startCardProcessActivity(
+                ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
+                PaymentProcess.cardPayment(
+                        merchantIDAndEnvironmentPair(merchantInfo),
+                        excludeCardSchemes, // You can get this set from persisted storage preferably
                         amountAndCurrencyCodePair(orderInfo),
                         cardPaymentRegistration
                 ),
