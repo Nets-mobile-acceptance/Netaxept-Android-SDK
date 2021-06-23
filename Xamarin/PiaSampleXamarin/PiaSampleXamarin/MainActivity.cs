@@ -75,6 +75,7 @@ namespace PiaSampleXamarin
         Button btnMobilePay;
         Button btnSBusinessCard;
         Switch switchToVisaOnly;
+        Switch swtCardImage;
         public RelativeLayout progressBar;
 
 
@@ -103,7 +104,8 @@ namespace PiaSampleXamarin
             btnPaytrailNordea = FindViewById<Button>(Resource.Id.paytrailNordea);
             btnMobilePay = FindViewById<Button>(Resource.Id.mobilePay);
             btnSBusinessCard = FindViewById<Button>(Resource.Id.sBusinessCard);
-            switchToVisaOnly = FindViewById<Switch>(Resource.Id.tbtnCardScheme);
+            switchToVisaOnly = FindViewById<Switch>(Resource.Id.switchCardScheme);
+            swtCardImage = FindViewById<Switch>(Resource.Id.switchCardImage);
             progressBar = FindViewById<RelativeLayout>(Resource.Id.progressBarLayout);
 
             btnPay.Click += onPayWithNewCard;
@@ -300,13 +302,20 @@ namespace PiaSampleXamarin
            
             PiaInterfaceConfiguration.Instance.SkipConfirmationSelected = false;
 
+            CardDisplay cardDisplay = swtCardImage.Checked ?
+                    CardDisplay.CustomCardImage(Resource.Drawable.ic_custom_card, CardScheme.Visa) :
+                    CardDisplay.InvokeCard(CardScheme.Visa);
+
+            TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.ForAmount(
+                    amountAndCurrencyCodePair(), true);
+
             PiaSDK.StartCardProcessActivity(cardPaymentActivityLauncher,
                 PaymentProcess.CardTokenPayment(
                     merchantIDAndEnvironmentPair(),
-                    amountAndCurrencyCodePair(),
                     tokenIdTest,
-                    schemeIdTest,
                     expiryDateTest,
+                    cardDisplay,
+                    confirmationPrompt,
                 new CardTokenPaymentRegistration(
                     merchantBaseUrlTest, 
                     merchantIdTest)),
@@ -316,13 +325,23 @@ namespace PiaSampleXamarin
 
         private void onSaveCard(object sender, EventArgs eventArgs)
         {
-            
+
+            HashSet<CardScheme> excludeCardSchemes = new HashSet<CardScheme>();
+
+            if (switchToVisaOnly.Checked)
+            {
+                // Exclude all card schemes except `visa`
+                excludeCardSchemes = new HashSet<CardScheme>(CardScheme.Values());
+                excludeCardSchemes.Remove(CardScheme.Visa);
+            }
+
             PiaSDK.StartCardProcessActivity(
                 cardPaymentActivityLauncher,
                 PaymentProcess.CardTokenization(
                     Pair.Create(
                         merchantIdTest, 
                         PiaSDK.Environment.Test),
+                    excludeCardSchemes,
                 new CardTokenizationRegistration(merchantBaseUrlTest, 
                     merchantIdTest)), 
                 (Java.Lang.Boolean)true);
@@ -345,17 +364,21 @@ namespace PiaSampleXamarin
 
             PiaInterfaceConfiguration.Instance.SkipConfirmationSelected = true;
 
-            PiaSDK.StartCardProcessActivity(
-                cardPaymentActivityLauncher,
+            CardDisplay cardDisplay = swtCardImage.Checked ?
+                    CardDisplay.CustomCardImage(Resource.Drawable.ic_custom_card, CardScheme.Visa) :
+                    CardDisplay.InvokeCard(CardScheme.Visa);
+
+            TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.ForAmount(
+                    amountAndCurrencyCodePair(), true);
+
+            PiaSDK.StartCardProcessActivity(cardPaymentActivityLauncher,
                 PaymentProcess.CardTokenPayment(
-                    merchantIDAndEnvironmentPair(), 
-                    amountAndCurrencyCodePair(), 
+                    merchantIDAndEnvironmentPair(),
                     tokenIdTest,
-                    schemeIdTest,
                     expiryDateTest,
-                new CardTokenPaymentRegistration(
-                    merchantBaseUrlTest, 
-                    merchantIdTest)), 
+                    cardDisplay,
+                    confirmationPrompt,
+                new CardTokenPaymentRegistration(merchantBaseUrlTest, merchantIdTest)), 
                 (Java.Lang.Boolean)false);
 
         }
@@ -549,9 +572,9 @@ namespace PiaSampleXamarin
             {
                 string jsonData;
                 if (paymentMode.Equals(PaymentMode.S_BUSINESS)) {
-                    jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000011\",\"orderNumber\":\"PiaSDK-Android\",\"paymentMethodActionList\":\"[{PaymentMethod:SBusinessCard}]\"}";
+                    jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000012\",\"orderNumber\":\"PiaSDK-Android\",\"paymentMethodActionList\":\"[{PaymentMethod:SBusinessCard}]\"}";
                 } else {
-                    jsonData = "{\"storeCard\":true,\"orderNumber\":\"PiaSDK-Android\",\"customerId\":\"000003\",\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":\"100\",\"vatAmount\":0}}";
+                    jsonData = "{\"storeCard\":false,\"orderNumber\":\"PiaSDK-Android\",\"customerId\":\"000011\",\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":\"100\",\"vatAmount\":0}}";
                 }
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(merchantBaseUrlTest);
@@ -590,7 +613,7 @@ namespace PiaSampleXamarin
 
             public void RegisterPayment(ITransactionCallback callbackWithTransaction)
             {
-                string jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000011\",\"method\":{\"id\":\"PayPal\"},\"orderNumber\":\"PiaSDK-Android\"}";
+                string jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000012\",\"method\":{\"id\":\"PayPal\"},\"orderNumber\":\"PiaSDK-Android\"}";
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(merchantBaseUrlTest);
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");

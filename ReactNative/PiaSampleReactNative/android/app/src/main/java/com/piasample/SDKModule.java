@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Pair;
 
+import androidx.activity.result.ActivityResultLauncher;
+
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
@@ -14,8 +16,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
 import org.jetbrains.annotations.NotNull;
-
-import androidx.activity.result.ActivityResultLauncher;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,23 +34,25 @@ import eu.nets.pia.data.model.OrderInfo;
 import eu.nets.pia.data.model.SchemeType;
 import eu.nets.pia.data.model.TokenCardInfo;
 import eu.nets.pia.data.model.TransactionInfo;
+import eu.nets.pia.wallets.CardDisplay;
 import eu.nets.pia.wallets.PaymentProcess;
+import eu.nets.pia.wallets.TokenizedCardPrompt;
 import eu.nets.pia.wallets.WalletPaymentRegistration;
 import eu.nets.pia.wallets.WalletURLCallback;
 
 
 /**
  * MIT License
- * <p>
+ *
  * Copyright (c) 2019 Nets Denmark A/S
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  of this software
  * and associated documentation files (the "Software"), to deal  in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the Software is  furnished to do so,
  * subject to the following conditions:
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
  * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -84,7 +86,6 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     WalletURLCallback walletURLCallback;
 
 
-
     public SDKModule(final ReactApplicationContext reactContext) {
         super(reactContext);
         reactContext.addActivityEventListener(this);
@@ -109,7 +110,8 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
 
 
     @Override
-    public void onNewIntent(Intent intent) {}
+    public void onNewIntent(Intent intent) {
+    }
 
     @Override
     public String getName() {
@@ -229,6 +231,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
     /**
      * Method to store here the paymentResult promise to be used inside the #onActivityResult method
      * Call this method from JavaScript before calling #start()
+     *
      * @param paymentResult
      */
     @ReactMethod
@@ -286,7 +289,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
      * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
      * This callback will notify you when the register payment API call is required to be done from your application.
      * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
-     *
+     * <p>
      * This method proceeds ahead for the card payment with all card schemes included
      *
      * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
@@ -309,11 +312,12 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
         );
     }
 
+
     /**
      * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
      * This callback will notify you when the register payment API call is required to be done from your application.
      * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
-     *
+     * <p>
      * This method excludes all card schemes except visa and proceeds ahead for the card payment
      *
      * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
@@ -427,14 +431,63 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
 
         activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
 
+        CardScheme cardScheme = cardSchemeFrom(tokenCardInfo.getSchemeId());
+
+        CardDisplay cardDisplay = CardDisplay.Companion.card(cardScheme);
+
+        TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
+                amountAndCurrencyCodePair(orderInfo),
+                merchantInfo.isCvcRequired()
+        );
+
         PiaSDK.startCardProcessActivity(
                 ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
                 PaymentProcess.cardTokenPayment(
                         merchantIDAndEnvironmentPair(merchantInfo),
-                        amountAndCurrencyCodePair(orderInfo),
                         tokenCardInfo.getTokenId(),
-                        tokenCardInfo.getSchemeId(),
                         tokenCardInfo.getExpiryDate(),
+                        cardDisplay,
+                        confirmationPrompt,
+                        cardTokenPaymentRegistration
+                ),
+                merchantInfo.isCvcRequired()
+        );
+    }
+
+    /**
+     * After you set all required local object through above setters, call this method to skip the confirmation and instantiate the Callback Parameter
+     * This callback will notify you when the register payment API call is required to be done from your application.
+     * When the register call is completed, call #buildTransactionInfo() to set the required transaction related fields
+     *
+     * @param registerPaymentCallback - callback to notify JavaScript when the register call is required
+     */
+    @ReactMethod
+    public void startSkipConfirmationCustomImage(final Callback registerPaymentCallback) {
+
+        this.registerPaymentCallback = registerPaymentCallback;
+
+        PiaInterfaceConfiguration.getInstance().setSkipConfirmationSelected(true);
+
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
+
+        CardScheme cardScheme = cardSchemeFrom(tokenCardInfo.getSchemeId());
+
+        CardDisplay cardDisplay =
+                CardDisplay.Companion.customCardImage(R.drawable.custom_card, cardScheme);
+
+        TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
+                amountAndCurrencyCodePair(orderInfo),
+                merchantInfo.isCvcRequired()
+        );
+
+        PiaSDK.startCardProcessActivity(
+                ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
+                PaymentProcess.cardTokenPayment(
+                        merchantIDAndEnvironmentPair(merchantInfo),
+                        tokenCardInfo.getTokenId(),
+                        tokenCardInfo.getExpiryDate(),
+                        cardDisplay,
+                        confirmationPrompt,
                         cardTokenPaymentRegistration
                 ),
                 merchantInfo.isCvcRequired()
@@ -448,20 +501,84 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
 
         activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
 
+        CardScheme cardScheme = cardSchemeFrom(tokenCardInfo.getSchemeId());
+
+        CardDisplay cardDisplay = CardDisplay.Companion.card(cardScheme);
+
+        TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
+                amountAndCurrencyCodePair(orderInfo),
+                merchantInfo.isCvcRequired()
+        );
+
         PiaSDK.startCardProcessActivity(
                 ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
                 PaymentProcess.cardTokenPayment(
                         merchantIDAndEnvironmentPair(merchantInfo),
-                        amountAndCurrencyCodePair(orderInfo),
                         tokenCardInfo.getTokenId(),
-                        tokenCardInfo.getSchemeId(),
                         tokenCardInfo.getExpiryDate(),
+                        cardDisplay,
+                        confirmationPrompt,
                         cardTokenPaymentRegistration
                 ),
                 merchantInfo.isCvcRequired()
         );
+
     }
 
+    @ReactMethod
+    public void startTokenPaymentCustomImage(final Callback registerPaymentCallback) {
+
+        this.registerPaymentCallback = registerPaymentCallback;
+
+        activityResultLauncher = ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher;
+
+        CardScheme cardScheme = cardSchemeFrom(tokenCardInfo.getSchemeId());
+
+        CardDisplay cardDisplay =
+                CardDisplay.Companion.customCardImage(R.drawable.custom_card, cardScheme);
+
+        TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
+                amountAndCurrencyCodePair(orderInfo),
+                merchantInfo.isCvcRequired()
+        );
+
+        PiaSDK.startCardProcessActivity(
+                ((MainActivity) getCurrentActivity()).cardPaymentActivityLauncher,
+                PaymentProcess.cardTokenPayment(
+                        merchantIDAndEnvironmentPair(merchantInfo),
+                        tokenCardInfo.getTokenId(),
+                        tokenCardInfo.getExpiryDate(),
+                        cardDisplay,
+                        confirmationPrompt,
+                        cardTokenPaymentRegistration
+                ),
+                merchantInfo.isCvcRequired()
+        );
+
+    }
+
+    private CardScheme cardSchemeFrom(SchemeType schemeType) {
+        switch (schemeType) {
+            case VISA:
+                return CardScheme.visa;
+            case MASTER_CARD:
+                return CardScheme.masterCard;
+            case AMEX:
+                return CardScheme.amex;
+            case DINERS_CLUB_INTERNATIONAL:
+                return CardScheme.dinersClubInternational;
+            case DANKORT:
+                return CardScheme.dankort;
+            case JCB:
+                return CardScheme.jcb;
+            case MAESTRO:
+                return CardScheme.maestro;
+            case SGROUP:
+                return CardScheme.sBusiness;
+            default:
+                return null;
+        }
+    }
 
     /**
      * After you set all required local object through above setters, call this method and instantiate the Callback Parameter
@@ -520,7 +637,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
         };
 
         PiaSDK.startPaytrailPayment(
-                ((MainActivity) getCurrentActivity()).paytrailActivityLauncher    ,
+                ((MainActivity) getCurrentActivity()).paytrailActivityLauncher,
                 merchantIDAndEnvironmentPair(merchantInfo),
                 paytrailPaymentRegistration
         );

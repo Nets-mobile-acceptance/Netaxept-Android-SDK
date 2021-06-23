@@ -26,7 +26,6 @@ import eu.nets.pia.sample.network.model.PaymentRegisterResponse;
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
 public class RegisterPaymentHandlerImpl implements RegisterPaymentHandler {
 
     private final String TAG = RegisterPaymentHandlerImpl.class.getSimpleName();
@@ -45,6 +44,7 @@ public class RegisterPaymentHandlerImpl implements RegisterPaymentHandler {
      * @param saveCard Specify if the card should be saved.
      * @return TransactionInfo object
      */
+
 
     @Override
     public TransactionInfo doRegisterPaymentRequest(boolean saveCard) {

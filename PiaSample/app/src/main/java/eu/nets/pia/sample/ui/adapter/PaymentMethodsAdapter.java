@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import eu.nets.pia.sample.R;
+import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 import eu.nets.pia.sample.network.model.Method;
 import eu.nets.pia.sample.ui.data.DisplayedToken;
 import eu.nets.pia.sample.ui.data.PaymentMethod;
@@ -126,7 +127,11 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         public void setupTokenCardHolder(final DisplayedToken method) {
-            mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), method.getCardSchemeLogo()));
+
+            Integer logoImageID = PiaSampleSharedPreferences.IsCustomCardSchemeImageSelected() ?
+                    R.drawable.custom_card : method.getCardSchemeLogo();
+            mCardLogo.setBackground(ContextCompat.getDrawable(itemView.getContext(), logoImageID));
+
             mCardSchemeDigits.setText(String.format("%1$s %2$s", method.getIssuer(), method.getMaskedPan()));
 
             itemView.setOnClickListener(new View.OnClickListener() {

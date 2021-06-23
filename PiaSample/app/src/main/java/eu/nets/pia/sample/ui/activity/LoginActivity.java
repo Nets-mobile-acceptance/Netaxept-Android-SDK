@@ -117,6 +117,8 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     SwitchCompat mSystemAuthSwitch;
     @BindView(R.id.switch_disable_visa)
     SwitchCompat disableVisaSwitch;
+    @BindView(R.id.switch_disable_image)
+    SwitchCompat includeCustomCardImageSwitch;
     //section-start-to-remove-by-script
     @BindView(R.id.switch_disable_cardio)
     SwitchCompat mDisableCardIOSwitch;
@@ -228,8 +230,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                     PiaInterfaceConfiguration.getInstance().setDisableCardIO(isChecked);
                 }
             });
-
-
             //section-end-to-remove-by-script
 
             disableVisaSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -242,6 +242,11 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
 
                 PiaSampleSharedPreferences.setExcludedCardSchemeSet(excludeCardSchemes);
             });
+
+            includeCustomCardImageSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                PiaSampleSharedPreferences.setCustomCardSchemeImageSelected(isChecked);
+            });
+            includeCustomCardImageSwitch.setChecked(PiaSampleSharedPreferences.IsCustomCardSchemeImageSelected());
 
             mSkipConfirmationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -450,7 +455,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
      */
     @OnClick(R.id.save_card)
     public void onSaveCardBtnClicked() {
-        //store in cache the payment request -- for register, a payment with zero amount is requred
+        //store in cache the payment request -- for register, a payment with zero amount is required
         mPaymentCache.setPaymentRegisterRequest(getPaymentRequest());
 
         String merchantID = getMerchantInfo().getMerchantId();

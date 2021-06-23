@@ -11,4 +11,5 @@
     <string name="sbusiness_card">Pay withS-Business Card</string>
     <string name="visa_only">Include only Visa</string>
     <string name="all_cards">Include all cards</string>
+    <string name="add_custome_card_image">Add custom card image</string>
 </resources>

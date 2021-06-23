@@ -38,6 +38,7 @@ import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.card.CardPaymentRegistration;
 import eu.nets.pia.card.CardProcessActivityLauncherInput;
 import eu.nets.pia.card.CardProcessActivityResultContract;
+import eu.nets.pia.card.CardScheme;
 import eu.nets.pia.card.CardTokenPaymentRegistration;
 import eu.nets.pia.card.PayPalActivityLauncherInput;
 import eu.nets.pia.card.PayPalActivityResultContract;
@@ -72,10 +73,12 @@ import eu.nets.pia.sample.ui.fragment.CheckoutFragment;
 import eu.nets.pia.sample.ui.fragment.FragmentCallback;
 import eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment;
 import eu.nets.pia.ui.main.PiaActivity;
+import eu.nets.pia.wallets.CardDisplay;
 import eu.nets.pia.wallets.MobileWallet;
 import eu.nets.pia.wallets.MobileWalletError;
 import eu.nets.pia.wallets.MobileWalletListener;
 import eu.nets.pia.wallets.PaymentProcess;
+import eu.nets.pia.wallets.TokenizedCardPrompt;
 import eu.nets.pia.wallets.WalletPaymentRegistration;
 import eu.nets.pia.wallets.WalletURLCallback;
 
@@ -568,14 +571,29 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
                 TokenCardInfo tokenCardInfo = getTokenizedCardInfo((DisplayedToken) method);
 
+                Integer customCardSchemeImageResourceID = PiaSampleSharedPreferences.IsCustomCardSchemeImageSelected() ?
+                        R.drawable.custom_card : null;
+
+
+                CardScheme cardScheme = cardSchemeFrom(tokenCardInfo.getSchemeId());
+
+                CardDisplay cardDisplay = PiaSampleSharedPreferences.IsCustomCardSchemeImageSelected() ?
+                        CardDisplay.Companion.customCardImage(R.drawable.custom_card, cardScheme) :
+                        CardDisplay.Companion.card(cardScheme);
+
+                TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
+                        amountAndCurrencyCodePair(),
+                        method.isCvcRequired()
+                );
+
                 PiaSDK.startCardProcessActivity(
                         cardTokenActivityLauncher,
                         PaymentProcess.cardTokenPayment(
                                 merchantIDAndEnvironmentPair(),
-                                amountAndCurrencyCodePair(),
                                 tokenCardInfo.getTokenId(),
-                                tokenCardInfo.getSchemeId(),
                                 tokenCardInfo.getExpiryDate(),
+                                cardDisplay,
+                                confirmationPrompt,
                                 cardTokenPaymentRegistration
                         ),
                         method.isCvcRequired()
@@ -614,6 +632,20 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         mPaymentCache.setState(PaymentFlowState.CALL_PIA_SDK);
 
+    }
+
+    private CardScheme cardSchemeFrom(SchemeType schemeType) {
+        switch (schemeType) {
+            case VISA: return CardScheme.visa;
+            case MASTER_CARD: return CardScheme.masterCard;
+            case AMEX: return CardScheme.amex;
+            case DINERS_CLUB_INTERNATIONAL: return CardScheme.dinersClubInternational;
+            case DANKORT: return CardScheme.dankort;
+            case JCB: return CardScheme.jcb;
+            case MAESTRO: return CardScheme.maestro;
+            case SGROUP: return CardScheme.sBusiness;
+            default: return null;
+        }
     }
 
     private Pair<String, PiaSDK.Environment> merchantIDAndEnvironmentPair() {

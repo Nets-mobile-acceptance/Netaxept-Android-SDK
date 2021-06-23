@@ -94,12 +94,21 @@
 				android:text="@string/sbusiness_card" />
 
 			<Switch 
-				android:id="@+id/tbtnCardScheme" 
+				android:id="@+id/switchCardScheme" 
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"				
 				android:layout_marginTop="15dp"
 				android:checked="false"
 				android:text="@string/visa_only"
+				android:gravity="center" />
+
+			<Switch 
+				android:id="@+id/switchCardImage" 
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"				
+				android:layout_marginTop="15dp"
+				android:checked="false"
+				android:text="@string/add_custome_card_image"
 				android:gravity="center" />
 
 		</LinearLayout>

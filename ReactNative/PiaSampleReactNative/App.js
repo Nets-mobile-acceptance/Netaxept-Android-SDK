@@ -37,7 +37,6 @@ const netsProduction = {
 
 };
 
-
 const netsTest = {
 
       static let backendUrlTest: String = "YOUR TEST BACKEND BASE URL HERE"
@@ -76,14 +75,20 @@ export default class App extends Component<Props> {
             <Button style={styles.button} onPress={this.payViaMobilePay} title="MobilePay Payment" />
           </View>
           <View style={styles.button}>
-            <Button style={styles.button} onPress={this.paySavedCardWithSkipConfirm} title="Pay 10 EUR - Saved Card(Skip Confirmation)" />
+            <Button style={styles.button} onPress={this.paySavedCardWithSkipConfirm} title="Pay 10 EUR - Saved Card (Skip Confirmation)" />
           </View>
           <View style={styles.button}>
             <Button style={styles.button} onPress={this.paySavedCardWithoutSkipConfirm} title="Pay 10 EUR - Saved Card" />
           </View>
           <View style={styles.button}>
             <Button style={styles.button} onPress={this.payViaPaytrailNordea} title="Paytrail Nordea" />
-          </View>
+          </View> 
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.paySavedCardWithoutSkipConfirmCustomImage} title="Pay 10 EUR - Saved Card (Custom Image)" />
+          </View> 
+          <View style={styles.button}>
+            <Button style={styles.button} onPress={this.paySavedCardWithSkipConfirmCustomImage} title="Pay 10 EUR - Saved Card (Skip Confirmation custom Image)" />
+          </View> 
         </View>
     );
   }
@@ -327,6 +332,72 @@ export default class App extends Component<Props> {
     });
   }
 
+  paySavedCardWithoutSkipConfirmCustomImage = () => {
+
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/true);
+   
+    piaSDKModule.buildOrderInfo(10, "EUR");
+    piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, true);
+    //set the payment result promise
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    });
+
+    piaSDKModule.startTokenPaymentCustomImage(() => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"customerId":"000012","orderNumber":"PiaSDK-Android","amount": {"currencyCode": "EUR", "vatAmount":0, "totalAmount":"1000"},"method": {"id":"EasyPayment","displayName":"","fee":""},"cardId":"492500******0004","storeCard": true,"merchantId":"","token":"","serviceTyp":"","paymentMethodActionList":"","phoneNumber":"","currencyCode":"","redirectUrl":"","language":""}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
+    });
+  }
+
+  paySavedCardWithSkipConfirmCustomImage = () => {
+    piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/false);
+   
+    piaSDKModule.buildOrderInfo(1, "EUR");
+    piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, false);
+    //set the payment result promise
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    });
+
+    piaSDKModule.startSkipConfirmationCustomImage(() => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"customerId":"000012","orderNumber":"PiaSDK-Android","amount": {"currencyCode": "EUR", "vatAmount":0, "totalAmount":"1000"},"method": {"id":"EasyPayment","displayName":"","fee":""},"cardId":"492500******0004","storeCard": true,"merchantId":"","token":"","serviceTyp":"","paymentMethodActionList":"","phoneNumber":"","currencyCode":"","redirectUrl":"","language":""}'
+
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          console.log('onResponse: ' + responseJson)
+          console.log('onResponse' + responseJson.transactionId)
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
+    });
+  }
+
   payViaPaytrailNordea = () => {
     piaSDKModule.buildOrderInfo(10, "EUR");
     piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/false);
@@ -394,7 +465,6 @@ export default class App extends Component<Props> {
 
   }
 
-
   getOrderId() {
     var checkDigit = -1;
     var multipliers = [7, 3, 1];
@@ -451,5 +521,5 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 10,
     marginTop: 10
-  },
+  }
 });

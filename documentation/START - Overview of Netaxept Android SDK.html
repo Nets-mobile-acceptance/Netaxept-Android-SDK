@@ -57,7 +57,7 @@
     </ul>
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
  
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.3.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.4.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
 	
         }
     </code></pre>
@@ -227,8 +227,7 @@
         </tbody>
     </table>
 	
-	
-			<p><strong>Note:</strong> If you do not support certain card schemes that are supported by the SDK, pass an exclude-card-scheme set to exclude the card schemes and present user with "This card is not supported" message during card entry.</p>
+	<p><strong>Note:</strong> If you do not support certain card schemes that are supported by the SDK, pass an exclude-card-scheme set to exclude the card schemes and present user with "This card is not supported" message during card entry.</p>
 			
 	<pre><code class="language-java"> 
 		<span class="hljs-comment">// Exclude Amex and Visa from supported card scheme list. </span>
@@ -314,42 +313,35 @@
                 
                 PiaSDK.startCardPaymentActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardPaymentActivityLauncher, cardPayment, boolean <span class="hljs-comment">cvcRequired</span>, <span class="hljs-comment">//Registration callback</span> cardPaymentRegistration);
 	</code></pre>
-                }	
             </code></pre>
             
-            <p><strong>Setting the confirmation page in the SDK</strong></p>
-            <p>The SDK offers an optional intermediary page where users can confirm the card to use.</p>
-            <table class="table table-striped table-bordered" align="center">
-                <thead>
-                    <tr>
-                        <th style="text-align:center">Subsequent payment without confirmation page (default) with 3DS</th>
-                        <th style="text-align:center">Subsequent payment with confirmation page with 3DS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="text-align:center"><img src="doc-files/sc_without_confirmation_page_with_3ds.gif" width="60%" height="auto" alt="Subsequent payment without confirmation page (default) with 3DS"></td>
-                        <td style="text-align:center"><img src="doc-files/sc_confirmation_page_with_3ds.gif" width="60%" height="auto" alt="Subsequent payment with confirmation page with 3DS"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <p><strong>Subsequent payment without confirmation page (default)</strong></p>
-            <p>This is an addition to the existing flow in the payment process. In case an existing stored card is selected, the SDK will proceed with payment without showing the confirmation screen (default).</p>
-            
-            <p><strong>Subsequent payment with confirmation page</strong></p>
-            <p>To switch on the <strong>Skip Confirmation</strong> payment process, the <strong>PiA SDK</strong> uses the API <code>PiaInterfaceConfiguration.getInstance().setSkipConfirmationResult(true)</code>. </p>
-            
-            <table class="table table-striped table-bordered" align="center">
+			
+            <p><strong>Important Note:</strong> If you wish to skip security code entry, you need approval from your acquirer.</p>
+			<p>The Android SDK supports 2 different ways of presenting subsequent payments to the user:</p>
+			<ul>
+                <li><strong>Option 1: Require user confirmation:</strong> Present a card view with entry field for CVC (if CVC is required) and a "Pay XX.XX" button to confirm payment.</li>
+                <li><strong>Option 2: Skip user confirmation - with SDK UI:</strong> Present a card view with an activity indicator while processing payment without requiring user confirmation.</li>
+            </ul>
+			
+			<p>The option 2 of <strong>Skip Confirmation</strong> can be presented by using the following API</p>
+			
+	<pre><code class="language-java"><span class="hljs-comment"></span>
+        PiaInterfaceConfiguration.getInstance().setSkipConfirmationResult(boolean <span class="hljs-comment">isSkipConfirmationActive</span>);
+	</code></pre>
+			
+			<p><strong>Important Note:</strong> If you wish to skip security code entry, you need approval from your acquirer.</p>
+			
+			<table class="table table-striped table-bordered" align="center">
             <thead>
             <tr>
-            <th style="text-align:center">Skip user confirmation</th>
             <th style="text-align:center">Require user confirmation</th>
+            <th style="text-align:center">Skip user confirmation</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-            <td style="text-align:center"><img src="doc-files/user_skip_confirmation.gif" width="50%" height="auto" alt="Payment without user confirmation"></td>
             <td style="text-align:center"><img src="doc-files/user_confirmation_required.gif" width="50%" height="auto" alt="Payment with user confirmation "></td>
+            <td style="text-align:center"><img src="doc-files/user_skip_confirmation.gif" width="50%" height="auto" alt="Payment without user confirmation"></td>
             </tr>
             </tbody>
             </table>
@@ -567,12 +559,15 @@
 	    public void registerPayment(final WalletURLCallback callback) {
 		
 	    // Make registration API call to your backend to obtain `walletURL`
+	    // redirectURL should have this format - "APPLICATION_ID://piasdk" 
 	    callback.successWithWalletURL(String walletUrl)
 	    
 	    // If unsuccessful, notify SDK with an error value, the error value can be of any type 
 	    callback.failureWithError(Object error);
 	    }
 	 }</code></pre>
+	 
+<p><strong>Note: </strong><code>APPLICATION_ID</code> in the redirect URL of MobilePay is your application package name.</p>
 	 
 <p>Vipps and MobilePay payment also support AUTH+CAPTURE process. If autoSale is set to true, Netaxept authorizes and immediately captures the amount set in the REGISTER call. It is optional and default value is false (authorization only and capture from the backend with additional process call). </p>	 
 	 
@@ -972,6 +967,47 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
             <tr>
                 <td style="text-align:center"><img src="doc-files/Android_UI_Customization_for_TokenCardView.png" width="90%" height="80%" alt=""></td>
                 <td style="text-align:center"><img src="doc-files/Android_UI_Customization_dark_theme_for_TokenCardView.png" width="90%" height="80%" alt=""></td>
+            </tr>
+        </tbody>
+    </table>
+  
+	<p>The SDK supports customizing the card scheme image shown to user during tokenized card payment. In order to display your own custom card scheme image, provide the image resource ID (Integer) when initializing a <code>TokenizedCardPayment</code> object as follows:
+	</p>
+<pre><code class="language-java">
+	//Use the CardDisplay.card function if custom card image is not needed.
+	CardDisplay cardDisplay = CardDisplay.card(cardScheme: CardScheme)
+	
+	//Use the CardDisplay.customCardImage function if custom card image is needed 
+	//and pass the image in Int format.
+	CardDisplay cardDisplay = CardDisplay.customCardImage(resourceID: Int, cardScheme: CardScheme)
+	
+	//CardScheme will be VISA, MASTERCARD..etc
+		
+	TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
+                Pair of String amount and String currency,
+                boolean isCvcRequired);
+		
+        val tokenizedCardPayment = PaymentProcess.cardTokenPayment(
+            Pair of String MerchantID and PiaSDK.Environment,
+            String tokenId,
+            String expiryDate,
+            cardDisplay,
+            confirmationPrompt,
+            CardTokenPaymentRegistration cardTokenPaymentRegistration
+        );
+</code></pre>
+  
+  <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:center">Standard Card Scheme Image</th>
+                <th style="text-align:center">Custom Card Scheme Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:center"><img src="doc-files/standard_card_image.png" width="90%" height="80%" alt=""></td>
+                <td style="text-align:center"><img src="doc-files/custom_card_image.png" width="90%" height="80%" alt=""></td>
             </tr>
         </tbody>
     </table>
@@ -1500,6 +1536,20 @@ The above copyright notice and this permission notice shall be included in all c
 <ul>
 		<li>Improved UX: the card entry form can now detect unsupported card schemes. Users cannot initiate a transaction with unsupported cards. 
 		Available for Native, React Native and Xamarin. Check the [exclude-card-scheme] <a href="https://htmlpreview.github.io/?https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/blob/master/documentation/START%20-%20Overview%20of%20Netaxept%20Android%20SDK.html#Basic_payment_flow_description" title="here">here</a> feature.</li>
+</ul>
+
+<h4><a id="v231_Released_06Jun2021"></a>v2.3.1 Released: 06-June-2021</h4>
+<h4><a id="Release_notes_743"></a>Release notes:</h4>
+<ul>
+		<li>Bug fix: Fixed app crashing when using old API (only on 2.3.0) for tokenized card payments.</li>
+</ul>
+
+<h4><a id="v240_Released_22Jun2021"></a>v2.4.0 Released: 22-June-2021</h4>
+<h4><a id="Release_notes_744"></a>Release notes:</h4>
+<ul>
+		<li>The SDK can now display custom card image when paying with saved card. Refer to documentation <a href="https://htmlpreview.github.io/?https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/blob/master/documentation/START%20-%20Overview%20of%20Netaxept%20Android%20SDK.html#UI_Customization_API" title="here">here</a>.</li>
+		<li>Added ReactNative and Xamarin support for custom card image feature.</li>
+		<li>Fixes minor bugs in card scanning and number field validation in card entry UI.</li>
 </ul>
 		
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>

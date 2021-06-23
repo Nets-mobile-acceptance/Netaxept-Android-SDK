@@ -3,7 +3,6 @@ package eu.nets.pia.sample.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +28,7 @@ import eu.nets.pia.sample.BuildConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+
 public class PiaSampleSharedPreferences {
 
     private static final String PREFERENCES_NAME = "PiaSampleSharedPreferences";
@@ -45,6 +45,7 @@ public class PiaSampleSharedPreferences {
     private static final String DISABLE_SAVE_CARD_OPTION = "disable_save_card_option";
     private static final String CUSTOMER_PHONE_NUMBER = "customer_phone_number";
     private static final String EXCLUDED_CARD_SCHEME_SET = "excluded_card_scheme_set";
+    private static final String IS_CUSTOM_CARD_SCHEME_IMAGE_SELECTED = "is_custom_card_scheme_image_selected";
 
     private static SharedPreferences mSharedPrefs;
 
@@ -196,6 +197,16 @@ public class PiaSampleSharedPreferences {
             excludedCardSchemeSet.add(CardScheme.valueOf(cardScheme));
         }
         return excludedCardSchemeSet; 
+    }
+
+    public static boolean IsCustomCardSchemeImageSelected() {
+        return mSharedPrefs.getBoolean(IS_CUSTOM_CARD_SCHEME_IMAGE_SELECTED, false);
+    }
+
+    public static void setCustomCardSchemeImageSelected(boolean customCardImage) {
+        SharedPreferences.Editor prefsEditor = mSharedPrefs.edit();
+        prefsEditor.putBoolean(IS_CUSTOM_CARD_SCHEME_IMAGE_SELECTED, customCardImage);
+        prefsEditor.commit();
     }
 
     public static String getPhoneNumber() {
