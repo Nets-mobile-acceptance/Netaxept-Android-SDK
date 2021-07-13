@@ -52,6 +52,34 @@
     
     <h1><a id="Installation"></a>Installation</h1>
     <hr>
+    <!-- section-start-to-remove-by-script -->
+    <ul>
+        <li>Please add to the <strong>gradle.properties</strong> file the values for the following variables as provided by Nets</li>
+    </ul>
+    <pre><code class="language-gradle">    ## Required Maven URLs and Credentials ##
+        MAVEN_URL_PIA=provided value <span class="hljs-keyword">for</span> URL to PiA SDK
+        
+        MAVEN_REPO_USERNAME=providedUsername
+        MAVEN_REPO_PASSWORD=providedPassword
+    </code></pre>
+    <ul>
+        <li>Please add code below to the <code>build.gradle</code> file under your App project folder.</li>
+    </ul>
+    <pre><code class="language-gradle"> <span class="hljs-keyword">allprojects</span> {
+        <span class="hljs-keyword">repositories</span> {
+			google()
+			jcenter()
+        
+			maven {
+			url MAVEN_URL_PIA
+			credentials {
+				username MAVEN_REPO_USERNAME
+				password MAVEN_REPO_PASSWORD
+			}
+			}
+        }
+        }
+    </code></pre>
     <ul>
         <li>Please add dependency on the following library to the <code>build.gradle</code> file.</li>
     </ul>
@@ -100,28 +128,41 @@
 	           <span class="hljs-annotation">@Override</span>
 	           public void run() {
 	            
-	              // Make a card payment registration request with your backend to retrieve a transactionID and redirectURL. 
+	              // Make a card payment registration request with your backend
+				     to retrieve a transactionID and redirectURL. 
 					   
 	              // Callback with `transactionID` and `redirectURL` obtained from your merchant backend 
-	              callbackWithTransaction.successWithTransactionIDAndRedirectURL(paymentRegisterResponse.getTransactionId(), Uri.parse(paymentRegisterResponse.getRedirectOK()));
+	              callbackWithTransaction.successWithTransactionIDAndRedirectURL(
+                           paymentRegisterResponse.getTransactionId(), 
+                           Uri.parse(paymentRegisterResponse.getRedirectOK())
+                        );
 	               
 	              // If registration request failed with your backend, callback the SDK with the error.
 	              callbackWithTransaction.failureWithError(null);
-	              
 	            }
 	        }.start();
 	    }
 	};</code></pre>
 	
-		<p>Now, to initiate a Card payment, create a CardPayment instance providing merchant information (obtained from Netaxept), the amount to be charged (in cents) and the currency code and than initiate the card payment using <code>PiaSDK.startCardPaymentActivity(...) as shown below</code></p>	 
+		<p>Now, to initiate a Card payment, create a CardPayment instance providing merchant information (obtained from Netaxept), the amount to be charged (in cents) and the currency code and than initiate the card payment using <code>PiaSDK.startCardProcessActivity(...) as shown below</code></p>	 
 	
 	
 		<pre><code class="language-java">
-	MerchantDetails merchantDetails = new MerchantDetails(String <span class="hljs-comment">//Merchant ID</span>, boolean <span class="hljs-comment">//test or prod</span>);
+	ActivityResultLauncher<CardProcessActivityLauncherInput> cardPaymentActivityLauncher = registerForActivityResult(
+            new CardProcessActivityResultContract(),
+            this::transactionCompleteResult
+        );	
 	
-	CardPayment cardPayment = new CardPayment(merchantDetails, amountInCents, currency);
+	CardProcess cardProcess = PaymentProcess.cardPayment(
+                                Pair of String merchantId and Enum environment,
+                                Set.of(CardScheme.visa, CardScheme.amex),
+                                Pair of Integer amount and String currency,
+                                cardPaymentRegistration
+                        )
 	
-	PiaSDK.startCardPaymentActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardPaymentActivityLauncher, cardPayment, boolean <span class="hljs-comment">//isCVCRequired</span>, <span class="hljs-comment">//Registration callback</span> cardPaymentRegistration);
+	PiaSDK.startCardProcessActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardPaymentActivityLauncher, 
+							cardProcess, 
+							<span class="hljs-comment">//boolean</span> isCVCRequired);
 	</code></pre>
 	
 	<p>The following sample code demonstrates how to handle result callbacks for success, cancellation and failure.</p>
@@ -139,31 +180,56 @@
            </code></pre>
 		   
 	<p><strong>Tokenized Payment</strong></p>	
-	Similar to Card Payment, SDK offers a declarative API for tokenized payment as well. The API for initiating the process is <code>PiaSDK.startTokenizedCardPayment()</code> which takes the following parameters:-</p>
+	Similar to Card Payment, SDK offers a declarative API for tokenized payment as well. The API for initiating the process is <code>PiaSDK.startCardProcessActivity()</code> which takes the following parameters:-</p>
 		 <ul>
-				<li>The API for initiating the process is PiaSDK.startTokenizedCardPayment() which takes the following parameters:-</li>
+				<li>The API for initiating the process is PiaSDK.startCardProcessActivity() which takes the following parameters:-</li>
 				<ul>
-				<li><code>ActivityResultLauncher<TokenizedCardPaymentActivityLauncherInput></code> of TokenizedCardPaymentActivityLauncherInput</li>
-				<li><code>TokenizedCardPayment</code> :- The TokenizedCardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), <code>Pair</code> of Integer amountInCents & String currency and CardTokenPaymentRegistrationnc which is a registration API to register the transaction and receive a transaction ID for the same.</li>
-				<ul>
-				<li><code>MerchantDetails merchantDetails = new MerchantDetails(String <span class="hljs-comment">//Merchant ID</span>, boolean <span class="hljs-comment">//test or prod</span>);</code></li>
-				<li><code>CardPayment cardPayment = new CardPayment(merchantDetails, amountInCents, currency);</code></li>
-				<li><code>String Token ID</code></li>
-				<li><code>SchemeType Scheme ID</code></li> 
-				<li><code>String Expiry date</code></li>
-				</ul>
+				<li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
+				<li><code>TokenizedCardPayment</code> :- The TokenizedCardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), <code>String</code> tokenId(Card number), <code>String</code> cardExpiryDate, <code>CardDisplay</code> cardDisplay, <code>TokenizedCardPrompt</code> confirmationPrompt and CardTokenPaymentRegistrationnc which is a registration API to register the transaction and receive a transaction ID for the same.</li>
 				<li>boolean //isCVCRequired</li>
-				<li>CardTokenPaymentRegistration //paymentRegistration</li>
 				<li>To initiate the payment: 
-				<li>To initiate the payment: 
-				<pre><code class="language-java">PiaSDK.startTokenizedCardPayment(<span class="hljs-comment">//ActivityResultLauncher</span> cardTokenActivityLauncher, <span class="hljs-comment">//TokenizedCardPayment</span> cardToken, boolean <span class="hljs-comment">isCVCRequired</span>, <span class="hljs-comment">//Registration callback</span> cardTokenPaymentRegistration);</code></pre></li>
+				
+				<pre><code class="language-java">
+	ActivityResultLauncher<CardProcessActivityLauncherInput> cardPaymentActivityLauncher = registerForActivityResult(
+            new CardProcessActivityResultContract(),
+            this::transactionCompleteResult
+        );	
+	
+	//SchemeType is an Enum class containing VISA, MASTERCARD etc..
+	CardScheme cardScheme = cardSchemeFrom(SchemeType schemeType);
+	
+	//Use the CardDisplay.card function if custom card image is not needed.
+	CardDisplay cardDisplay = CardDisplay.card(cardScheme: CardScheme)
+	
+	//Use the CardDisplay.customCardImage function if custom card image is needed 
+	//and pass the image in Int format.
+	CardDisplay cardDisplay = CardDisplay.customCardImage(resourceID: Int, cardScheme: CardScheme)
+	
+	TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
+                Pair of String amount and String currency,
+                boolean isCvcRequired);
+		
+        val tokenizedCardPayment = PaymentProcess.cardTokenPayment(
+            Pair of String MerchantID and PiaSDK.Environment,
+            String tokenId,
+            String expiryDate,
+            cardDisplay,
+            confirmationPrompt,
+            CardTokenPaymentRegistration cardTokenPaymentRegistration
+        );
+	
+	PiaSDK.startCardProcessActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardPaymentActivityLauncher, 
+							tokenizedCardPayment, 
+							<span class="hljs-comment">//boolean</span> isCVCRequired);
+	</code></pre>
+				
             </ul>
 		
 	<p><strong>Card Storage</strong></p>
 	It is possible to register/save card for future payments. The API to do so is <code>PiaSDK.startCardProcessActivity()</code></p>
 	<ul>
         <li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
-        <li><code>TokenizedCardPayment</code>  The TokenizedCardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD) and CardTokenPaymentRegistration which is a registration API to register the transaction and receive a transaction ID for the same.</li>
+        <li><code>TokenizedCardPayment</code>  The TokenizedCardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), Set of CardScheme (The exclude card scheme feature) and CardTokenPaymentRegistration which is a registration API to register the transaction and receive a transaction ID for the same.</li>
         <li><code>Boolean isCVCRequired</code>  Whether CVC/CVV is needed for authorization.</li>
     </ul>
 	
@@ -171,14 +237,14 @@
 	<p><strong>1)</strong> Our SDK supports payment via S-Business card which doesn't make use of card scanner. The API for initiating the process is <code>PiaSDK.startSBusinessCardProcessActivity()</code> which accepts parameters as follows</p>
 	<ul>
         <li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
-        <li><code>CardPayment</code>  The CardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), <code>Pair</code> of Integer amountInCents & String currency and CardPaymentRegistration which is a registration API to register the transaction and receive a transaction ID for the same.</li>
+        <li><code>CardPayment</code>  The CardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), Set of CardScheme (The exclude card scheme feature), <code>Pair</code> of Integer amountInCents & String currency and CardPaymentRegistration which is a registration API to register the transaction and receive a transaction ID for the same.</li>
         <li><code>Boolean isCVCRequired</code>  Whether CVV is needed for authorization.</li>
     </ul>
 	
 	<p><strong>2)</strong> Like payment with other cards, it is possible to  register/save the S-Business card for future payments. To register/save card use <code>PiaSDK.startSBusinessCardProcessActivity()</code> which accepts parameters as follows</p>
 	<ul>
         <li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
-        <li><code>CardTokenization</code>  The CardTokenization object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD) and CardPaymentRegistration which is a registration API to register the transaction and receive a transaction ID for the same.</li>
+        <li><code>CardTokenization</code>  The CardTokenization object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), Set of CardScheme (The exclude card scheme feature) and CardPaymentRegistration which is a registration API to register the transaction and receive a transaction ID for the same.</li>
         <li><code>Boolean isCVCRequired</code>  Whether CVV is needed for authorization.</li>
     </ul>
 	<p>The <code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput will give three results with respect to the three scenarios of SUCCESS, FAILURE and CANCELLED (the <code>transactionCompleteResult</code> method as shown in the sample app). The result will be given by <code>ProcessResult</code>.</p>
@@ -266,22 +332,47 @@
             
             In the subsequent transaction of Easy payment
             <ul>
-				<li>The API for initiating the process is PiaSDK.startTokenizedCardPayment() which takes the following parameters:-</li>
+				<li>The API for initiating the process is PiaSDK.startCardProcessActivity() which takes the following parameters:-</li>
 				<ul>
-				<li><code>ActivityResultLauncher<TokenizedCardPaymentActivityLauncherInput></code> of TokenizedCardPaymentActivityLauncherInput</li>
-				<li><code>TokenizedCardPayment</code> :- The TokenizedCardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), <code>Pair</code> of Integer amountInCents & String currency and CardTokenPaymentRegistrationnc which is a registration API to register the transaction and receive a transaction ID for the same.</li>
-				<ul>
-				<li><code>MerchantDetails merchantDetails = new MerchantDetails(String <span class="hljs-comment">//Merchant ID</span>, boolean <span class="hljs-comment">//test or prod</span>);</code></li>
-				<li><code>CardPayment cardPayment = new CardPayment(merchantDetails, amountInCents, currency);</code></li>
-				<li><code>String Token ID</code></li>
-				<li><code>SchemeType Scheme ID</code></li> 
-				<li><code>String Expiry date</code></li>
-				</ul>
+				<li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
+				<li><code>TokenizedCardPayment</code> :- The TokenizedCardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), <code>String</code> tokenId(Card number), <code>String</code> cardExpiryDate, <code>CardDisplay</code> cardDisplay, <code>TokenizedCardPrompt</code> confirmationPrompt and CardTokenPaymentRegistrationnc which is a registration API to register the transaction and receive a transaction ID for the same.</li>
 				<li>boolean //isCVCRequired</li>
-				<li>CardTokenPaymentRegistration //paymentRegistration</li>
 				<li>To initiate the payment: 
-				<pre><code class="language-java">PiaSDK.startTokenizedCardPayment(<span class="hljs-comment">//ActivityResultLauncher</span> cardTokenActivityLauncher, <span class="hljs-comment">//TokenizedCardPayment</span> cardToken, boolean <span class="hljs-comment">isCVCRequired</span>, <span class="hljs-comment">//Registration callback</span> cardTokenPaymentRegistration);</code></pre></li>
-                <li>the register call from your backend contains the parameter  <code>recurringUse3DS = true</code> in order to trigger 3DSecure authentication as per PSD2/SCA requirements.</li>
+				
+				<pre><code class="language-java">
+	ActivityResultLauncher<CardProcessActivityLauncherInput> cardPaymentActivityLauncher = registerForActivityResult(
+            new CardProcessActivityResultContract(),
+            this::transactionCompleteResult
+        );	
+	
+	//SchemeType is an Enum class containing VISA, MASTERCARD etc..
+	CardScheme cardScheme = cardSchemeFrom(SchemeType schemeType);
+	
+	//Use the CardDisplay.card function if custom card image is not needed.
+	CardDisplay cardDisplay = CardDisplay.card(cardScheme: CardScheme)
+	
+	//Use the CardDisplay.customCardImage function if custom card image is needed 
+	//and pass the image in Int format.
+	CardDisplay cardDisplay = CardDisplay.customCardImage(resourceID: Int, cardScheme: CardScheme)
+	
+	TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
+                Pair of String amount and String currency,
+                boolean isCvcRequired);
+		
+        val tokenizedCardPayment = PaymentProcess.cardTokenPayment(
+            Pair of String MerchantID and PiaSDK.Environment,
+            String tokenId,
+            String expiryDate,
+            cardDisplay,
+            confirmationPrompt,
+            CardTokenPaymentRegistration cardTokenPaymentRegistration
+        );
+	
+	PiaSDK.startCardProcessActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardPaymentActivityLauncher, 
+							tokenizedCardPayment, 
+							<span class="hljs-comment">//boolean</span> isCVCRequired);
+	</code></pre>
+				
             </ul>
             
             <h1><a id="Payment_without_Security_code"></a>Payment without Security code</h1>
@@ -307,11 +398,14 @@
             <p>Based on approval by your account manager, it is possible to skip the step of security code validation for payment with already saved card (Subsequent Easy payment).</p>
             <p>You can set the boolean parameter <code>cvcRequired</code> on the <code>TokenCardInfo</code> instance to notify <strong>PiA SDK</strong> to ask for the CVV/CVC security code from the customer. The snippet below illustrates how to start the <strong>PiA SDK</strong> for subsequent transaction of Easy Payment.</p>
             
-				<pre><code class="language-java"><span class="hljs-comment">                //region global params</span>
-                <span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> cvcRequired = <span class="hljs-keyword">true</span>;
-                <span class="hljs-comment">//end region</span>
+				<pre><code class="language-java"><span class="hljs-comment">      //region global params</span>
+      <span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> cvcRequired = <span class="hljs-keyword">true</span>;
+      <span class="hljs-comment">//end region</span>
                 
-                PiaSDK.startCardPaymentActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardPaymentActivityLauncher, cardPayment, boolean <span class="hljs-comment">cvcRequired</span>, <span class="hljs-comment">//Registration callback</span> cardPaymentRegistration);
+      PiaSDK.startCardProcessActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardPaymentActivityLauncher,
+                cardProcess, 
+                boolean <span class="hljs-comment">cvcRequired</span>, 
+                <span class="hljs-comment">//Registration callback</span> cardPaymentRegistration);
 	</code></pre>
             </code></pre>
             
@@ -326,7 +420,7 @@
 			<p>The option 2 of <strong>Skip Confirmation</strong> can be presented by using the following API</p>
 			
 	<pre><code class="language-java"><span class="hljs-comment"></span>
-        PiaInterfaceConfiguration.getInstance().setSkipConfirmationResult(boolean <span class="hljs-comment">isSkipConfirmationActive</span>);
+        PiaInterfaceConfiguration.getInstance().setSkipConfirmationResult(true);
 	</code></pre>
 			
 			<p><strong>Important Note:</strong> If you wish to skip security code entry, you need approval from your acquirer.</p>
@@ -404,20 +498,23 @@
 	CardPaymentRegistration cardPaymentRegistration = new CardPaymentRegistration(){
 	   <span class="hljs-annotation">@Override</span>
 	   public void registerPayment(@NotNull TransactionCallback callbackWithTransaction) {
-	       final PaymentRegisterRequest paymentRegisterRequest = mPaymentCache.getPaymentRegisterRequest();
+	       final PaymentRegisterRequest paymentRegisterRequest 
+		        = mPaymentCache.getPaymentRegisterRequest();
 	       paymentRegisterRequest.setStoreCard(false);
 	       new Thread() {
 	           <span class="hljs-annotation">@Override</span>
 	           public void run() {
-	            
-	              // Make a Card registration request with your backend to retrieve a transactionID and redirectURL. 
+	              // Make a Card registration request with your backend 
+                      //to retrieve a transactionID and redirectURL. 
 					   
 	              // Callback with `transactionID` and `redirectURL` obtained from your merchant backend 
-	              callbackWithTransaction.successWithTransactionIDAndRedirectURL(paymentRegisterResponse.getTransactionId(), Uri.parse(paymentRegisterResponse.getRedirectOK()));
+	              callbackWithTransaction.successWithTransactionIDAndRedirectURL(
+				    paymentRegisterResponse.getTransactionId(), 
+				    Uri.parse(paymentRegisterResponse.getRedirectOK())
+                        );
 	               
 	              // If registration request failed with your backend, callback the SDK with the error.
 	              callbackWithTransaction.failureWithError(null);
-	               
 	            }
 	        }.start();
 	    }
@@ -459,20 +556,23 @@
 	PayPalPaymentRegistration payPalPaymentRegistration = new PayPalPaymentRegistration(){
 	   <span class="hljs-annotation">@Override</span>
 	   public void registerPayment(@NotNull TransactionCallback callbackWithTransaction) {
-	       final PaymentRegisterRequest paymentRegisterRequest = mPaymentCache.getPaymentRegisterRequest();
+	       final PaymentRegisterRequest paymentRegisterRequest 
+		       = mPaymentCache.getPaymentRegisterRequest();
 	       paymentRegisterRequest.setStoreCard(false);
 	       new Thread() {
 	           <span class="hljs-annotation">@Override</span>
 	           public void run() {
-	            
-	              // Make a paypal registration request with your backend to retrieve a transactionID and redirectURL. 
+	            // Make a paypal registration request with your backend 
+                    //to retrieve a transactionID and redirectURL. 
 					   
 	              // Callback with `transactionID` and `redirectURL` obtained from your merchant backend 
-	              callbackWithTransaction.successWithTransactionIDAndRedirectURL(paymentRegisterResponse.getTransactionId(), Uri.parse(paymentRegisterResponse.getRedirectOK()));
+	              callbackWithTransaction.successWithTransactionIDAndRedirectURL(
+                        paymentRegisterResponse.getTransactionId(), 
+                        Uri.parse(paymentRegisterResponse.getRedirectOK())
+                      );
 	               
 	              // If registration request failed with your backend, callback the SDK with the error.
 	              callbackWithTransaction.failureWithError(null);
-	               
 	            }
 	        }.start();
 	    }
@@ -529,20 +629,25 @@
 	PaymentProcess.WalletPayment walletProcess;
 	
 	<span class="hljs-comment">//For MobilePay</span>
-	walletProcess = PaymentProcess.mobilePay(this <span class="hljs-comment">/*Context of Activity/Fragment implementing MobileWalletListener*/</span>);
+	walletProcess = PaymentProcess.mobilePay(this <span class="hljs-comment">/*Context of Activity/Fragment 
+        implementing MobileWalletListener*/</span>);
 	
 	<span class="hljs-comment">//For Swish</span>
-	walletProcess = PaymentProcess.swish(this <span class="hljs-comment">/*Context of Activity/Fragment implementing MobileWalletListener*/</span>);
+	walletProcess = PaymentProcess.swish(this <span class="hljs-comment">/*Context of Activity/Fragment 
+        implementing MobileWalletListener*/</span>);
 	
 	<span class="hljs-comment">//For Vipps</span>
-	walletProcess = PaymentProcess.vipps(PiaSampleSharedPreferences.isPiaTestMode()<span class="hljs-comment">/*For Vipps test app*/</span>, this <span class="hljs-comment">/*Context of Activity/Fragment implementing MobileWalletListener*/</span>);
+	walletProcess = PaymentProcess.vipps(PiaSampleSharedPreferences.isPiaTestMode()<span class="hljs-comment">/*For Vipps test app*/</span>, 
+        this <span class="hljs-comment">/*Context of Activity/Fragment implementing MobileWalletListener*/</span>);
 	<span class="hljs-comment">
       /**
        * Initiating a wallet-payment. Returns `false` if the wallet app is not installed on the device;
        *
        * @param walletPaymentRegisteration: callback for starting the register payment with merchant backend
        */</span>
-       boolean canLaunch = PiaSDK.initiateMobileWallet(walletProcess, WalletPaymentRegistration mobileWalletRegistration);
+       boolean canLaunch = PiaSDK.initiateMobileWallet(
+                walletProcess,
+                WalletPaymentRegistration mobileWalletRegistration);
 	
        if (!canLaunch) {<span class="hljs-comment">/*Wallet app is not installed, preferably lead user to other payment methods */</span>}</code></pre>
 
@@ -755,31 +860,34 @@
 	PaytrailPaymentRegistration paytrailPaymentRegistration = new PaytrailPaymentRegistration(){
 	   <span class="hljs-annotation">@Override</span>
 	   public void registerPayment(@NotNull TransactionCallback callbackWithTransaction) {
-	       final PaymentRegisterRequest paymentRegisterRequest = mPaymentCache.getPaymentRegisterRequest();
+	       final PaymentRegisterRequest paymentRegisterRequest 
+                = mPaymentCache.getPaymentRegisterRequest();
 	       paymentRegisterRequest.setStoreCard(false);
 	       new Thread() {
 	           <span class="hljs-annotation">@Override</span>
 	           public void run() {
-	            
-	              // Make a paytrail registration request with your backend to retrieve a transactionID and redirectURL. 
-					   
-	              // Callback with `transactionID` and `redirectURL` obtained from your merchant backend 
-	              callbackWithTransaction.successWithTransactionIDAndRedirectURL(paymentRegisterResponse.getTransactionId(), Uri.parse(paymentRegisterResponse.getRedirectOK()));
+                 // Make a paytrail registration request with your backend 
+                    to retrieve a transactionID and redirectURL. 
+
+                 // Callback with `transactionID` and `redirectURL` 
+                    obtained from your merchant backend 
+	              callbackWithTransaction.successWithTransactionIDAndRedirectURL(
+                         paymentRegisterResponse.getTransactionId(),
+                         Uri.parse(paymentRegisterResponse.getRedirectOK())
+                      );
 	               
 	              // If registration request failed with your backend, callback the SDK with the error.
 	              callbackWithTransaction.failureWithError(null);
-	               
 	            }
 	        }.start();
 	    }
 	};</code></pre>
 
 				<p>Now, to initiate a Paytrail payment, wrap up the merchant information in MerchantDetails object and call <code>PiaSDK.startPaytrailPayment(...)</code></p>		
-			
 	<pre><code class="language-java">
-	MerchantDetails merchantDetails = new MerchantDetails(String <span class="hljs-comment">//Merchant ID</span>, boolean <span class="hljs-comment">//test or prod</span>);
-	
-	PiaSDK.startPaytrailPayment(<span class="hljs-comment">//ActivityResultLauncher</span> paytrailActivityLauncher, <span class="hljs-comment">//merchantDetails</span>, <span class="hljs-comment">//Registration callback</span> paytrailPaymentRegistration);
+	PiaSDK.startPaytrailPayment(<span class="hljs-comment">//ActivityResultLauncher</span> paytrailActivityLauncher, 
+                                Pair ofString merchantId and Enum environment, 
+                                <span class="hljs-comment">//Registration callback</span> paytrailPaymentRegistration);
 	</code></pre>
 	
 	<p>The following sample code demonstrates how to handle result callbacks for success, cancellation and failure.</p>
