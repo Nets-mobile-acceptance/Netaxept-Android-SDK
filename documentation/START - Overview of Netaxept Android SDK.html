@@ -52,40 +52,12 @@
     
     <h1><a id="Installation"></a>Installation</h1>
     <hr>
-    <!-- section-start-to-remove-by-script -->
-    <ul>
-        <li>Please add to the <strong>gradle.properties</strong> file the values for the following variables as provided by Nets</li>
-    </ul>
-    <pre><code class="language-gradle">    ## Required Maven URLs and Credentials ##
-        MAVEN_URL_PIA=provided value <span class="hljs-keyword">for</span> URL to PiA SDK
-        
-        MAVEN_REPO_USERNAME=providedUsername
-        MAVEN_REPO_PASSWORD=providedPassword
-    </code></pre>
-    <ul>
-        <li>Please add code below to the <code>build.gradle</code> file under your App project folder.</li>
-    </ul>
-    <pre><code class="language-gradle"> <span class="hljs-keyword">allprojects</span> {
-        <span class="hljs-keyword">repositories</span> {
-			google()
-			jcenter()
-        
-			maven {
-			url MAVEN_URL_PIA
-			credentials {
-				username MAVEN_REPO_USERNAME
-				password MAVEN_REPO_PASSWORD
-			}
-			}
-        }
-        }
-    </code></pre>
     <ul>
         <li>Please add dependency on the following library to the <code>build.gradle</code> file.</li>
     </ul>
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
  
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.4.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.5.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
 	
         }
     </code></pre>
@@ -1658,6 +1630,13 @@ The above copyright notice and this permission notice shall be included in all c
 		<li>The SDK can now display custom card image when paying with saved card. Refer to documentation <a href="https://htmlpreview.github.io/?https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/blob/master/documentation/START%20-%20Overview%20of%20Netaxept%20Android%20SDK.html#UI_Customization_API" title="here">here</a>.</li>
 		<li>Added ReactNative and Xamarin support for custom card image feature.</li>
 		<li>Fixes minor bugs in card scanning and number field validation in card entry UI.</li>
+</ul>
+
+<h4><a id="v250_Released_21Oct2021"></a>v2.5.0 Released: 21-Oct-2021</h4>
+<h4><a id="Release_notes_745"></a>Release notes:</h4>
+<ul>
+		<li>Added Android 12 support.</li>
+		<li>Minor user interface improvements.</li>
 </ul>
 		
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>

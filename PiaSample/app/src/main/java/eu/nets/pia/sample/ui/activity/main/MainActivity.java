@@ -1,6 +1,5 @@
 package eu.nets.pia.sample.ui.activity.main;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,7 +33,6 @@ import butterknife.ButterKnife;
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.ProcessResult;
-import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.card.CardPaymentRegistration;
 import eu.nets.pia.card.CardProcessActivityLauncherInput;
 import eu.nets.pia.card.CardProcessActivityResultContract;
@@ -47,8 +45,6 @@ import eu.nets.pia.card.PaytrailActivityLauncherInput;
 import eu.nets.pia.card.PaytrailActivityResultContract;
 import eu.nets.pia.card.PaytrailPaymentRegistration;
 import eu.nets.pia.card.TransactionCallback;
-import eu.nets.pia.data.model.MerchantInfo;
-import eu.nets.pia.data.model.OrderInfo;
 import eu.nets.pia.data.model.SchemeType;
 import eu.nets.pia.data.model.TokenCardInfo;
 import eu.nets.pia.sample.BuildConfig;
@@ -72,7 +68,6 @@ import eu.nets.pia.sample.ui.data.PaymentMethodType;
 import eu.nets.pia.sample.ui.fragment.CheckoutFragment;
 import eu.nets.pia.sample.ui.fragment.FragmentCallback;
 import eu.nets.pia.sample.ui.fragment.PaymentMethodsFragment;
-import eu.nets.pia.ui.main.PiaActivity;
 import eu.nets.pia.wallets.CardDisplay;
 import eu.nets.pia.wallets.MobileWallet;
 import eu.nets.pia.wallets.MobileWalletError;
@@ -119,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
     private AlertDialog mEnvironmentDialog;
     private PaymentFlowCache mPaymentCache;
-    private RegisterPaymentHandler mRegisterPaymentHandler;
     private MerchantRestClient mRestClient = MerchantRestClient.getInstance();
     private PaymentMethodsResponse paymentMethodsResponse;
 
@@ -145,10 +139,6 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
          * Object used for caching all data related to payment
          */
         mPaymentCache = PaymentFlowCache.getInstance();
-        /**
-         * Instantiate the payment handled which will be sent to the SDK when launching it
-         */
-        mRegisterPaymentHandler = new RegisterPaymentHandlerImpl();
 
         //clear all fragments added in backstack -- when activity is created, it's better to have a fresh stack
         clearFragmentStack();
@@ -486,31 +476,10 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
     }
 
     /**
-     * Launch the SDK to perform a payment, and provide the needed parameters: {@link eu.nets.pia.PiaSDK#start(Activity, Bundle, RegisterPaymentHandler)}
-     * <p>
-     * The Bundle can contain the following data, depending on the desired action:
-     * <p>
-     * 1. Pay with new card:
-     * put only {@link eu.nets.pia.data.model.MerchantInfo} and
-     * {@link eu.nets.pia.data.model.OrderInfo}
-     * <p>
-     * 2. Pay with save card:
-     * put only {@link eu.nets.pia.data.model.MerchantInfo},
-     * {@link eu.nets.pia.data.model.OrderInfo} and  {@link eu.nets.pia.data.model.TokenCardInfo}
-     * <p>
-     * 3. Save card:
-     * put only {@link eu.nets.pia.data.model.MerchantInfo} - check {@link LoginActivity#onSaveCardBtnClicked}
-     *
      * @param method selected payment method
      */
     private void callPiaSDK(PaymentMethod method) {
         Log.d(TAG, "[callPiaSDK] start Pia SDK");
-
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(PiaActivity.BUNDLE_MERCHANT_INFO, getMerchantInfo(method.isCvcRequired()));
-        bundle.putParcelable(PiaActivity.BUNDLE_ORDER_INFO, getOrderInfo());
-
-        Boolean isTest = PiaSampleSharedPreferences.isPiaTestMode();
 
         switch (method.getType()) {
             case PAY_PAL:
@@ -570,10 +539,6 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
             case TOKEN:
 
                 TokenCardInfo tokenCardInfo = getTokenizedCardInfo((DisplayedToken) method);
-
-                Integer customCardSchemeImageResourceID = PiaSampleSharedPreferences.IsCustomCardSchemeImageSelected() ?
-                        R.drawable.custom_card : null;
-
 
                 CardScheme cardScheme = cardSchemeFrom(tokenCardInfo.getSchemeId());
 
@@ -934,34 +899,6 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
     }
 
     /**
-     * In this object, you notify the SDK about:
-     * 1. Which merchant is requesting the payments to be processed (your merchant ID)
-     * 2. Which base URL should be used: TEST or PRODUCTION
-     * 3. If your merchant configuration supports payments without CVC, it notifies the SDK
-     * to hide the CVC entry.
-     *
-     * @param cardVerificationRequired - flag that specifies if the CVC will be required ot not
-     * @return MerchantInfo object
-     */
-    private MerchantInfo getMerchantInfo(boolean cardVerificationRequired) {
-        if (PiaSampleSharedPreferences.isPiaTestMode()) {
-            //launch SDK with test merchant id and flag testMode = true to point SDK to test env
-            return new MerchantInfo(
-                    getMerchantId(true),
-                    true,
-                    cardVerificationRequired
-            );
-        } else {
-            //launch SDK with production merchant id
-            return new MerchantInfo(
-                    getMerchantId(false),
-                    false,
-                    cardVerificationRequired
-            );
-        }
-    }
-
-    /**
      * If your application supports test mode (you have a test environment), you must also have a
      * specific merchant Id for this environment. So, provide it accordingly
      *
@@ -978,23 +915,6 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                     BuildConfig.MERCHANT_ID_PROD :
                     PiaSampleSharedPreferences.getMerchantIdProd();
         }
-    }
-
-    /**
-     * The order information to be passed in to the SDK.
-     * Basically, it contains the amount and currency. This info will only be displayed
-     * inside the SDK (the text on the Pay button: e.g Pay 10 EUR)
-     *
-     * @return order info object
-     */
-    private OrderInfo getOrderInfo() {
-        String priceString = getCheckoutPriceString();
-        double price = priceString.isEmpty() ? 0 : Double.parseDouble(priceString);
-
-        return new OrderInfo(
-                price,
-                PiaSampleSharedPreferences.getCustomerCurrency()
-        );
     }
 
     /**

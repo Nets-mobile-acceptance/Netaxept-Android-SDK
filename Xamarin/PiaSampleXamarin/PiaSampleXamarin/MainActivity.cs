@@ -123,120 +123,23 @@ namespace PiaSampleXamarin
             cardPaymentActivityLauncher = RegisterForActivityResult(
                 PiaSDK.CardPaymentActivityContractXamarin(),
                 new PiaActivityResultCallback(processResult => {
-
-                    switch (processResult) {
-
-                        case ProcessResult.Success:
-                            Toast.MakeText(this, "Success", ToastLength.Short).Show();
-                            break;
-
-                        case ProcessResult.Failure:
-                            Toast.MakeText(this, "Failure", ToastLength.Short).Show();
-                            break;
-
-                        case ProcessResult.Cancellation:
-                            Toast.MakeText(this, "Cancelled", ToastLength.Short).Show();
-                            break;
-
-                        default:
-                            break;
-
-                    }
+                    processResultCallback(processResult);
                 })
             );
 
             paypalPaymentActivityLauncher = RegisterForActivityResult(
                 PiaSDK.PaypalPaymentActivityContractXamarin(),
                 new PiaActivityResultCallback(processResult => {
-
-                    switch (processResult)
-                    {
-
-                        case ProcessResult.Success:
-                            Toast.MakeText(this, "Success", ToastLength.Short).Show();
-                            break;
-
-                        case ProcessResult.Failure:
-                            Toast.MakeText(this, "Failure", ToastLength.Short).Show();
-                            break;
-
-                        case ProcessResult.Cancellation:
-                            Toast.MakeText(this, "Cancelled", ToastLength.Short).Show();
-                            break;
-
-                        default:
-                            break;
-
-                    }
+                    processResultCallback(processResult);
                 })
             );
 
             paytrailPaymentActivityLauncher = RegisterForActivityResult(
                 PiaSDK.PaytrailPaymentActivityContractXamarin(),
                 new PiaActivityResultCallback(processResult => {
-
-                    switch (processResult)
-                    {
-
-                        case ProcessResult.Success:
-                            Toast.MakeText(this, "Success", ToastLength.Short).Show();
-                            break;
-
-                        case ProcessResult.Failure:
-                            Toast.MakeText(this, "Failure", ToastLength.Short).Show();
-                            break;
-
-                        case ProcessResult.Cancellation:
-                            Toast.MakeText(this, "Cancelled", ToastLength.Short).Show();
-                            break;
-
-                        default:
-                            break;
-
-                    }
+                    processResultCallback(processResult);
                 })
             );
-        }
-
-        protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-
-            if (resultCode == Android.App.Result.Ok)
-            {
-                if (requestCode == PiaSDK.PiaSdkRequest)
-                {
-                    PiaResult result = (PiaResult)data.GetParcelableExtra(PiaSDK.BundleCompleteResult);
-                    if (result.Success)
-                    {
-                        Toast.MakeText(this, "SUCCESS", ToastLength.Short).Show();
-                        //call commitPayment/storeCard on your backend
-                    }
-                    else
-                    {
-                        Toast.MakeText(this, "ERROR", ToastLength.Short).Show();
-                        //call rollbackTransaction on your backend
-                    }
-                }
-                else if (requestCode == PiaSDK.PiaPaytrailRequest)
-                {
-                    PiaResult result = (PiaResult)data.GetParcelableExtra(PiaSDK.BundleCompleteResult);
-                    if (result.Success)
-                    {
-                        Toast.MakeText(this, "SUCCESS", ToastLength.Short).Show();
-                        //call commitPayment/storeCard on your backend
-                    }
-                    else
-                    {
-                        Toast.MakeText(this, "ERROR", ToastLength.Short).Show();
-                        //call rollbackTransaction on your backend
-                    }
-                }
-            }
-            else
-            {
-                Toast.MakeText(this, "CANCELED", ToastLength.Short).Show();
-            }
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -496,7 +399,7 @@ namespace PiaSampleXamarin
 
             Task.Run(async () =>
             {
-                string mobileWalletRequest = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000012\",\"method\":{\"id\":\"MobilePay\"},\"orderNumber\":\"PiaSDK-Android\",\"paymentMethodActionList\":\"[{PaymentMethod:MobilePay}]\",\"redirectUrl\":\"PiaSampleXamarin.PiaSampleXamarin://piasdk_mobilepay\",\"storeCard\":false}";
+                string mobileWalletRequest = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000011\",\"method\":{\"id\":\"MobilePay\"},\"orderNumber\":\"PiaSDK-Android\",\"paymentMethodActionList\":\"[{PaymentMethod:MobilePay}]\",\"redirectUrl\":\"PiaSampleXamarin.PiaSampleXamarin://piasdk_mobilepay\",\"storeCard\":false}";
                 HttpResponseMessage response = makeHttpCall(mobileWalletRequest, merchantIdTest, merchantBaseUrlTest);
                 if (response.IsSuccessStatusCode)
                 {
@@ -613,7 +516,7 @@ namespace PiaSampleXamarin
 
             public void RegisterPayment(ITransactionCallback callbackWithTransaction)
             {
-                string jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000012\",\"method\":{\"id\":\"PayPal\"},\"orderNumber\":\"PiaSDK-Android\"}";
+                string jsonData = "{\"amount\":{\"currencyCode\":\"EUR\",\"totalAmount\":1000,\"vatAmount\":0},\"customerId\":\"000011\",\"method\":{\"id\":\"PayPal\"},\"orderNumber\":\"PiaSDK-Android\"}";
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(merchantBaseUrlTest);
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -689,7 +592,7 @@ namespace PiaSampleXamarin
 
             public void RegisterPayment(ITransactionCallback callbackWithTransaction)
             {
-                string jsonData = "{\"customerId\":\"000012\",\"orderNumber\":\"PiaSDK-Android\",\"amount\":{\"currencyCode\":\"EUR\",\"vatAmount\":0,\"totalAmount\":\"1000\"},\"method\":{\"id\":\"EasyPayment\",\"displayName\":\"\",\"fee\":\"\"},\"cardId\":\"492500******0004\",\"storeCard\":true,\"merchantId\":\"\",\"token\":\"\",\"serviceTyp\":\"\",\"paymentMethodActionList\":\"\",\"phoneNumber\":\"\",\"currencyCode\":\"\",\"redirectUrl\":\"\",\"language\":\"\"}";
+                string jsonData = "{\"customerId\":\"000011\",\"orderNumber\":\"PiaSDK-Android\",\"amount\":{\"currencyCode\":\"EUR\",\"vatAmount\":0,\"totalAmount\":\"1000\"},\"method\":{\"id\":\"EasyPayment\",\"displayName\":\"\",\"fee\":\"\"},\"cardId\":\"492500******0004\",\"storeCard\":true,\"merchantId\":\"\",\"token\":\"\",\"serviceTyp\":\"\",\"paymentMethodActionList\":\"\",\"phoneNumber\":\"\",\"currencyCode\":\"\",\"redirectUrl\":\"\",\"language\":\"\"}";
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(merchantBaseUrlTest);
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -727,7 +630,7 @@ namespace PiaSampleXamarin
 
             public void RegisterPayment(ITransactionCallback callbackWithTransaction)
             {
-                string jsonData = "{\"amount\":{\"currencyCode\":\"SEK\",\"totalAmount\":1000,\"vatAmount\":0},\"cardId\":\"492500******0004\",\"customerId\":\"000012\",\"method\":{\"id\":\"EasyPayment\"},\"orderNumber\":\"PiaSDK-Android\",\"storeCard\":false}";
+                string jsonData = "{\"amount\":{\"currencyCode\":\"SEK\",\"totalAmount\":1000,\"vatAmount\":0},\"cardId\":\"492500******0004\",\"customerId\":\"000011\",\"method\":{\"id\":\"EasyPayment\"},\"orderNumber\":\"PiaSDK-Android\",\"storeCard\":false}";
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(merchantBaseUrlTest);
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -750,6 +653,31 @@ namespace PiaSampleXamarin
                     }
                 }
             }
+        }
+
+        private void processResultCallback(ProcessResult processResult)
+        {
+
+            switch (processResult)
+            {
+
+                case ProcessResult.Success:
+                    Toast.MakeText(this, "Success", ToastLength.Short).Show();
+                    break;
+
+                case ProcessResult.Failure:
+                    Toast.MakeText(this, "Failure", ToastLength.Short).Show();
+                    break;
+
+                case ProcessResult.Cancellation:
+                    Toast.MakeText(this, "Cancelled", ToastLength.Short).Show();
+                    break;
+
+                default:
+                    break;
+
+            }
+
         }
 
     }

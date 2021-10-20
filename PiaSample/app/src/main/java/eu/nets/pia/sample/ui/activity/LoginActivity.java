@@ -143,7 +143,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
 
     private MerchantRestClient mRestClient = MerchantRestClient.getInstance();
     private PaymentFlowCache mPaymentCache;
-    private RegisterPaymentHandler mRegisterPaymentHandler;
 
     ActivityResultLauncher<CardProcessActivityLauncherInput> cardStorageActivityLauncher = registerForActivityResult(
             new CardProcessActivityResultContract(),
@@ -171,7 +170,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
         initViews();
 
         mPaymentCache = PaymentFlowCache.getInstance();
-        mRegisterPaymentHandler = new RegisterPaymentHandlerImpl();
     }
 
     @Override
