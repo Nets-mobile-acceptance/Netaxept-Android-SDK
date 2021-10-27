@@ -1,12 +1,10 @@
-# PiA - Netaxept Android SDK v2.5.0
+# PiA - Netaxept Android SDK v2.5.1
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
 PiA Netaxept Android SDK is a library that provides the native In-App interaction of performing the Netaxept payment directly from an app on the Android device and minimizes PCI DSS requirements for you.
 
 **PiA - Netaxept iOS SDK** can also be found [here](https://github.com/Nets-mobile-acceptance/Netaxept-iOS-SDK)
-
-**Detailed documentation** can be found [here](https://htmlpreview.github.io/?https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/blob/master/documentation/START%20-%20Overview%20of%20Netaxept%20Android%20SDK.html).
 
 | ![](readme-files/demo_pay_with_new_card.gif)  | ![](readme-files/demo_pay_with_saved_card.gif) |
 | --- | --- |
@@ -16,7 +14,7 @@ PiA Netaxept Android SDK is a library that provides the native In-App interactio
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:2.5.0') { transitive = true; changing=true; }
+implementation('eu.nets.pia:pia-sdk:2.5.1') { transitive = true; changing=true; }
 ```
 
 **Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
