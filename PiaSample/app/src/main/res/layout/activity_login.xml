@@ -354,33 +354,36 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/disable_visa_card"
+                    android:id="@+id/exclude_branded_dankort_and_master_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/disable_card_io"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
-                        android:text="@string/include_only_visa_scheme"
+                        android:text="@string/exclude_co_branded_dankort_and_mastercard_scheme"
                         android:textColor="@android:color/black"
-                        android:textSize="@dimen/pia_text_normal" />
+                        android:textSize="@dimen/pia_text_very_small" />
+
 
                     <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_disable_visa"
+                        android:id="@+id/exclude_co_branded_dankort_and_mastercard"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:theme="@style/SwitchStyleBasic" />
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/disable_card_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/disable_visa_card"
+                    android:layout_below="@+id/exclude_branded_dankort_and_master_card"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 

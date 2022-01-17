@@ -83,7 +83,7 @@
     <string name="disable_cardio">Disable card scanner</string>
     <string name="exclude_card_scheme_check">Exclude all card schemes except VISA</string>
     <string name="include_card_scheme_check">Include custom card schemes image</string>
-    <string name="include_only_visa_scheme">Include only VISA Scheme</string>
+    <string name="exclude_co_branded_dankort_and_mastercard_scheme">Exclude CoBranded Dankort and MasterCard</string>
 
     <!-- Customize UI Screen -->
     <string name="global_ui_customization">Global UI Customization</string>

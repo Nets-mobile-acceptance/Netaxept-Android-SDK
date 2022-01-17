@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -115,8 +116,8 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     SwitchCompat mUrlSwitch;
     @BindView(R.id.switch_sistem_auth)
     SwitchCompat mSystemAuthSwitch;
-    @BindView(R.id.switch_disable_visa)
-    SwitchCompat disableVisaSwitch;
+    @BindView(R.id.exclude_co_branded_dankort_and_mastercard)
+    SwitchCompat excludeCoBrandedDankortAndMastercard;
     @BindView(R.id.switch_disable_image)
     SwitchCompat includeCustomCardImageSwitch;
     //section-start-to-remove-by-script
@@ -230,12 +231,14 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
             });
             //section-end-to-remove-by-script
 
-            disableVisaSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
+
+            excludeCoBrandedDankortAndMastercard.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 HashSet<CardScheme> excludeCardSchemes = new HashSet<>();
                 if (isChecked) {
-                    // Exclude all card schemes except `visa`
-                    excludeCardSchemes.addAll(Arrays.asList(CardScheme.values()));
-                    excludeCardSchemes.remove(CardScheme.visa);
+                    // Include all card schemes except `coBrandedDankort`
+                    excludeCardSchemes.add(CardScheme.coBrandedDankort);
+                    excludeCardSchemes.add(CardScheme.masterCard);
                 }
 
                 PiaSampleSharedPreferences.setExcludedCardSchemeSet(excludeCardSchemes);
@@ -261,8 +264,9 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
             //section-start-to-remove-by-script
             mDisableCardIOSwitch.setChecked(PiaSampleSharedPreferences.isDisableCardIo());
             //section-end-to-remove-by-script
+            Set<CardScheme> excludedSet = PiaSampleSharedPreferences.getExcludedCardSchemeSet();
 
-            disableVisaSwitch.setChecked(!PiaSampleSharedPreferences.getExcludedCardSchemeSet().isEmpty());
+            excludeCoBrandedDankortAndMastercard.setChecked(!PiaSampleSharedPreferences.getExcludedCardSchemeSet().isEmpty());
 
             mSkipConfirmationSwitch.setChecked(PiaSampleSharedPreferences.getEnableSkipConfirmation());
 
