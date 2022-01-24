@@ -52,6 +52,35 @@
     
     <h1><a id="Installation"></a>Installation</h1>
     <hr>
+    <!-- section-start-to-remove-by-script -->
+    <ul>
+        <li>Please add to the <strong>gradle.properties</strong> file the values for the following variables as provided by Nets</li>
+    </ul>
+    <pre><code class="language-gradle">    ## Required Maven URLs and Credentials ##
+        MAVEN_URL_PIA=provided value <span class="hljs-keyword">for</span> URL to PiA SDK
+        
+        MAVEN_REPO_USERNAME=providedUsername
+        MAVEN_REPO_PASSWORD=providedPassword
+    </code></pre>
+    <ul>
+        <li>Please add code below to the <code>build.gradle</code> file under your App project folder.</li>
+    </ul>
+    <pre><code class="language-gradle"> <span class="hljs-keyword">allprojects</span> {
+        <span class="hljs-keyword">repositories</span> {
+			google()
+			jcenter()
+        
+			maven {
+			url MAVEN_URL_PIA
+			credentials {
+				username MAVEN_REPO_USERNAME
+				password MAVEN_REPO_PASSWORD
+			}
+			}
+        }
+        }
+    </code></pre>
+    <!-- section-end-to-remove-by-script -->
     <ul>
         <li>Please add dependency on the following library to the <code>build.gradle</code> file.</li>
     </ul>
@@ -1131,35 +1160,92 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
     <hr>
     <p>If you wish to disable card scanning functionality, you can toggle the following parameter within <code>PiaInterfaceConfiguration</code> API.</p>
     <pre><code class="language-java">  PiaInterfaceConfiguration.getInstance().setDisableCardIO(true);</code></pre>
-    <h1><a id="Error_Codes_Handling"></a>Error Codes Handling</h1>
+  <h1><a id="Error_Codes_Handling"></a>Error Codes Handling</h1>
     <hr>
     <p>In the following link, you can find the Microsoft Excel document with the error codes handled inside the <strong>PiA SDK</strong>, along with further description on how they are used. <a href="error-codes/PiA_SDK-Netaxept_-_Response_codes.xlsx">PiA SDK - Netaxept - Response codes</a></p>
-    <p><strong>Note:</strong>*<br>
+        <p><strong>Note:</strong>*<br>
     The error codes are returned back to the application, through the <code>transactionCompleteResult()</code> method, inside the <code>PiaResult</code>. If is error case, this object will contain the<code>PiaError</code>, which has getters for error code and error message. The error codes are mapped inside an enum <code>PiaErrorCode</code>, but each explanation message is stored in the strings file. If you want custom error messages, you can create your custom map based on the codes.<br>
     <strong>Note:</strong>** We recommend that you keep all error codes internal without showing them to your users. Instead, you should provide generic messages encouraging them to retry the transaction, to select another payment method, or to contact your customer service. Beside the Netaxept error codes, there are handled internal SDK errors, such as:</p>
-
     <ul>
-        <li><strong>WALLET_APP_NOT_FOUND:</strong> Mobile wallet application not installed in the device. May occur if the required wallet app is not installed on the device.
+<li><strong>REQUEST_FAILED, code 200:</strong> May occur in the folowing cases:
+            <ul>
+                <li>internet connectivity issues</li>
+                <li>timeout error</li>
+                <li>failed serialisation in models</li>
+            </ul>
         </li>
-		<li><strong>INVALID_WALLET_URL:</strong> The Wallet URL is invalid, typically null. May occur when Wallet URL received from register call is invalid or null.
-		</li>
-		<li><strong>NETWORK_ERROR:</strong> Error loading request the URL
+		 <li><strong>WALLET_PAYMENT_INTERRUPTED, code 201:</strong> Wallet payment flow interrupted. May occur in the following cases
+		   <ul>
+				<li>App switch failed due to an unknown error on Wallet application</li>
+                <li>User switches back to the merchant app manually</li>
+            </ul>
+        </li>
+        <li><strong>GENERIC_ERROR, code 300:</strong> Terminal call has completed with an unexpected error. Please make the Netaxept Query call to get more detailed information.</li>
+        <li><strong>TERMINAL_VALIDATION_ERROR, code 301:</strong> Operation denied by transaction filter. May occur in the following cases:
+            <ul>
+                <li>Credit card type denied</li>
+                <li>Velocity filter</li>
+                <li>Blocked IP</li>
+            </ul>
+            <strong>NOTE TO DEVELOPER:</strong>
+            <ul>
+                <li>Check transaction filter parameters on Netaxept Admin</li>
+                <li>Conversion tips: suggest user to retry transaction with another card / payment method"</li>
+            </ul>
+        </li>
+        <li><strong>VIPPS_ERROR, code 302:</strong> Payment with Vipps failed. May occur in the following cases:
+            <ul>
+                <li>User doesn't have Vipps profile</li>
+                <li>Login failed (login max attempt reached)</li>
+                <li>Vipps doesn't support this action, please update Vipps</li>
+                <li>Request timed out or Token has expired</li>
+                <li>The user was selected for fraud validation</li>
+            </ul>
+            <strong>NOTE TO DEVELOPER:</strong>
+            <ul>
+                <li>Error code returned by Vipps is accessible using <code>getMobileWalletErrorCode</code>. You can further refer to <a href="https://github.com/vippsas/vipps-ecom-api/blob/master/vipps-ecom-api.md#error-codes">error codes</a> from the Vipps documentation.</li>
+				<li><strong>This error code is deprecated and will be removed in future release.</strong></li>
+            </ul>
+        </li>
+        <li><strong>WALLET_APP_NOT_FOUND, code 303:</strong> Mobile wallet application not installed in the device. May occur if the required wallet app is not installed on the device.
+        </li>
+        <li><strong>SWISH_ERROR, code 304:</strong> Payment with Swish failed. May occur in the following cases:
+            <ul>
+                <li>User doesn't have Swish profile</li>
+                <li>Login failed (login max attempt reached)</li>
+                <li>Swish doesn't support this action, please update Swish</li>
+                <li>Request timed out or Token has expired</li>
+                <li>The user was selected for fraud validation</li>
+            </ul>
+        </li>
+		<li><strong>TRANSACTION_INFO_NULL, code 306:</strong> Transaction Info object is null. May occur in the following cases:
+            <ul>
+                <li>The TransactionInfo object passed to SDK is null</li>
+            </ul>
+        </li>
+        
+		<li><strong>REDIRECT_URL_NULL, code 307:</strong> 3D Secure Error. May occur in the following cases
+		   <ul>
+				<li>RedirectURL provided to SDK is null.</li>
+            </ul>
+        </li>
+		<li><strong>UNKNOWN_TERMINAL_ERROR, code 308:</strong> 3D Secure Error. May occur in the following cases
+		   <ul>
+				<li>Dedicated error code for 3DS when the redirect URL contains response code other than OK or CANCEL</li>
+            </ul>
+        </li>
+		<li><strong>UNIDENTIFIED_WEBVIEW_REDIRECT_URL, code 309:</strong> 3D Secure Error. May occur in the following cases
+		   <ul>
+				<li>Dedicated error code for 3DS when the redirect URL contains response code other than OK or CANCEL</li>	
+            </ul>
+        </li>
+		<li><strong>THREE_D_SECURE_PAGE_NOT_FOUND, code 310:</strong> 3D Secure Error. May occur in the following cases
+		   <ul>
+				<li>The HTML string for loading the 3D Secure webpage is null or empty.</li>
+			For more details, follow the code snippet and the note<a href="#Handle_Interruption"> here</a>.	
+            </ul>
         </li>
     </ul>
-	<p><strong>Error cases</strong></p>
-	<p>There are certain cases in error scenario in Card, Paypal and Paytrail payment process which would result in process failure, that are as follows</p>
-	<ul>
-		<li>The transaction details returned from the register call is not-valid/null.</li>
-		<li>The 3DS html content required to load the payment page is not-valid/null.</li>
-		<li>The redirect URL after confirming the payment on webpage in webview has response code which is unrecognized by the SDK.</li>
-		<li>The terminal URL and the URL loaded on the webview for payment are not the same.</li>
-		<li>The redirect URL does not contain response code or no adequate details to identify the result of payment.</li>
-		<li>The redirect URL passsed to the SDK from the response of register call is not-valid/null.</li>
-		<li>The result of terminal request is not-valid/null.</li>
-		<li>The terminal request failed due to networking issue.</li>
-		<li>The terminal request may not contain all the required parameters.</li>
-		<li>The terminal request contains an error in response.</li>
-	</ul>
     <h1><a id="Backend_Tips"></a>Backend Tips</h1>
     <hr>
     <p>Netaxept offers <a href="https://shop.nets.eu/web/partners/appi"> REST API </a> to register, authorize and capture payments and query transaction status. This section provides backend tips of each API and some variations for different payment flows.</p>
