@@ -52,41 +52,12 @@
     
     <h1><a id="Installation"></a>Installation</h1>
     <hr>
-    <!-- section-start-to-remove-by-script -->
-    <ul>
-        <li>Please add to the <strong>gradle.properties</strong> file the values for the following variables as provided by Nets</li>
-    </ul>
-    <pre><code class="language-gradle">    ## Required Maven URLs and Credentials ##
-        MAVEN_URL_PIA=provided value <span class="hljs-keyword">for</span> URL to PiA SDK
-        
-        MAVEN_REPO_USERNAME=providedUsername
-        MAVEN_REPO_PASSWORD=providedPassword
-    </code></pre>
-    <ul>
-        <li>Please add code below to the <code>build.gradle</code> file under your App project folder.</li>
-    </ul>
-    <pre><code class="language-gradle"> <span class="hljs-keyword">allprojects</span> {
-        <span class="hljs-keyword">repositories</span> {
-			google()
-			jcenter()
-        
-			maven {
-			url MAVEN_URL_PIA
-			credentials {
-				username MAVEN_REPO_USERNAME
-				password MAVEN_REPO_PASSWORD
-			}
-			}
-        }
-        }
-    </code></pre>
-    <!-- section-end-to-remove-by-script -->
     <ul>
         <li>Please add dependency on the following library to the <code>build.gradle</code> file.</li>
     </ul>
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
  
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.6.0'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.6.1'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
 	
         }
     </code></pre>
@@ -109,7 +80,7 @@
 	<p>To initiaite a card payment, create an <code>ActivityResultLauncher</code>, with result contract specific to Card payment defined in SDK and a callback for result as shown below</p>
 	
 	<pre><code class="language-java">
-	ActivityResultLauncher<CardPaymentActivityLauncherInput> cardPaymentActivityLauncher = registerForActivityResult(
+	ActivityResultLauncher&lt;CardProcessActivityLauncherInput&gt; cardPaymentActivityLauncher = registerForActivityResult(
 		new CardPaymentActivityResultContract(),
 		this::transactionCompleteResult
 	);
@@ -149,7 +120,7 @@
 	
 	
 		<pre><code class="language-java">
-	ActivityResultLauncher<CardProcessActivityLauncherInput> cardPaymentActivityLauncher = registerForActivityResult(
+	ActivityResultLauncher&lt;CardProcessActivityLauncherInput&gt; cardPaymentActivityLauncher = registerForActivityResult(
             new CardProcessActivityResultContract(),
             this::transactionCompleteResult
         );	
@@ -171,11 +142,13 @@
 			 <pre><code class="language-java">
                <span class="hljs-function"> <span class="hljs-keyword">void</span> <span class="hljs-title">transactionCompleteResult</span><span class="hljs-params">(ProcessResult result)</span></span>{
 	            if (result instanceof ProcessResult.Success) {
-	                PiaResult piaResult = ((ProcessResult.Success) result).getPiaResult();
+			     String transactionId = ((ProcessResult.Success) result).getTransactionID();
 	            } else if (result instanceof ProcessResult.Failure) {
-	                String message = ((ProcessResult.Failure) result).getError().toString();
+			     String message = ((ProcessResult.Failure) result).getProcessError().toString();	
+			     String transactionId = ((ProcessResult.Failure) result).getTransactionID();	
 	            } else if (result instanceof ProcessResult.Cancellation) {
-	                String message = ((ProcessResult.Cancellation) result).getMessage();
+			     String message = ((ProcessResult.Cancellation) result).getReason();
+			     String transactionId = ((ProcessResult.Cancellation) result).getTransactionID();
 	            }
 	        }
            </code></pre>
@@ -185,26 +158,26 @@
 		 <ul>
 				<li>The API for initiating the process is PiaSDK.startCardProcessActivity() which takes the following parameters:-</li>
 				<ul>
-				<li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
+				<li><code>ActivityResultLauncher&lt;CardProcessActivityLauncherInpu&gt;</code> of CardProcessActivityLauncherInput</li>
 				<li><code>TokenizedCardPayment</code> :- The TokenizedCardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), <code>String</code> tokenId(Card number), <code>String</code> cardExpiryDate, <code>CardDisplay</code> cardDisplay, <code>TokenizedCardPrompt</code> confirmationPrompt and CardTokenPaymentRegistrationnc which is a registration API to register the transaction and receive a transaction ID for the same.</li>
 				<li>boolean //isCVCRequired</li>
 				<li>To initiate the payment: 
 				
 				<pre><code class="language-java">
-	ActivityResultLauncher<CardProcessActivityLauncherInput> cardPaymentActivityLauncher = registerForActivityResult(
+	ActivityResultLauncher&lt;CardProcessActivityLauncherInput&gt; cardPaymentActivityLauncher = registerForActivityResult(
             new CardProcessActivityResultContract(),
             this::transactionCompleteResult
         );	
 	
 	//SchemeType is an Enum class containing VISA, MASTERCARD etc..
-	CardScheme cardScheme = cardSchemeFrom(SchemeType schemeType);
+	CardDisplay cardDisplay = CardDisplay.Companion.card(cardScheme: CardScheme)
 	
 	//Use the CardDisplay.card function if custom card image is not needed.
 	CardDisplay cardDisplay = CardDisplay.card(cardScheme: CardScheme)
 	
 	//Use the CardDisplay.customCardImage function if custom card image is needed 
 	//and pass the image in Int format.
-	CardDisplay cardDisplay = CardDisplay.customCardImage(resourceID: Int, cardScheme: CardScheme)
+	CardDisplay cardDisplay = CardDisplay.Companion.customCardImage(resourceID: Int, cardScheme: CardScheme)
 	
 	TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
                 Pair of String amount and String currency,
@@ -219,7 +192,7 @@
             CardTokenPaymentRegistration cardTokenPaymentRegistration
         );
 	
-	PiaSDK.startCardProcessActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardPaymentActivityLauncher, 
+	PiaSDK.startCardProcessActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardTokenActivityLauncher, 
 							tokenizedCardPayment, 
 							<span class="hljs-comment">//boolean</span> isCVCRequired);
 	</code></pre>
@@ -229,7 +202,7 @@
 	<p><strong>Card Storage</strong></p>
 	It is possible to register/save card for future payments. The API to do so is <code>PiaSDK.startCardProcessActivity()</code></p>
 	<ul>
-        <li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
+        <li><code>ActivityResultLauncher&lt;CardProcessActivityLauncherInput&gt;</code> of CardProcessActivityLauncherInput</li>
         <li><code>TokenizedCardPayment</code>  The TokenizedCardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), Set of CardScheme (The exclude card scheme feature) and CardTokenPaymentRegistration which is a registration API to register the transaction and receive a transaction ID for the same.</li>
         <li><code>Boolean isCVCRequired</code>  Whether CVC/CVV is needed for authorization.</li>
     </ul>
@@ -237,18 +210,18 @@
 	<p><strong>S-Business Card</strong></p>
 	<p><strong>1)</strong> Our SDK supports payment via S-Business card which doesn't make use of card scanner. The API for initiating the process is <code>PiaSDK.startSBusinessCardProcessActivity()</code> which accepts parameters as follows</p>
 	<ul>
-        <li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
+        <li><code>ActivityResultLauncher&lt;CardProcessActivityLauncherInput&gt;</code> of CardProcessActivityLauncherInput</li>
         <li><code>CardPayment</code>  The CardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), Set of CardScheme (The exclude card scheme feature), <code>Pair</code> of Integer amountInCents & String currency and CardPaymentRegistration which is a registration API to register the transaction and receive a transaction ID for the same.</li>
         <li><code>Boolean isCVCRequired</code>  Whether CVV is needed for authorization.</li>
     </ul>
 	
 	<p><strong>2)</strong> Like payment with other cards, it is possible to  register/save the S-Business card for future payments. To register/save card use <code>PiaSDK.startSBusinessCardProcessActivity()</code> which accepts parameters as follows</p>
 	<ul>
-        <li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
+        <li><code>ActivityResultLauncher&lt;CardProcessActivityLauncherInput&gt;</code> of CardProcessActivityLauncherInput</li>
         <li><code>CardTokenization</code>  The CardTokenization object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), Set of CardScheme (The exclude card scheme feature) and CardPaymentRegistration which is a registration API to register the transaction and receive a transaction ID for the same.</li>
         <li><code>Boolean isCVCRequired</code>  Whether CVV is needed for authorization.</li>
     </ul>
-	<p>The <code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput will give three results with respect to the three scenarios of SUCCESS, FAILURE and CANCELLED (the <code>transactionCompleteResult</code> method as shown in the sample app). The result will be given by <code>ProcessResult</code>.</p>
+	<p>The <code>ActivityResultLauncher&lt;CardProcessActivityLauncherInput&gt;</code> of CardProcessActivityLauncherInput will give three results with respect to the three scenarios of SUCCESS, FAILURE and CANCELLED (the <code>transactionCompleteResult</code> method as shown in the sample app). The result will be given by <code>ProcessResult</code>.</p>
 	<ul>
         <li><code>ProcessResult.Success</code>  Commit the transaction with your merchant backend.</li>
         <li><code>ProcessResult.Failure</code>  Rollback transaction, check error object for detail.</li>
@@ -316,8 +289,7 @@
             var cardPayment = PaymentProcess.CardPayment(
                 withMerchant: merchantDetails,
                 Set.of(CardScheme.visa, CardScheme.amex), 
-                amount: amountInCents,
-                currency: currencyCode,
+                Pair of Integer amount and String currency,
                 cardPaymentRegistration: CardPaymentRegistration);
 	</code></pre>
 	
@@ -350,13 +322,13 @@
             <ul>
 				<li>The API for initiating the process is PiaSDK.startCardProcessActivity() which takes the following parameters:-</li>
 				<ul>
-				<li><code>ActivityResultLauncher<CardProcessActivityLauncherInput></code> of CardProcessActivityLauncherInput</li>
+				<li><code>ActivityResultLauncher&lt;CardProcessActivityLauncherInput&gt;</code> of CardProcessActivityLauncherInput</li>
 				<li><code>TokenizedCardPayment</code> :- The TokenizedCardPayment object requires <code>Pair</code> of String merchantID and PiaSDK.Environment (PiaSDK.Environment is an enum and the value will be TEST or PROD), <code>String</code> tokenId(Card number), <code>String</code> cardExpiryDate, <code>CardDisplay</code> cardDisplay, <code>TokenizedCardPrompt</code> confirmationPrompt and CardTokenPaymentRegistrationnc which is a registration API to register the transaction and receive a transaction ID for the same.</li>
 				<li>boolean //isCVCRequired</li>
 				<li>To initiate the payment: 
 				
 				<pre><code class="language-java">
-	ActivityResultLauncher<CardProcessActivityLauncherInput> cardPaymentActivityLauncher = registerForActivityResult(
+	ActivityResultLauncher&lt;CardProcessActivityLauncherInput&gt; cardTokenActivityLauncher = registerForActivityResult(
             new CardProcessActivityResultContract(),
             this::transactionCompleteResult
         );	
@@ -365,11 +337,11 @@
 	CardScheme cardScheme = cardSchemeFrom(SchemeType schemeType);
 	
 	//Use the CardDisplay.card function if custom card image is not needed.
-	CardDisplay cardDisplay = CardDisplay.card(cardScheme: CardScheme)
+	CardDisplay cardDisplay = CardDisplay.Companion.card(cardScheme: CardScheme)
 	
 	//Use the CardDisplay.customCardImage function if custom card image is needed 
 	//and pass the image in Int format.
-	CardDisplay cardDisplay = CardDisplay.customCardImage(resourceID: Int, cardScheme: CardScheme)
+	CardDisplay cardDisplay = CardDisplay.Companion.customCardImage(resourceID: Int, cardScheme: CardScheme)
 	
 	TokenizedCardPrompt confirmationPrompt = TokenizedCardPrompt.Companion.forAmount(
                 Pair of String amount and String currency,
@@ -557,7 +529,7 @@
 				<p>To initiaite a paypal payment, create an <code>ActivityResultLauncher</code>, with result contract specific to Paypal defined in SDK and a callback for result as shown below</p>
 
 <pre><code class="language-java">
-	ActivityResultLauncher<PayPalActivityLauncherInput> payPalActivityLauncher = registerForActivityResult(
+	ActivityResultLauncher&lt;PayPalActivityLauncherInput&gt; payPalActivityLauncher = registerForActivityResult(
 		new PayPalActivityResultContract(),
 		this::transactionCompleteResult
 	);
@@ -606,12 +578,14 @@
 			
 			 <pre><code class="language-java">
                <span class="hljs-function"> <span class="hljs-keyword">void</span> <span class="hljs-title">transactionCompleteResult</span><span class="hljs-params">(ProcessResult result)</span></span>{
-	            if (result instanceof ProcessResult.Success) {
-	                PiaResult piaResult = ((ProcessResult.Success) result).getPiaResult();
+	             if (result instanceof ProcessResult.Success) {
+			     String transactionId = ((ProcessResult.Success) result).getTransactionID();
 	            } else if (result instanceof ProcessResult.Failure) {
-	                String message = ((ProcessResult.Failure) result).getError().toString();
+			     String message = ((ProcessResult.Failure) result).getProcessError().toString();	
+			     String transactionId = ((ProcessResult.Failure) result).getTransactionID();	
 	            } else if (result instanceof ProcessResult.Cancellation) {
-	                String message = ((ProcessResult.Cancellation) result).getMessage();
+			     String message = ((ProcessResult.Cancellation) result).getReason();
+			     String transactionId = ((ProcessResult.Cancellation) result).getTransactionID();
 	            }
 	        }
            </code></pre>
@@ -861,7 +835,7 @@
 				<p>To initiaite a paytrail payment, create an <code>ActivityResultLauncher</code>, with result contract specific to Paytrail defined in SDK and a callback for result as shown below</p>
 
 <pre><code class="language-java">
-	ActivityResultLauncher<PaytrailActivityLauncherInput> paytrailActivityLauncher = registerForActivityResult(
+	ActivityResultLauncher&lt;PaytrailActivityLauncherInput&gt; paytrailActivityLauncher = registerForActivityResult(
 		new PaytrailActivityResultContract(),
 		this::transactionCompleteResult
 	);
@@ -910,12 +884,14 @@
 			
 			 <pre><code class="language-java">
                <span class="hljs-function"> <span class="hljs-keyword">void</span> <span class="hljs-title">transactionCompleteResult</span><span class="hljs-params">(ProcessResult result)</span></span>{
-	            if (result instanceof ProcessResult.Success) {
-	                PiaResult piaResult = ((ProcessResult.Success) result).getPiaResult();
+	             if (result instanceof ProcessResult.Success) {
+			     String transactionId = ((ProcessResult.Success) result).getTransactionID();
 	            } else if (result instanceof ProcessResult.Failure) {
-	                String message = ((ProcessResult.Failure) result).getError().toString();
+			     String message = ((ProcessResult.Failure) result).getProcessError().toString();	
+			     String transactionId = ((ProcessResult.Failure) result).getTransactionID();	
 	            } else if (result instanceof ProcessResult.Cancellation) {
-	                String message = ((ProcessResult.Cancellation) result).getMessage();
+			     String message = ((ProcessResult.Cancellation) result).getReason();
+			     String transactionId = ((ProcessResult.Cancellation) result).getTransactionID();
 	            }
 	        }
            </code></pre>
@@ -1160,7 +1136,7 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
     <hr>
     <p>If you wish to disable card scanning functionality, you can toggle the following parameter within <code>PiaInterfaceConfiguration</code> API.</p>
     <pre><code class="language-java">  PiaInterfaceConfiguration.getInstance().setDisableCardIO(true);</code></pre>
-  <h1><a id="Error_Codes_Handling"></a>Error Codes Handling</h1>
+    <h1><a id="Error_Codes_Handling"></a>Error Codes Handling</h1>
     <hr>
     <p>In the following link, you can find the Microsoft Excel document with the error codes handled inside the <strong>PiA SDK</strong>, along with further description on how they are used. <a href="error-codes/PiA_SDK-Netaxept_-_Response_codes.xlsx">PiA SDK - Netaxept - Response codes</a></p>
         <p><strong>Note:</strong>*<br>
@@ -1740,11 +1716,26 @@ The above copyright notice and this permission notice shall be included in all c
 		<li>Minor user interface improvements.</li>
 </ul>
 
+<h4><a id="v250_Released_21Oct2021"></a>v2.5.1 Released: 28-Oct-2021</h4>
+<h4><a id="Release_notes_746"></a>Release notes:</h4>
+<ul>
+		<li>Fixed 3DS redirect URL handling issue in webview encountered while app is in background</li>
+		<li>Added release-logs for redirect URLs for better debugging.</li>
+		<li>Updated example code snippets in the documentation.</li>
+</ul>
+
 <h4><a id="v250_Released_14Jan2022"></a>v2.6.0 Released: 14-Jan-2022</h4>
 <h4><a id="Release_notes_746"></a>Release notes:</h4>
 <ul>
 		<li>SDK now supports pre-selection of scheme between Dankort and Visa when using Dankort-Visa Co-Branded card.</li>
 		<li>Bug fix: Fixed app crashing on high resolution devices due to missing resources.</li>
+</ul>
+
+<h4><a id="v250_Released_27Jan2022"></a>v2.6.1 Released: 27-Jan-2022</h4>
+<h4><a id="Release_notes_747"></a>Release notes:</h4>
+<ul>
+		<li>Updated documentation to include Error codes.</li>
+		<li>Bug fix: Removed duplicate permission for "android.permission.VIBRATE".</li>
 </ul>
 		
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>
