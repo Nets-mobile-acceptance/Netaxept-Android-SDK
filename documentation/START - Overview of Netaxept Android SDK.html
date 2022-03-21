@@ -57,7 +57,7 @@
     </ul>
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
  
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.6.1'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.6.2'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
 	
         }
     </code></pre>
@@ -144,8 +144,8 @@
 	            if (result instanceof ProcessResult.Success) {
 			     String transactionId = ((ProcessResult.Success) result).getTransactionID();
 	            } else if (result instanceof ProcessResult.Failure) {
-			     String message = ((ProcessResult.Failure) result).getProcessError().toString();	
-			     String transactionId = ((ProcessResult.Failure) result).getTransactionID();	
+			     String message = ((ProcessResult.Failure) result).getProcessError().toString();
+			     String transactionId = ((ProcessResult.Failure) result).getTransactionID();
 	            } else if (result instanceof ProcessResult.Cancellation) {
 			     String message = ((ProcessResult.Cancellation) result).getReason();
 			     String transactionId = ((ProcessResult.Cancellation) result).getTransactionID();
@@ -192,12 +192,13 @@
             CardTokenPaymentRegistration cardTokenPaymentRegistration
         );
 	
-	PiaSDK.startCardProcessActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardTokenActivityLauncher, 
+	PiaSDK.startCardProcessActivity(<span class="hljs-comment">//ActivityResultLauncher</span> cardTokenActivityLauncher,
 							tokenizedCardPayment, 
 							<span class="hljs-comment">//boolean</span> isCVCRequired);
 	</code></pre>
 				
             </ul>
+    </ul>
 		
 	<p><strong>Card Storage</strong></p>
 	It is possible to register/save card for future payments. The API to do so is <code>PiaSDK.startCardProcessActivity()</code></p>
@@ -362,6 +363,7 @@
 	</code></pre>
 				
             </ul>
+    </ul>
             
             <h1><a id="Payment_without_Security_code"></a>Payment without Security code</h1>
             <hr>
@@ -581,8 +583,8 @@
 	             if (result instanceof ProcessResult.Success) {
 			     String transactionId = ((ProcessResult.Success) result).getTransactionID();
 	            } else if (result instanceof ProcessResult.Failure) {
-			     String message = ((ProcessResult.Failure) result).getProcessError().toString();	
-			     String transactionId = ((ProcessResult.Failure) result).getTransactionID();	
+			     String message = ((ProcessResult.Failure) result).getProcessError().toString();
+			     String transactionId = ((ProcessResult.Failure) result).getTransactionID();
 	            } else if (result instanceof ProcessResult.Cancellation) {
 			     String message = ((ProcessResult.Cancellation) result).getReason();
 			     String transactionId = ((ProcessResult.Cancellation) result).getTransactionID();
@@ -887,8 +889,8 @@
 	             if (result instanceof ProcessResult.Success) {
 			     String transactionId = ((ProcessResult.Success) result).getTransactionID();
 	            } else if (result instanceof ProcessResult.Failure) {
-			     String message = ((ProcessResult.Failure) result).getProcessError().toString();	
-			     String transactionId = ((ProcessResult.Failure) result).getTransactionID();	
+			     String message = ((ProcessResult.Failure) result).getProcessError().toString();
+			     String transactionId = ((ProcessResult.Failure) result).getTransactionID();
 	            } else if (result instanceof ProcessResult.Cancellation) {
 			     String message = ((ProcessResult.Cancellation) result).getReason();
 			     String transactionId = ((ProcessResult.Cancellation) result).getTransactionID();
@@ -1199,7 +1201,7 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
                 <li>The TransactionInfo object passed to SDK is null</li>
             </ul>
         </li>
-        
+
 		<li><strong>REDIRECT_URL_NULL, code 307:</strong> 3D Secure Error. May occur in the following cases
 		   <ul>
 				<li>RedirectURL provided to SDK is null.</li>
@@ -1212,13 +1214,13 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
         </li>
 		<li><strong>UNIDENTIFIED_WEBVIEW_REDIRECT_URL, code 309:</strong> 3D Secure Error. May occur in the following cases
 		   <ul>
-				<li>Dedicated error code for 3DS when the redirect URL contains response code other than OK or CANCEL</li>	
+				<li>Dedicated error code for 3DS when the redirect URL contains response code other than OK or CANCEL</li>
             </ul>
         </li>
 		<li><strong>THREE_D_SECURE_PAGE_NOT_FOUND, code 310:</strong> 3D Secure Error. May occur in the following cases
 		   <ul>
 				<li>The HTML string for loading the 3D Secure webpage is null or empty.</li>
-			For more details, follow the code snippet and the note<a href="#Handle_Interruption"> here</a>.	
+			For more details, follow the code snippet and the note<a href="#Handle_Interruption"> here</a>.
             </ul>
         </li>
     </ul>
@@ -1737,7 +1739,13 @@ The above copyright notice and this permission notice shall be included in all c
 		<li>Updated documentation to include Error codes.</li>
 		<li>Bug fix: Removed duplicate permission for "android.permission.VIBRATE".</li>
 </ul>
-		
+
+<h4><a id="v262_Released_11Mar2022"></a>v2.6.2 Released: 11-Mar-2022</h4>
+<h4><a id="Release_notes_748"></a>Release notes:</h4>
+<ul>
+		<li>Bug fix - Fixed the co-branded Dankort/Visa card bug for non-Danish merchants.</li>
+</ul>
+
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>
 
 <ul>

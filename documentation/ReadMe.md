@@ -1,4 +1,4 @@
-﻿# PiA - Netaxept Android SDK v1.0.0
+﻿# PiA - Netaxept Android SDK v2.6.2
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
