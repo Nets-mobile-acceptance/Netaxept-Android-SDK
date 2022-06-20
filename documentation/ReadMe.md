@@ -1,4 +1,4 @@
-﻿# PiA - Netaxept Android SDK v2.6.2
+﻿# PiA - Netaxept Android SDK v2.6.4
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -16,7 +16,7 @@ Detailed documentation can be found [here](https://htmlpreview.github.io/?https:
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:1.0.0@aar') { transitive = true; }
+implementation('eu.nets.pia:pia-sdk:2.6.4@aar') { transitive = true; }
 ```
 
 **Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
@@ -26,7 +26,7 @@ implementation('eu.nets.pia:pia-sdk:1.0.0@aar') { transitive = true; }
 -dontwarn eu.nets.pia.cardio.**
 ```
     
-**Note:** the library is available through both `jcenter()` and `mavenCentral()` repositories.
+**Note:** the library is available through `mavenCentral()` repository.
 
 # Frequently Asked Questions
 ---
@@ -72,7 +72,7 @@ Supported payment methods:
 
 # Contact
 ----
-If you have any question or feedback, please contact us via email: [mobile-acceptance@nets.eu](mailto:mobile-acceptance@nets.eu)
+If you have any question or feedback, please contact us via email: [in-app-support@nets.eu](mailto:in-app-support@nets.eu)
 
 
 
