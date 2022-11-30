@@ -12,9 +12,6 @@ PiA-Light Netaxept Android SDK is a light-weight version of the [Pia - Netaxept 
 ## Required Maven URLs and Credentials ##
 MAVEN_URL_PIA=provided value for URL to PiA SDK
 
-MAVEN_REPO_USERNAME=providedUsername
-MAVEN_REPO_PASSWORD=providedPassword
-
 ```
 
 + Please add code below to the project's `build.gradle` file.
@@ -34,7 +31,7 @@ MAVEN_REPO_PASSWORD=providedPassword
             }
         }
     }
-	
+
 ```
 
 + In your `build.gradle` application level file, add:
@@ -49,10 +46,10 @@ implementation('eu.nets.pia:pia-light-sdk:1.1.2-SNAPSHOT') { transitive = true; 
 ---
 Please check our [GitHub page](https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK) for more details related to new versions, documentation and best-practice code samples.
 
-**Xamarin Support**: The only difference between the Official version and this one is that you need to include the [Light-Version DLL File](Xamarin) in your application. 
+**Xamarin Support**: The only difference between the Official version and this one is that you need to include the [Light-Version DLL File](Xamarin) in your application.
 **ReactNative Support**: The only difference between the Official Version and this one is that in the `buid.gradle` file in your _Bridge_ you need to include the library from our Nexus private repository. Check **Installation** step for how to do it.
 
-**Note:** Please have in mind that since _CardIO_ Library is removed from this version, all **UI Customization APIs** related to CardIO are no longer used. 
+**Note:** Please have in mind that since _CardIO_ Library is removed from this version, all **UI Customization APIs** related to CardIO are no longer used.
 
 # Permissions
 ----
@@ -80,7 +77,7 @@ Software is copyrighted. Title to Software and all associated intellectual prope
 
 No right, title or interest in or to any trademark, service mark, logo or trade name of NETS or its licensors is granted under this Agreement.
 
-Permission is hereby granted, to any person obtaining a copy of this software and associated documentation files ("the Software"), to deal in the Software, including without limitation the rights to use, copy, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: 
+Permission is hereby granted, to any person obtaining a copy of this software and associated documentation files ("the Software"), to deal in the Software, including without limitation the rights to use, copy, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 

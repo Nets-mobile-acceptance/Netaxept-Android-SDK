@@ -58,6 +58,7 @@ public class PaymentMethodsFragment extends Fragment {
     public static final String ID_EASY_PAYMENT = "EasyPayment";
     public static final String ID_JCB = "JCB";
     public static final String ID_MAESTRO = "Maestro";
+    public static final String ID_FORBRUGSFORENINGEN = "DanishConsumerCard";
     public static final String ID_PAYTRAILAKTIA = "PaytrailAktia";
     public static final String ID_PAYTRAILALANDSBANKEN = "PaytrailAlandsbanken";
     public static final String ID_PAYTRAILDANSKEBANK = "PaytrailDanskeBank";

@@ -1,0 +1,44 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:eu.nets.pia.card/CardProcess.CardPayment///PointingToDeclaration/eu/nets/pia/card/CardProcess.CardPayment.html
+$dokka.location:eu.nets.pia.card/CardProcess.CardTokenization///PointingToDeclaration/eu/nets/pia/card/CardProcess.CardTokenization.html
+$dokka.location:eu.nets.pia.card/CardProcess.TokenizedCardPayment///PointingToDeclaration/eu/nets/pia/card/CardProcess.TokenizedCardPayment.html
+$dokka.location:eu.nets.pia.card/CardProcessActivityResultContract.Companion///PointingToDeclaration/eu/nets/pia/card/CardProcessActivityResultContract.Companion.html
+$dokka.location:eu.nets.pia.card/PayPalActivityResultContract.Companion///PointingToDeclaration/eu/nets/pia/card/PayPalActivityResultContract.Companion.html
+$dokka.location:eu.nets.pia.card/PaytrailActivityResultContract.Companion///PointingToDeclaration/eu/nets/pia/card/PaytrailActivityResultContract.Companion.html
+$dokka.location:eu.nets.pia.cardio.ui/CustomToolbar.ToolbarCallback///PointingToDeclaration/eu/nets/pia/cardio/ui/CustomToolbar.ToolbarCallback.html
+$dokka.location:eu.nets.pia.network.model/PostCardDataResponse.Status///PointingToDeclaration/eu/nets/pia/network/model/PostCardDataResponse.Status.html
+$dokka.location:eu.nets.pia.ui.base/BaseActivity.AlertCallback///PointingToDeclaration/eu/nets/pia/ui/base/BaseActivity.AlertCallback.html
+$dokka.location:eu.nets.pia.ui.custom/PiaToolbar.ToolbarCallback///PointingToDeclaration/eu/nets/pia/ui/custom/PiaToolbar.ToolbarCallback.html
+$dokka.location:eu.nets.pia.ui.main/MainInteractor.Callback///PointingToDeclaration/eu/nets/pia/ui/main/MainInteractor.Callback.html
+$dokka.location:eu.nets.pia.ui.main/PiaActivityPresenterImpl.OnCardDataSentRunnable///PointingToDeclaration/eu/nets/pia/ui/main/PiaActivityPresenterImpl.OnCardDataSentRunnable.html
+$dokka.location:eu.nets.pia.ui.tokenizedCard/TokenizedCardFragment.CardState///PointingToDeclaration/eu/nets/pia/ui/tokenizedCard/TokenizedCardFragment.CardState.html
+$dokka.location:eu.nets.pia.ui.webview/PayPalActivityPresenterImpl.OnPayPalRequestSentRunnable///PointingToDeclaration/eu/nets/pia/ui/webview/PayPalActivityPresenterImpl.OnPayPalRequestSentRunnable.html
+$dokka.location:eu.nets.pia.ui.webview/ThreeDSecureActivity.ResultKey///PointingToDeclaration/eu/nets/pia/ui/webview/ThreeDSecureActivity.ResultKey.html
+$dokka.location:eu.nets.pia.utils/FileLogger.deleteLogfilesAsyncTask///PointingToDeclaration/eu/nets/pia/utils/FileLogger.deleteLogfilesAsyncTask.html
+$dokka.location:eu.nets.pia.wallets/CardDisplay.Companion///PointingToDeclaration/eu/nets/pia/wallets/CardDisplay.Companion.html
+$dokka.location:eu.nets.pia.wallets/PaymentProcess.Companion///PointingToDeclaration/eu/nets/pia/wallets/PaymentProcess.Companion.html
+$dokka.location:eu.nets.pia.wallets/PaymentProcess.WalletPayment///PointingToDeclaration/eu/nets/pia/wallets/PaymentProcess.WalletPayment.html
+$dokka.location:eu.nets.pia.wallets/TokenizedCardPrompt.Companion///PointingToDeclaration/eu/nets/pia/wallets/TokenizedCardPrompt.Companion.html
+eu.nets.pia.card
+eu.nets.pia.cardio
+eu.nets.pia.cardio.ui
+eu.nets.pia.data.exception
+eu.nets.pia.data.model
+eu.nets.pia.network
+eu.nets.pia.network.model
+eu.nets.pia.ui.base
+eu.nets.pia.ui.cardform
+eu.nets.pia.ui.custom
+eu.nets.pia.ui.data
+eu.nets.pia.ui.main
+eu.nets.pia.ui.themes
+eu.nets.pia.ui.tokenizedCard
+eu.nets.pia.ui.wallet
+eu.nets.pia.ui.webview
+eu.nets.pia.ui.webview.base
+eu.nets.pia.utils
+eu.nets.pia.utils.textwatcher
+eu.nets.pia.utils.validator
+eu.nets.pia.wallets
+

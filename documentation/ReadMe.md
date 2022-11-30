@@ -1,4 +1,4 @@
-﻿# PiA - Netaxept Android SDK v2.6.4
+# PiA - Netaxept Android SDK v2.7.0
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -16,17 +16,17 @@ Detailed documentation can be found [here](https://htmlpreview.github.io/?https:
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:2.6.4@aar') { transitive = true; }
+implementation('eu.nets.pia:pia-sdk:eu.nets.pia:pia-sdk:2.7.0') { transitive = true; changing = true; }
 ```
 
 **Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
-```java
-#Rules required by Card.Io library
+```pro
+# Rules required by Card.Io library
 -keep class eu.nets.pia.cardio.** { *; }
 -dontwarn eu.nets.pia.cardio.**
 ```
-    
-**Note:** the library is available through `mavenCentral()` repository.
+
+**Note:** the library is available through both `jcenter()` and `mavenCentral()` repositories.
 
 # Frequently Asked Questions
 ---
@@ -58,15 +58,17 @@ These permissions are handled inside the binary, and your integration won't requ
 # Examples
 ----
 ![](readme-files/sample_screenshots.png)
-We have provided a [Sample Application](PiaSample/) to help you understand the use cases of the SDK functionalities. All you need to do is to setup your Back-End solution with Netaxept ([see more](https://github.com/Nets-mobile-acceptance/Netaxept-Sample-Backend)), get the source code (check [ReadMe](PiaSample/ReadMe.md) on how to do basic setup) and then run it. 
+
+We have provided a [Sample Application](PiaSample/) to help you understand the use cases of the SDK functionalities. All you need to do is to setup your Back-End solution with Netaxept ([see more](https://github.com/Nets-mobile-acceptance/Netaxept-Sample-Backend)), get the source code (check [ReadMe](PiaSample/ReadMe.md) on how to do basic setup) and then run it.
 
 
 # Project Status
 ---
 Supported payment methods:
-- Cards: Visa, Mastercard, American Express, Diners, JCB, Maestro, Dankort, PayPal
+- Cards: Visa, Mastercard, American Express, Diners, JCB, Maestro, Dankort, PayPal, Forbrugsforeningen
 - Vipps
 - Swish
+- Paytrail direct bank payments
 - MobilePay
 
 

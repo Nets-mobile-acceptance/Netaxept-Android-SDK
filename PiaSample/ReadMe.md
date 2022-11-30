@@ -1,6 +1,6 @@
 ## Required Merchant BackEnd BaseURL and Merchant ID
 
-Please add to the **gradle.properties** file in APP level the values for the following variables as provided by Nets: 
+Please add to the **gradle.properties** file in APP level the values for the following variables as provided by Nets:
 
 ```
 

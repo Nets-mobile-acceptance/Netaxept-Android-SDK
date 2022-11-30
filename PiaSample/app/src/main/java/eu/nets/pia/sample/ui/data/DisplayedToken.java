@@ -39,8 +39,10 @@ public class DisplayedToken extends PaymentMethod {
     }
 
     public String getIssuer() {
-        if (issuer.toLowerCase().equals(PaymentMethodsFragment.ID_DINERS.toLowerCase())) {
+        if (issuer.equalsIgnoreCase(PaymentMethodsFragment.ID_DINERS)) {
             return "Diners Club"; //return just "Diners Club" since "DinersClubInternational" is too large
+        } else if (issuer.equalsIgnoreCase(PaymentMethodsFragment.ID_FORBRUGSFORENINGEN)) {
+            return "Forbrugsforeningen"; // return Forbrugsforeningen instead of DanishConsumerCard
         }
         return issuer;
     }
@@ -83,6 +85,8 @@ public class DisplayedToken extends PaymentMethod {
                 return R.drawable.pia_jcb;
             case PaymentMethodsFragment.ID_MAESTRO:
                 return R.drawable.pia_maestro_icon;
+            case PaymentMethodsFragment.ID_FORBRUGSFORENINGEN:
+                return R.drawable.pia_ic_forbrugsforeningen_logo;
             case PaymentMethodsFragment.ID_DINERS:
                 return R.drawable.pia_diners;
             case PaymentMethodsFragment.ID_S_BUSINESS_CARD:

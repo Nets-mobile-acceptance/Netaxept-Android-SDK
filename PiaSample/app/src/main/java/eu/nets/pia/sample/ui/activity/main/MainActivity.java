@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -20,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
 
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
     @BindView(R.id.toolbar_view)
     Toolbar mToolbar;
     @BindView(R.id.frame_layout)
-    FrameLayout mFrame;
+    FragmentContainerView mFrame;
 
     private AlertDialog mEnvironmentDialog;
     private PaymentFlowCache mPaymentCache;
@@ -516,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
                 PaymentProcess.WalletPayment walletProcess = null;
 
                 if (method.getType() == PaymentMethodType.MOBILE_PAY) {
-                    walletProcess = PaymentProcess.mobilePay(this);
+                    walletProcess = PaymentProcess.mobilePay(PiaSampleSharedPreferences.isPiaTestMode(), this);
                 }
 
                 if (method.getType() == PaymentMethodType.SWISH) {
@@ -608,6 +608,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
             case DANKORT: return CardScheme.dankort;
             case JCB: return CardScheme.jcb;
             case MAESTRO: return CardScheme.maestro;
+            case FORBRUGSFORENINGEN: return CardScheme.forbrugsforeningen;
             case SGROUP: return CardScheme.sBusiness;
             default: return null;
         }
@@ -946,6 +947,9 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         if (issuer.equals("amex") || issuer.equals("americanexpress")) {
             return SchemeType.AMEX;
         }
+        if (issuer.equals("forbrugsforeningen")) {
+            return SchemeType.FORBRUGSFORENINGEN;
+        }
         if (issuer.equals("sbusinesscard")) {
             return SchemeType.SGROUP;
         }
@@ -1027,8 +1031,9 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         }
 
         if (method.getType() == PaymentMethodType.MOBILE_PAY) {
+            String host = PiaSampleSharedPreferences.isPiaTestMode() ? "piasdk_mobilepay_test" : "piasdk_mobilepay";
             paymentRequest.setPaymentMethodActionList("[{PaymentMethod:MobilePay}]");
-            paymentRequest.setRedirectUrl(String.format("%1$s://piasdk_mobilepay",
+            paymentRequest.setRedirectUrl(String.format("%1$s://" + host,
                     eu.nets.pia.sample.BuildConfig.APPLICATION_ID));
             paymentRequest.setMethod(new Method(method.getId()));
         }

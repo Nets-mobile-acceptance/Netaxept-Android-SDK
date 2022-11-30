@@ -19,7 +19,7 @@ group Register payment
 "User" -> "3rd party app": Select finnish bank as payment method
 "3rd party app"->"Merchant backend": Provide register data for Paytrail
 "Merchant backend"->"NetAxept client": Register payment
-"NetAxept client"->"NetAxept": **Register API call** with RegisterRequest serviceType=B \n&customerEmail=bill.buyer@nets.eu\n&customerFirstName=Bill\n&customerLastName=Buyer\n&customerAddress1=Testaddress\n&customerPostCode=00510\n&customerTown=Helsinki\n&customerCountry=FI\n&paymentMethodActionList=[{"PaymentMethod":"PaytrailNordea"}]\n&currencyCode=EUR\n&redirectUrl=http://localhost/redirect.php\n&token=**Merchant API token**
+"NetAxept client"->"NetAxept": **Register API call** with RegisterRequest serviceType=B \n&customerEmail=bill.buyer@nets.eu\n&customerFirstName=Bill\n&customerLastName=Buyer\n&customerAddress1=Testaddress\n&customerPostCode=00510\n&customerTown=Helsinki\n&customerCountry=FI\n&paymentMethodActionList=[{"PaymentMethod":"PaytrailNordeaFinland"}]\n&currencyCode=EUR\n&redirectUrl=http://localhost/redirect.php\n&token=**Merchant API token**
 activate "NetAxept" #white
 "NetAxept"->"NetAxept client": OK with Transaction id
 "NetAxept client"->"Merchant backend": OK with Transaction id
