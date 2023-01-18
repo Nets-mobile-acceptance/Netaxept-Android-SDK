@@ -65,7 +65,8 @@ We have provided a [Sample Application](PiaSample/) to help you understand the u
 # Project Status
 ---
 Supported payment methods:
-- Cards: Visa, Mastercard, American Express, Diners, JCB, Maestro, Dankort, PayPal, Forbrugsforeningen
+- Cards: Visa, Mastercard, American Express, Diners, JCB, Maestro, Dankort, Forbrugsforeningen, S-Business
+- PayPal
 - Vipps
 - Swish
 - Paytrail direct bank payments
