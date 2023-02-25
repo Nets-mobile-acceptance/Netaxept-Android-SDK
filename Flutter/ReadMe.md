@@ -19,7 +19,7 @@ Assuming that you have your Flutter application structure ready, here are the th
 1. Open an instance of _Android Studio_ and open the _android_ folder inside the Flutter app
     +  Add dependency for **PiaSDK**: in `build.gradle` application level file, add:
         ```gradle
-implementation('eu.nets.pia:pia-sdk:2.7.0') { transitive = true; }
+implementation('eu.nets.pia:pia-sdk:2.7.1') { transitive = true; }
         ```
     + HTTP requests needs to be done from Native code (at least the RegisterPayment synchronous call). For this you may need to add dependency for a newtorking library (e.g. [Retrofit](https://square.github.io/retrofit/))
     + Open _MainActivity.java_ and add Java/Kotlin code to handle SDK communication (launch, registerPayment, handle result). Please check the official [documentation](https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/tree/master/documentation) on how to implement this.

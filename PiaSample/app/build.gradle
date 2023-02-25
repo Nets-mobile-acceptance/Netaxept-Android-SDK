@@ -44,28 +44,28 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'eu.nets.pia.sample'
 }
 
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation "com.google.code.gson:gson:2.8.5"
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation "com.google.code.gson:gson:2.8.9"
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.activity:activity-ktx:1.2.0-beta01'
-    implementation 'androidx.fragment:fragment-ktx:1.5.4'
-    implementation 'androidx.activity:activity:1.2.0-beta01'
-    implementation 'androidx.fragment:fragment:1.5.4'
-	implementation('eu.nets.pia:pia-sdk:2.7.0@aar') { transitive = true; changing=true; }
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.activity:activity-ktx:1.6.1'
+    implementation 'androidx.fragment:fragment-ktx:1.5.5'
+	implementation('eu.nets.pia:pia-sdk:2.7.1@aar') { transitive = true; changing=true; }
 }
 apply plugin: 'com.google.gms.google-services'

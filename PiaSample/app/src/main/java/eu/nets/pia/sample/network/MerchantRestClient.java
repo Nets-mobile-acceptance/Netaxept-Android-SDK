@@ -20,6 +20,7 @@ import eu.nets.pia.sample.network.model.ProcessingOptionRequest;
 import eu.nets.pia.utils.LogUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -99,10 +100,14 @@ public class MerchantRestClient {
          * Since BE callback mechanism is not in place and may take atleast 10 sec to process
          * so adding 20 sec timeout
          * */
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.connectTimeout(CLIENT_TIMEOUT, TimeUnit.SECONDS);
         httpClient.readTimeout(CLIENT_TIMEOUT, TimeUnit.SECONDS);
         httpClient.writeTimeout(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+        httpClient.addInterceptor(logging);
         return httpClient;
     }
 

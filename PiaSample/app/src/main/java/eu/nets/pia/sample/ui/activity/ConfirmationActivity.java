@@ -63,7 +63,12 @@ public class ConfirmationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_confirmation);
         ButterKnife.bind(this);
 
-        Result result = (Result) getIntent().getSerializableExtra("RESULT");
+        Result result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            result = getIntent().getSerializableExtra("RESULT", Result.class);
+        } else {
+            result = (Result) getIntent().getSerializableExtra("RESULT");
+        }
         String title = getIntent().getStringExtra("TITLE");
         String message = getIntent().getStringExtra("MESSAGE");
         switch (result) {

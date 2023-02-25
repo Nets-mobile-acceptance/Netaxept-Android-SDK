@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         FragmentCallback, MobileWalletListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    private static final String ORDER_NUMBER = "PiaSDK-Android";
 
     @BindView(R.id.spinner_holder)
     protected RelativeLayout mProgressBar;
@@ -975,7 +974,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
         PaymentRegisterRequest paymentRequest = new PaymentRegisterRequest();
         paymentRequest.setAmount(amount);
-        paymentRequest.setOrderNumber(ORDER_NUMBER);
+        paymentRequest.setOrderNumber("PiaSDK-Android-" + System.currentTimeMillis());
         paymentRequest.setCustomerId(PiaSampleSharedPreferences.getCustomerId());
 
         //specify the token id , if a token payment method selected
