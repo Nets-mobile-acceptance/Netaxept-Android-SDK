@@ -66,6 +66,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.activity:activity-ktx:1.6.1'
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
-	implementation('eu.nets.pia:pia-sdk:2.7.1@aar') { transitive = true; changing=true; }
+	implementation('eu.nets.pia:pia-sdk:2.7.2@aar') { transitive = true; changing=true; }
 }
 apply plugin: 'com.google.gms.google-services'

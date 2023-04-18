@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
             try {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
 
-                builder.setTitle("You are using Nets environment");
+                builder.setTitle("You are using Nexi/Nets environment");
 
                 builder.setMessage("To switch to your own test or production environment, update your configuration in the Setting page");
                 builder.setCancelable(false);

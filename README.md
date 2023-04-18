@@ -1,4 +1,4 @@
-# PiA - Netaxept Android SDK v2.7.1
+# PiA - Netaxept Android SDK v2.7.2
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -16,7 +16,7 @@ Detailed documentation can be found [here](https://htmlpreview.github.io/?https:
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:2.7.1') { transitive = true; changing=true; }
+implementation('eu.nets.pia:pia-sdk:2.7.2') { transitive = true; changing=true; }
 ```
 
 **Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
@@ -65,7 +65,9 @@ We have provided a [Sample Application](PiaSample/) to help you understand the u
 # Project Status
 ---
 Supported payment methods:
-- Cards: Visa, Mastercard, American Express, Diners, JCB, Maestro, Dankort, PayPal, Forbrugsforeningen
+- Cards: Visa, Mastercard, American Express, Diners, JCB, Maestro, Dankort, Forbrugsforeningen
+- S-Business
+- PayPal
 - Vipps
 - Swish
 - Paytrail direct bank payments

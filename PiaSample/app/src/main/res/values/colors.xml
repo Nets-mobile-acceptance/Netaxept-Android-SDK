@@ -30,4 +30,6 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
 
+    <!-- Launcher icon background-->
+    <color name="ic_launcher_background">#FFFFFF</color>
 </resources>
