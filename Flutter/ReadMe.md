@@ -19,45 +19,45 @@ Assuming that you have your Flutter application structure ready, here are the th
 1. Open an instance of _Android Studio_ and open the _android_ folder inside the Flutter app
     +  Add dependency for **PiaSDK**: in `build.gradle` application level file, add:
         ```gradle
-implementation('eu.nets.pia:pia-sdk:2.7.2') { transitive = true; }
+        implementation('eu.nets.pia:pia-sdk:2.7.2') { transitive = true; }
         ```
     + HTTP requests needs to be done from Native code (at least the RegisterPayment synchronous call). For this you may need to add dependency for a newtorking library (e.g. [Retrofit](https://square.github.io/retrofit/))
     + Open _MainActivity.java_ and add Java/Kotlin code to handle SDK communication (launch, registerPayment, handle result). Please check the official [documentation](https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/tree/master/documentation) on how to implement this.
     + Inside the _MainActivity_ you need to configure a **MethodChannel** to listen for method calls from your `dart` code. 
-    ```java
-            //register a MethodChannel to listen for method calls from dart code
-            new MethodChannel(getFlutterView(), PAY_NEW_CARD_CHANNEL).setMethodCallHandler(
-                    (call, result) -> {
-                        this.paymentCallback = result;
-                        //call specific method; you can handle all cases here: new card, saved card, paypal, etc
-                        switch (call.method) {
-                            case "payWithNewCard":
-                                payWithNewCard();
-                                break;
-                            case "payWithPayPal":
-                                payWithPayPal();
-                                break;
-                        }
-                    });
-    ```
+        ```java
+                //register a MethodChannel to listen for method calls from dart code
+                new MethodChannel(getFlutterView(), PAY_NEW_CARD_CHANNEL).setMethodCallHandler(
+                        (call, result) -> {
+                            this.paymentCallback = result;
+                            //call specific method; you can handle all cases here: new card, saved card, paypal, etc
+                            switch (call.method) {
+                                case "payWithNewCard":
+                                    payWithNewCard();
+                                    break;
+                                case "payWithPayPal":
+                                    payWithPayPal();
+                                    break;
+                            }
+                        });
+        ```
 2. Open an instance of Android Studio and open the Flutter app root folder
     + Upon user interraction, you need to invoke a method on the method channel, specifying the concrete method to call via the String identifier:
-    ```dart
-        void _launchSDK(String method) async {
-            try {
-              //call method from MainActivity to launch SDK
-              //the result will be delivered after the payment process is finished
-              String result = await platform.invokeMethod(method);
-              //handle your result
-            } on PlatformException catch (e) {
-              //method cannot be invoked; handle exception
+        ```dart
+            void _launchSDK(String method) async {
+                try {
+                  //call method from MainActivity to launch SDK
+                  //the result will be delivered after the payment process is finished
+                  String result = await platform.invokeMethod(method);
+                  //handle your result
+                } on PlatformException catch (e) {
+                  //method cannot be invoked; handle exception
+                }
             }
-        }
-        
-        ...
-        onPressed:() {_launchSDK('payWithNewCard');},
-        ...
-    ```
+
+            ...
+            onPressed:() {_launchSDK('payWithNewCard');},
+            ...
+        ```
     + Ignore all missing imports from the _MainActivity_ class. The external dependencies are still included in your project, but they are not visible from the Flutter application.
     
 ### Native Module inside Flutter application
