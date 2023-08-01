@@ -73,6 +73,22 @@ Supported payment methods:
 - Paytrail direct bank payments
 - MobilePay
 
+# Automation
+---
+All automated UI tests will be added in /automation directory at project root. 
+Automation is done with Robot framework and Appium
+Quick setup:
+### Install dependencies:
+- Android Studio
+- JVM
+- Robot framework
+- Appium Server
+- Appium Inspector
+
+### Run Automation:
+```bash
+robot test_file.robot
+```
 
 # Contact
 ----
