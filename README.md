@@ -80,12 +80,16 @@ Automation is done with Robot framework and Appium
 
 Automation follows Page Object Pattern meanning all steps/keywords and UI element queries/locators will be defined around app screens in automation/Pages dir.
 
-Quick setup:
 ### Install dependencies:
-- Android Studio (2022.3.1)
-- Robot framework (6.1.1)
-- Appium Server (2.0.1)
-- Appium Inspector (2023.7.1)
+- Android Studio (2022.3.1) - download from [official website](https://developer.android.com/studio)
+- Brew - package manager for MacOS [official site](https://brew.sh)
+- Python 3.11.4_1 - install with `brew install python`
+- Robot framework (6.1.1) - install with `pip3 install robotframework`
+- Robot-appium client - install with `pip3 install robotframework-appiumlibrary`
+- Appium Server (2.0.1) 
+    - install npm: `brew install npm`
+    - install Appium: `npm i --location=global appium`
+- Appium Inspector (2023.7.1) - install from [github page](https://github.com/appium/appium-inspector/releases)
 
 ### Run Automation:
 ```bash
