@@ -26,7 +26,7 @@ Should send keys to search box and then check the value
   Open Change UserID view
   Cancel Changing UserID action, so userID is still:  000101
   Change UserID to:  000202
-
+  Verify that UserID has beed changed to:  000202
 *** Keywords ***
 Open Test Application
   Open Application  http://127.0.0.1:4723/wd/hub  automationName=${ANDROID_AUTOMATION_NAME}
@@ -60,5 +60,8 @@ Change UserID to:
   Click Element  ${SETTINGS_CHANGE_ID}
   Input Text  ${SETTINGS_CHANGE_ID_INPUT}   ${text}
   Click Element  ${SETTINGS_CHANGE_ID_SUBMIT}
+
+Verify that UserID has beed changed to:
+  [Arguments]  ${text}
   Wait Until Page Contains Element  ${SETTINGS_CUSTOMER_ID}
   Element Text Should Be  ${SETTINGS_CUSTOMER_ID}  ${text}
