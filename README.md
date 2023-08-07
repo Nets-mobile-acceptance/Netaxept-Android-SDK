@@ -95,7 +95,7 @@ Automation follows Page Object Pattern meanning all steps/keywords and UI elemen
 ```bash
 cd automation # make sure you are in PROJECT_ROOT/automation directory
 appium --base-path /wd/hub > output.txt & # run Appium server in separate process and move output to txt file (or you could run it in sepate terminal)
-robot --variable INITIAL_ID:000101 --variable NEW_ID:009999 test_file.robot
+robot --variable INITIAL_ID:000501 --variable NEW_ID:009999 --variable ENV:"../environment.robot" test_file.robot
 ```
 
 # Contact
