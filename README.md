@@ -77,16 +77,20 @@ Supported payment methods:
 ---
 All automated UI tests will be added in /automation directory at project root. 
 Automation is done with Robot framework and Appium
+
+Automation follows Page Object Pattern meanning all steps/keywords and UI element queries/locators will be defined around app screens in automation/Pages dir.
+
 Quick setup:
 ### Install dependencies:
-- Android Studio
-- JVM
-- Robot framework
-- Appium Server
-- Appium Inspector
+- Android Studio (2022.3.1)
+- Robot framework (6.1.1)
+- Appium Server (2.0.1)
+- Appium Inspector (2023.7.1)
 
 ### Run Automation:
 ```bash
+cd automation # make sure you are in PROJECT_ROOT/automation directory
+appium --base-path /wd/hub > output.txt & # run Appium server in separate process and move output to txt file (or you could run it in sepate terminal)
 robot test_file.robot
 ```
 
