@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 6.1.1 (Python 3.11.4 on darwin)" generated="20230807 14:15:16.460" rpa="false" schemaversion="4">
+<robot generator="Robot 6.1.1 (Python 3.11.4 on darwin)" generated="20230807 15:16:40.938" rpa="false" schemaversion="4">
 <suite id="s1" name="Test File" source="/Users/piotr/workshop/Netaxept-Android-SDK/automation/test_file.robot">
 <test id="s1-t1" name="Should send keys to search box and then check the value" line="10">
 <kw name="Open Test Application" library="AppPage">
@@ -18,150 +18,150 @@ Please check https://github.com/appium/appium/blob/master/docs/en/writing-runnin
 | remote_url          | Yes    | Appium server url |
 | alias               | no     | alias             |
 | strict_ssl          | No     | allows you to send commands to an invalid certificate host like a self-signed one. |</doc>
-<status status="PASS" starttime="20230807 14:15:16.522" endtime="20230807 14:15:22.016"/>
+<status status="PASS" starttime="20230807 15:16:41.023" endtime="20230807 15:16:45.835"/>
 </kw>
-<status status="PASS" starttime="20230807 14:15:16.522" endtime="20230807 14:15:22.017"/>
+<status status="PASS" starttime="20230807 15:16:41.023" endtime="20230807 15:16:45.836"/>
 </kw>
 <kw name="Login as user with id:" library="LoginPage">
-<arg>000101</arg>
+<arg>${INITIAL_ID}</arg>
 <kw name="Input Text" library="AppiumLibrary">
 <arg>${LOGIN_INPUT}</arg>
 <arg>${query}</arg>
 <doc>Types the given `text` into text field identified by `locator`.</doc>
-<msg timestamp="20230807 14:15:22.018" level="INFO">Typing text '000101' into text field 'id=eu.nets.pia.sample:id/customer_id_et'</msg>
-<msg timestamp="20230807 14:15:22.962" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_et</msg>
-<status status="PASS" starttime="20230807 14:15:22.017" endtime="20230807 14:15:22.962"/>
+<msg timestamp="20230807 15:16:45.838" level="INFO">Typing text '000501' into text field 'id=eu.nets.pia.sample:id/customer_id_et'</msg>
+<msg timestamp="20230807 15:16:46.084" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_et</msg>
+<status status="PASS" starttime="20230807 15:16:45.837" endtime="20230807 15:16:46.084"/>
 </kw>
 <kw name="Click Element" library="AppiumLibrary">
 <arg>${LOGIN_BUTTON}</arg>
 <doc>Click element identified by `locator`.</doc>
-<msg timestamp="20230807 14:15:22.965" level="INFO">Clicking element 'id=eu.nets.pia.sample:id/sign_up_btn'.</msg>
-<msg timestamp="20230807 14:15:23.667" level="INFO">criteria is eu.nets.pia.sample:id/sign_up_btn</msg>
-<status status="PASS" starttime="20230807 14:15:22.962" endtime="20230807 14:15:23.667"/>
+<msg timestamp="20230807 15:16:46.088" level="INFO">Clicking element 'id=eu.nets.pia.sample:id/sign_up_btn'.</msg>
+<msg timestamp="20230807 15:16:46.891" level="INFO">criteria is eu.nets.pia.sample:id/sign_up_btn</msg>
+<status status="PASS" starttime="20230807 15:16:46.084" endtime="20230807 15:16:46.891"/>
 </kw>
 <kw name="Wait Until Page Contains Element" library="AppiumLibrary">
 <arg>${HOMEPAGE_PRODUCT_IMAGE}</arg>
 <doc>Waits until element specified with `locator` appears on current page.</doc>
-<msg timestamp="20230807 14:15:24.790" level="INFO">criteria is eu.nets.pia.sample:id/products_imgv
+<msg timestamp="20230807 15:16:47.971" level="INFO">criteria is eu.nets.pia.sample:id/products_imgv
 criteria is eu.nets.pia.sample:id/products_imgv</msg>
-<status status="PASS" starttime="20230807 14:15:23.667" endtime="20230807 14:15:24.790"/>
+<status status="PASS" starttime="20230807 15:16:46.891" endtime="20230807 15:16:47.971"/>
 </kw>
-<status status="PASS" starttime="20230807 14:15:22.017" endtime="20230807 14:15:24.790"/>
+<status status="PASS" starttime="20230807 15:16:45.837" endtime="20230807 15:16:47.972"/>
 </kw>
 <kw name="Open Settings View for userID:" library="SettingsPage">
-<arg>000101</arg>
+<arg>${INITIAL_ID}</arg>
 <kw name="Click Element" library="AppiumLibrary">
 <arg>${HOMEPAGE_SETTINGS_BUTTON}</arg>
 <doc>Click element identified by `locator`.</doc>
-<msg timestamp="20230807 14:15:24.795" level="INFO">Clicking element 'id=eu.nets.pia.sample:id/settings_item'.</msg>
-<msg timestamp="20230807 14:15:24.852" level="INFO">criteria is eu.nets.pia.sample:id/settings_item</msg>
-<status status="PASS" starttime="20230807 14:15:24.792" endtime="20230807 14:15:24.852"/>
+<msg timestamp="20230807 15:16:47.979" level="INFO">Clicking element 'id=eu.nets.pia.sample:id/settings_item'.</msg>
+<msg timestamp="20230807 15:16:48.060" level="INFO">criteria is eu.nets.pia.sample:id/settings_item</msg>
+<status status="PASS" starttime="20230807 15:16:47.974" endtime="20230807 15:16:48.060"/>
 </kw>
 <kw name="Wait Until Page Contains Element" library="AppiumLibrary">
 <arg>${SETTINGS_CUSTOMER_ID}</arg>
 <doc>Waits until element specified with `locator` appears on current page.</doc>
-<msg timestamp="20230807 14:15:25.973" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label
-criteria is eu.nets.pia.sample:id/customer_id_label</msg>
-<status status="PASS" starttime="20230807 14:15:24.852" endtime="20230807 14:15:25.974"/>
+<msg timestamp="20230807 15:16:49.137" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
+<status status="PASS" starttime="20230807 15:16:48.060" endtime="20230807 15:16:49.137"/>
 </kw>
 <kw name="Element Text Should Be" library="AppiumLibrary">
 <arg>${SETTINGS_CUSTOMER_ID}</arg>
 <arg>${text}</arg>
 <doc>Verifies element identified by ``locator`` exactly contains text ``expected``.</doc>
-<msg timestamp="20230807 14:15:25.978" level="INFO">Verifying element 'id=eu.nets.pia.sample:id/customer_id_label' contains exactly text '000101'.</msg>
-<msg timestamp="20230807 14:15:26.026" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
-<status status="PASS" starttime="20230807 14:15:25.974" endtime="20230807 14:15:26.026"/>
+<msg timestamp="20230807 15:16:49.142" level="INFO">Verifying element 'id=eu.nets.pia.sample:id/customer_id_label' contains exactly text '000501'.</msg>
+<msg timestamp="20230807 15:16:49.185" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
+<status status="PASS" starttime="20230807 15:16:49.138" endtime="20230807 15:16:49.185"/>
 </kw>
-<status status="PASS" starttime="20230807 14:15:24.791" endtime="20230807 14:15:26.027"/>
+<status status="PASS" starttime="20230807 15:16:47.972" endtime="20230807 15:16:49.185"/>
 </kw>
 <kw name="Open Change UserID view" library="SettingsPage">
 <kw name="Click Element" library="AppiumLibrary">
 <arg>${SETTINGS_CHANGE_ID}</arg>
 <doc>Click element identified by `locator`.</doc>
-<msg timestamp="20230807 14:15:26.027" level="INFO">Clicking element 'id=eu.nets.pia.sample:id/change_customer_id'.</msg>
-<msg timestamp="20230807 14:15:26.724" level="INFO">criteria is eu.nets.pia.sample:id/change_customer_id</msg>
-<status status="PASS" starttime="20230807 14:15:26.027" endtime="20230807 14:15:26.725"/>
+<msg timestamp="20230807 15:16:49.186" level="INFO">Clicking element 'id=eu.nets.pia.sample:id/change_customer_id'.</msg>
+<msg timestamp="20230807 15:16:49.854" level="INFO">criteria is eu.nets.pia.sample:id/change_customer_id</msg>
+<status status="PASS" starttime="20230807 15:16:49.185" endtime="20230807 15:16:49.854"/>
 </kw>
 <kw name="Wait Until Page Contains Element" library="AppiumLibrary">
 <arg>${SETTINGS_CHANGE_ID_ALERT}</arg>
 <doc>Waits until element specified with `locator` appears on current page.</doc>
-<msg timestamp="20230807 14:15:26.774" level="INFO">criteria is eu.nets.pia.sample:id/alertTitle</msg>
-<status status="PASS" starttime="20230807 14:15:26.725" endtime="20230807 14:15:26.775"/>
+<msg timestamp="20230807 15:16:49.895" level="INFO">criteria is eu.nets.pia.sample:id/alertTitle</msg>
+<status status="PASS" starttime="20230807 15:16:49.855" endtime="20230807 15:16:49.895"/>
 </kw>
-<status status="PASS" starttime="20230807 14:15:26.027" endtime="20230807 14:15:26.775"/>
+<status status="PASS" starttime="20230807 15:16:49.185" endtime="20230807 15:16:49.896"/>
 </kw>
 <kw name="Cancel Changing UserID action, so userID is still:" library="SettingsPage">
-<arg>000101</arg>
+<arg>${INITIAL_ID}</arg>
 <kw name="Click Element" library="AppiumLibrary">
 <arg>id=android:id/button2</arg>
 <doc>Click element identified by `locator`.</doc>
-<msg timestamp="20230807 14:15:26.777" level="INFO">Clicking element 'id=android:id/button2'.</msg>
-<msg timestamp="20230807 14:15:26.866" level="INFO">criteria is android:id/button2</msg>
-<status status="PASS" starttime="20230807 14:15:26.775" endtime="20230807 14:15:26.866"/>
+<msg timestamp="20230807 15:16:49.902" level="INFO">Clicking element 'id=android:id/button2'.</msg>
+<msg timestamp="20230807 15:16:49.994" level="INFO">criteria is android:id/button2</msg>
+<status status="PASS" starttime="20230807 15:16:49.896" endtime="20230807 15:16:49.994"/>
 </kw>
 <kw name="Wait Until Page Contains Element" library="AppiumLibrary">
 <arg>${SETTINGS_CUSTOMER_ID}</arg>
 <doc>Waits until element specified with `locator` appears on current page.</doc>
-<msg timestamp="20230807 14:15:27.452" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
-<status status="PASS" starttime="20230807 14:15:26.866" endtime="20230807 14:15:27.452"/>
+<msg timestamp="20230807 15:16:50.278" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
+<status status="PASS" starttime="20230807 15:16:49.994" endtime="20230807 15:16:50.279"/>
 </kw>
 <kw name="Element Text Should Be" library="AppiumLibrary">
 <arg>${SETTINGS_CUSTOMER_ID}</arg>
 <arg>${text}</arg>
 <doc>Verifies element identified by ``locator`` exactly contains text ``expected``.</doc>
-<msg timestamp="20230807 14:15:27.456" level="INFO">Verifying element 'id=eu.nets.pia.sample:id/customer_id_label' contains exactly text '000101'.</msg>
-<msg timestamp="20230807 14:15:27.505" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
-<status status="PASS" starttime="20230807 14:15:27.452" endtime="20230807 14:15:27.505"/>
+<msg timestamp="20230807 15:16:50.282" level="INFO">Verifying element 'id=eu.nets.pia.sample:id/customer_id_label' contains exactly text '000501'.</msg>
+<msg timestamp="20230807 15:16:50.613" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
+<status status="PASS" starttime="20230807 15:16:50.279" endtime="20230807 15:16:50.614"/>
 </kw>
-<status status="PASS" starttime="20230807 14:15:26.775" endtime="20230807 14:15:27.505"/>
+<status status="PASS" starttime="20230807 15:16:49.896" endtime="20230807 15:16:50.614"/>
 </kw>
 <kw name="Change UserID to:" library="SettingsPage">
-<arg>000202</arg>
+<arg>${NEW_ID}</arg>
 <kw name="Click Element" library="AppiumLibrary">
 <arg>${SETTINGS_CHANGE_ID}</arg>
 <doc>Click element identified by `locator`.</doc>
-<msg timestamp="20230807 14:15:27.506" level="INFO">Clicking element 'id=eu.nets.pia.sample:id/change_customer_id'.</msg>
-<msg timestamp="20230807 14:15:28.193" level="INFO">criteria is eu.nets.pia.sample:id/change_customer_id</msg>
-<status status="PASS" starttime="20230807 14:15:27.506" endtime="20230807 14:15:28.193"/>
+<msg timestamp="20230807 15:16:50.618" level="INFO">Clicking element 'id=eu.nets.pia.sample:id/change_customer_id'.</msg>
+<msg timestamp="20230807 15:16:51.302" level="INFO">criteria is eu.nets.pia.sample:id/change_customer_id</msg>
+<status status="PASS" starttime="20230807 15:16:50.616" endtime="20230807 15:16:51.302"/>
 </kw>
 <kw name="Input Text" library="AppiumLibrary">
 <arg>${SETTINGS_CHANGE_ID_INPUT}</arg>
 <arg>${text}</arg>
 <doc>Types the given `text` into text field identified by `locator`.</doc>
-<msg timestamp="20230807 14:15:28.197" level="INFO">Typing text '000202' into text field 'class=android.widget.EditText'</msg>
-<status status="PASS" starttime="20230807 14:15:28.194" endtime="20230807 14:15:28.746"/>
+<msg timestamp="20230807 15:16:51.306" level="INFO">Typing text '009999' into text field 'class=android.widget.EditText'</msg>
+<status status="PASS" starttime="20230807 15:16:51.303" endtime="20230807 15:16:51.876"/>
 </kw>
 <kw name="Click Element" library="AppiumLibrary">
 <arg>${SETTINGS_CHANGE_ID_SUBMIT}</arg>
 <doc>Click element identified by `locator`.</doc>
-<msg timestamp="20230807 14:15:28.750" level="INFO">Clicking element 'id=android:id/button1'.</msg>
-<msg timestamp="20230807 14:15:29.450" level="INFO">criteria is android:id/button1</msg>
-<status status="PASS" starttime="20230807 14:15:28.747" endtime="20230807 14:15:29.450"/>
+<msg timestamp="20230807 15:16:51.881" level="INFO">Clicking element 'id=android:id/button1'.</msg>
+<msg timestamp="20230807 15:16:52.580" level="INFO">criteria is android:id/button1</msg>
+<status status="PASS" starttime="20230807 15:16:51.876" endtime="20230807 15:16:52.580"/>
 </kw>
-<status status="PASS" starttime="20230807 14:15:27.505" endtime="20230807 14:15:29.450"/>
+<status status="PASS" starttime="20230807 15:16:50.614" endtime="20230807 15:16:52.580"/>
 </kw>
 <kw name="Verify that UserID has beed changed to:" library="SettingsPage">
-<arg>000202</arg>
+<arg>${NEW_ID}</arg>
 <kw name="Wait Until Page Contains Element" library="AppiumLibrary">
 <arg>${SETTINGS_CUSTOMER_ID}</arg>
 <doc>Waits until element specified with `locator` appears on current page.</doc>
-<msg timestamp="20230807 14:15:29.735" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
-<status status="PASS" starttime="20230807 14:15:29.450" endtime="20230807 14:15:29.735"/>
+<msg timestamp="20230807 15:16:52.872" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
+<status status="PASS" starttime="20230807 15:16:52.580" endtime="20230807 15:16:52.872"/>
 </kw>
 <kw name="Element Text Should Be" library="AppiumLibrary">
 <arg>${SETTINGS_CUSTOMER_ID}</arg>
 <arg>${text}</arg>
 <doc>Verifies element identified by ``locator`` exactly contains text ``expected``.</doc>
-<msg timestamp="20230807 14:15:29.738" level="INFO">Verifying element 'id=eu.nets.pia.sample:id/customer_id_label' contains exactly text '000202'.</msg>
-<msg timestamp="20230807 14:15:30.056" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
-<status status="PASS" starttime="20230807 14:15:29.736" endtime="20230807 14:15:30.056"/>
+<msg timestamp="20230807 15:16:52.876" level="INFO">Verifying element 'id=eu.nets.pia.sample:id/customer_id_label' contains exactly text '009999'.</msg>
+<msg timestamp="20230807 15:16:53.199" level="INFO">criteria is eu.nets.pia.sample:id/customer_id_label</msg>
+<status status="PASS" starttime="20230807 15:16:52.873" endtime="20230807 15:16:53.199"/>
 </kw>
-<status status="PASS" starttime="20230807 14:15:29.450" endtime="20230807 14:15:30.057"/>
+<status status="PASS" starttime="20230807 15:16:52.580" endtime="20230807 15:16:53.199"/>
 </kw>
-<status status="PASS" starttime="20230807 14:15:16.522" endtime="20230807 14:15:30.057"/>
+<doc>You need to speficy initial 6-digit user id and new user id (also 6-digit) to run this test.</doc>
+<status status="PASS" starttime="20230807 15:16:41.023" endtime="20230807 15:16:53.200"/>
 </test>
 <doc>Login with userID 101, start and abort changing userID process, change userID to 202</doc>
-<status status="PASS" starttime="20230807 14:15:16.461" endtime="20230807 14:15:30.058"/>
+<status status="PASS" starttime="20230807 15:16:40.940" endtime="20230807 15:16:53.201"/>
 </suite>
 <statistics>
 <total>

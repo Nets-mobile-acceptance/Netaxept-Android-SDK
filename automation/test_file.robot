@@ -8,10 +8,11 @@ Resource  Pages/SettingsPage.robot
 
 *** Test Cases ***
 Should send keys to search box and then check the value
+  [Documentation]  You need to speficy initial 6-digit user id and new user id (also 6-digit) to run this test.
   Open Test Application
-  Login as user with id:  000101
-  Open Settings View for userID:  000101
+  Login as user with id:  ${INITIAL_ID}
+  Open Settings View for userID:  ${INITIAL_ID}
   Open Change UserID view
-  Cancel Changing UserID action, so userID is still:  000101
-  Change UserID to:  000202
-  Verify that UserID has beed changed to:  000202
+  Cancel Changing UserID action, so userID is still:  ${INITIAL_ID}
+  Change UserID to:  ${NEW_ID}
+  Verify that UserID has beed changed to:  ${NEW_ID}
