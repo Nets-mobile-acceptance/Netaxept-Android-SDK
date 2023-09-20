@@ -665,7 +665,7 @@ public class SDKModule extends ReactContextBaseJavaModule implements ActivityEve
         MainActivity mainActivity = (MainActivity) getCurrentActivity();
         PaymentProcess.WalletPayment walletProcess = null;
         if (walletType.equals("MobilePay")) {
-            walletProcess = PaymentProcess.mobilePay(mainActivity);
+            walletProcess = PaymentProcess.mobilePay(true, mainActivity);
         }
 
         boolean canLaunch = PiaSDK.initiateMobileWallet(walletProcess, mobileWalletRegistration);

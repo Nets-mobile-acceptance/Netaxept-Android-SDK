@@ -18,22 +18,15 @@
  */
 
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View, Button, ToastAndroid} from 'react-native';
+import { Platform, StyleSheet, Text, View, Button, ToastAndroid } from 'react-native';
 import { NativeModules } from 'react-native';
 
 const piaSDKModule = NativeModules.PiaSDK;
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
 const netsProduction = {
 
-    static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
-    static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
+   static let backendUrlProd: String = "YOUR PRODUCTION BACKEND BASE URL HERE"
+   static let merchantIdProd: String = "YOUR PRODUCTION NETAXEPT MERCHANT ID HERE"
 
 };
 
@@ -53,43 +46,43 @@ export default class App extends Component<Props> {
   render() {
 
     return (
-        <View style={styles.container}>
-          <Text style={styles.welcome}>Welcome to Pia Sample app React Native!</Text>
-          <Text style={styles.instructions}>Check our basic implementation here!</Text>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.pay} title="Buy" />
-          </View>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.startCardPaymentWithOnlyVisa} title="Start CardPayment With Only Visa" />
-          </View>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.sBusiness} title="S-Business" />
-          </View>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.saveCard} title="Save Card" />
-          </View>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.payViaPaypal} title="Paypal" />
-          </View>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.payViaMobilePay} title="MobilePay Payment" />
-          </View>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.paySavedCardWithSkipConfirm} title="Pay 10 EUR - Saved Card (Skip Confirmation)" />
-          </View>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.paySavedCardWithoutSkipConfirm} title="Pay 10 EUR - Saved Card" />
-          </View>
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.payViaPaytrailNordea} title="Paytrail Nordea" />
-          </View> 
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.paySavedCardWithoutSkipConfirmCustomImage} title="Pay 10 EUR - Saved Card (Custom Image)" />
-          </View> 
-          <View style={styles.button}>
-            <Button style={styles.button} onPress={this.paySavedCardWithSkipConfirmCustomImage} title="Pay 10 EUR - Saved Card (Skip Confirmation custom Image)" />
-          </View> 
+      <View style={styles.container}>
+        <Text style={styles.welcome}>Welcome to Pia Sample app React Native!</Text>
+        <Text style={styles.instructions}>Check our basic implementation here!</Text>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.pay} title="Buy" />
         </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.startCardPaymentWithOnlyVisa} title="Start CardPayment With Only Visa" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.sBusiness} title="S-Business" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.saveCard} title="Save Card" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.payViaPaypal} title="Paypal" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.payViaMobilePay} title="MobilePay Payment" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.paySavedCardWithSkipConfirm} title="Pay 10 EUR - Saved Card (Skip Confirmation)" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.paySavedCardWithoutSkipConfirm} title="Pay 10 EUR - Saved Card" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.payViaPaytrailNordea} title="Paytrail Nordea" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.paySavedCardWithoutSkipConfirmCustomImage} title="Pay 10 EUR - Saved Card (Custom Image)" />
+        </View>
+        <View style={styles.button}>
+          <Button style={styles.button} onPress={this.paySavedCardWithSkipConfirmCustomImage} title="Pay 10 EUR - Saved Card (Skip Confirmation custom Image)" />
+        </View>
+      </View>
     );
   }
 
@@ -112,7 +105,7 @@ export default class App extends Component<Props> {
           'Accept': 'application/json;charset=utf-8;version=2.0',
           'Content-Type': 'application/json;charset=utf-8;version=2.0'
         },
-        body: '{"storeCard": ' + saveCardBool +',"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
+        body: '{"storeCard": ' + saveCardBool + ',"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
       }).then((response) => response.json())
         .then((responseJson) => {
           console.log('onResponse' + responseJson.transactionId)
@@ -144,7 +137,7 @@ export default class App extends Component<Props> {
           'Accept': 'application/json;charset=utf-8;version=2.0',
           'Content-Type': 'application/json;charset=utf-8;version=2.0'
         },
-        body: '{"storeCard": ' + saveCardBool +',"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
+        body: '{"storeCard": ' + saveCardBool + ',"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
       }).then((response) => response.json())
         .then((responseJson) => {
           console.log('onResponse' + responseJson.transactionId)
@@ -164,13 +157,13 @@ export default class App extends Component<Props> {
     piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/true);
 
 
-      //set the payment result promise
-      piaSDKModule.handleSDKResult().then((result) => {
-        ToastAndroid.show(result, ToastAndroid.SHORT);
-      }).catch((error) => {
-        ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
-      });
-  
+    //set the payment result promise
+    piaSDKModule.handleSDKResult().then((result) => {
+      ToastAndroid.show(result, ToastAndroid.SHORT);
+    }).catch((error) => {
+      ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
+    });
+
 
     piaSDKModule.saveCard(() => {
       fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
@@ -194,7 +187,7 @@ export default class App extends Component<Props> {
   payViaPaypal = () => {
     //for PayPal set only the MerchantInfo object
     piaSDKModule.buildMerchantInfo(netsProduction.merchantIdProd, /*isTestMode*/false, /*isCvcRequired*/true);
-   
+
 
     //set the payment result promise
     piaSDKModule.handleSDKResult().then((result) => {
@@ -224,23 +217,23 @@ export default class App extends Component<Props> {
 
   payViaMobilePay = () => {
 
-   let walletType = "MobilePay"
+    let walletType = "MobilePay"
 
-   //Set wallet type before initiating the wallet payment using startWalletPayment
-   piaSDKModule.setWalletType(walletType);
+    //Set wallet type before initiating the wallet payment using startWalletPayment
+    piaSDKModule.setWalletType(walletType);
 
-  
-   //set the payment result promise
-   piaSDKModule.handleSDKResult().then((result) => {
-    ToastAndroid.show(result, ToastAndroid.SHORT);
-  }).catch((error) => {
-    ToastAndroid.show('Interruption', ToastAndroid.SHORT);
+
+    //set the payment result promise
     piaSDKModule.handleSDKResult().then((result) => {
       ToastAndroid.show(result, ToastAndroid.SHORT);
     }).catch((error) => {
-      ToastAndroid.show(error, ToastAndroid.SHORT);
+      ToastAndroid.show('Interruption', ToastAndroid.SHORT);
+      piaSDKModule.handleSDKResult().then((result) => {
+        ToastAndroid.show(result, ToastAndroid.SHORT);
+      }).catch((error) => {
+        ToastAndroid.show(error, ToastAndroid.SHORT);
+      });
     });
-  });
 
 
 
@@ -254,7 +247,7 @@ export default class App extends Component<Props> {
           'Content-Type': 'application/json;charset=utf-8;version=2.0'
         },
         body: '{"amount":{"currencyCode":"EUR","totalAmount":1000,"vatAmount":0},"customerId":"000013","method":{"id":"MobilePay"},"orderNumber":"PiaSDK-Android","paymentMethodActionList":"[{PaymentMethod:MobilePay}]","redirectUrl":"com.piasample://piasdk_mobilepay","storeCard":false}'
-            
+
       }).then((response) => response.json())
         .then((responseJson) => {
           piaSDKModule.openWalletApp(responseJson.walletUrl);
@@ -268,7 +261,7 @@ export default class App extends Component<Props> {
 
   paySavedCardWithSkipConfirm = () => {
     piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/false);
-   
+
     piaSDKModule.buildOrderInfo(1, "EUR");
     piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, false);
     //set the payment result promise
@@ -303,7 +296,7 @@ export default class App extends Component<Props> {
   paySavedCardWithoutSkipConfirm = () => {
 
     piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/true);
-   
+
     piaSDKModule.buildOrderInfo(10, "EUR");
     piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, true);
     //set the payment result promise
@@ -335,7 +328,7 @@ export default class App extends Component<Props> {
   paySavedCardWithoutSkipConfirmCustomImage = () => {
 
     piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/true);
-   
+
     piaSDKModule.buildOrderInfo(10, "EUR");
     piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, true);
     //set the payment result promise
@@ -366,7 +359,7 @@ export default class App extends Component<Props> {
 
   paySavedCardWithSkipConfirmCustomImage = () => {
     piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/false);
-   
+
     piaSDKModule.buildOrderInfo(1, "EUR");
     piaSDKModule.buildTokenCardInfo(netsTest.tokenIdTest, netsTest.schemeIdTest, netsTest.expiryDateTest, false);
     //set the payment result promise
@@ -401,11 +394,11 @@ export default class App extends Component<Props> {
   payViaPaytrailNordea = () => {
     piaSDKModule.buildOrderInfo(10, "EUR");
     piaSDKModule.buildMerchantInfo(netsTest.merchantIdTest, /*isTestMode*/true, /*isCvcRequired*/false);
-   
+
 
     //set the payment result promise
     piaSDKModule.handleSDKResult().then((result) => {
-      ToastAndroid.show(result , ToastAndroid.SHORT);
+      ToastAndroid.show(result, ToastAndroid.SHORT);
     }).catch((error) => {
       ToastAndroid.show('CANCEL OR ERROR', ToastAndroid.SHORT);
     });
@@ -413,23 +406,23 @@ export default class App extends Component<Props> {
     var orderId = this.getOrderId();
     console.log('orderId ' + orderId);
 
-  piaSDKModule.startPaytrailProcess(() => {
-    fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json;charset=utf-8;version=2.0',
-        'Content-Type': 'application/json;charset=utf-8;version=2.0'
-      },
-      body: '{"amount":{"currencyCode":"EUR","totalAmount":1000,"vatAmount":0},"customerTown":"Helsinki","customerPostCode":"00510","customerLastName":"Buyer","customerId":"000012","customerAddress1":"Testaddress","customerCountry":"FI","customerEmail":"bill.buyer@nets.eu","customerFirstName":"Bill","customerId":"000013","method":{"id":"PaytrailNordea"},"orderNumber":' + orderId + ',"storeCard":false}'
-    }).then((response) => response.json())
-      .then((responseJson) => {
-        piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
-      })
-      .catch((error) => {
-        console.error(error);
-        piaSDKModule.buildTransactionInfo(null, null, null);
-      });
-});
+    piaSDKModule.startPaytrailProcess(() => {
+      fetch(netsTest.backendUrlTest + "v2/payment/" + netsTest.merchantIdTest + "/register", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json;charset=utf-8;version=2.0',
+          'Content-Type': 'application/json;charset=utf-8;version=2.0'
+        },
+        body: '{"amount":{"currencyCode":"EUR","totalAmount":1000,"vatAmount":0},"customerTown":"Helsinki","customerPostCode":"00510","customerLastName":"Buyer","customerId":"000012","customerAddress1":"Testaddress","customerCountry":"FI","customerEmail":"bill.buyer@nets.eu","customerFirstName":"Bill","customerId":"000013","method":{"id":"PaytrailNordea"},"orderNumber":' + orderId + ',"storeCard":false}'
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          piaSDKModule.buildTransactionInfo(responseJson.transactionId, responseJson.redirectOK, null);
+        })
+        .catch((error) => {
+          console.error(error);
+          piaSDKModule.buildTransactionInfo(null, null, null);
+        });
+    });
   }
 
   startCardPaymentWithOnlyVisa = () => {
@@ -451,7 +444,7 @@ export default class App extends Component<Props> {
           'Accept': 'application/json;charset=utf-8;version=2.0',
           'Content-Type': 'application/json;charset=utf-8;version=2.0'
         },
-        body: '{"storeCard": ' + saveCardBool +',"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
+        body: '{"storeCard": ' + saveCardBool + ',"orderNumber": "PiaSDK-Android","customerId": "000003","amount": {"currencyCode": "EUR", "totalAmount": "100","vatAmount": 0}}'
       }).then((response) => response.json())
         .then((responseJson) => {
           console.log('onResponse' + responseJson.transactionId)

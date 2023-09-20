@@ -13,25 +13,21 @@ android {
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "MERCHANT_ID_PROD", MERCHANT_ID_PROD
+        buildConfigField "String", "MERCHANT_BACKEND_URL_PROD", MERCHANT_BACKEND_URL_PROD
+        buildConfigField "String", "MERCHANT_ID_TEST", MERCHANT_ID_TEST
+        buildConfigField "String", "MERCHANT_BACKEND_URL_TEST", MERCHANT_BACKEND_URL_TEST
     }
 
 
     buildTypes {
         release {
-            //section-end-to-remove-by-script
-            buildConfigField "String", "MERCHANT_ID_PROD", MERCHANT_ID_PROD
-            buildConfigField "String", "MERCHANT_BACKEND_URL_PROD", MERCHANT_BACKEND_URL_PROD
-            buildConfigField "String", "MERCHANT_ID_TEST", MERCHANT_ID_TEST
-            buildConfigField "String", "MERCHANT_BACKEND_URL_TEST", MERCHANT_BACKEND_URL_TEST
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         debug {
-            buildConfigField "String", "MERCHANT_ID_PROD", MERCHANT_ID_PROD
-            buildConfigField "String", "MERCHANT_BACKEND_URL_PROD", MERCHANT_BACKEND_URL_PROD
-            buildConfigField "String", "MERCHANT_ID_TEST", MERCHANT_ID_TEST
-            buildConfigField "String", "MERCHANT_BACKEND_URL_TEST", MERCHANT_BACKEND_URL_TEST
         }
     }
 
@@ -66,6 +62,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.activity:activity-ktx:1.6.1'
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
-	implementation('eu.nets.pia:pia-sdk:2.7.2@aar') { transitive = true; changing=true; }
+	implementation('eu.nets.pia:pia-sdk:2.7.3@aar') { transitive = true; changing=true; }
 }
 apply plugin: 'com.google.gms.google-services'

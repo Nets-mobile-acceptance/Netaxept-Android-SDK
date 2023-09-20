@@ -19,3 +19,18 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep public class eu.nets.pia.sample.network.model.PaymentRegisterResponse
+
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+}
+
+##---------------Begin: proguard configuration for Gson  ----------
+
+# Prevent R8 from leaving Data object members always null
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
+
+##---------------End: proguard configuration for Gson  ----------

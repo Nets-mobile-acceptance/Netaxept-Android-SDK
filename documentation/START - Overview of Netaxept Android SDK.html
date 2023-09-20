@@ -32,8 +32,8 @@
     <h1><a id="Terminology"></a>Terminology</h1>
     <hr>
     <ol>
-        <li><strong>Nexi/Nets PiA SDK</strong> - The SDK. From your reference, a compiled Android library AAR.</li>
-        <li><strong>Netaxept</strong> - Netaxept is a comprehensive online payment service provided by Nexi/Nets. It enables merchants to offer their customers different ways to pay purchases easily and securely in webshops, mobile environment and call centre services. When using Netaxept, it is easy to pay with broad range of payment methods and currencies, and still meet high security requirements set for online paying.</li>
+        <li><strong>Nets PiA SDK</strong> - The SDK. From your reference, a compiled Android library AAR.</li>
+        <li><strong>Netaxept</strong> - Netaxept is a comprehensive online payment service provided by Nets. It enables merchants to offer their customers different ways to pay purchases easily and securely in webshops, mobile environment and call centre services. When using Netaxept, it is easy to pay with broad range of payment methods and currencies, and still meet high security requirements set for online paying.</li>
         <li><strong>Easy Payment</strong> involve card details saved for faster checkout:
             <ul>
                 <li>During initial transaction, customer saves card details for faster checkout next time. Transaction can be account verification or actual purchase.</li>
@@ -58,7 +58,7 @@
         <li>Please add dependency on the following library to the <code>build.gradle</code> file.</li>
     </ul>
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.7.2'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.7.3'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         }
     </code></pre>
     <ul>
@@ -362,7 +362,7 @@
                 <li>serviceType = <q>M</q></li>
             </ul>
             
-            <p>After the successful Register call, perform terminal call and continue with the Process call choosing either operation AUTH and CAPTURE or SALE as with a regular transaction.</p>
+            <p>After the successful Register call, skip the Terminal phase and continue directly with the Process call choosing either operation AUTH and CAPTURE or SALE as with a regular transaction.</p>
             
             <p>As per PSD2/SCA guidelines, 3D-Secure will be bypassed on all subsequent recurring transactions.</p>
             
@@ -415,7 +415,7 @@
     <p>Note: Netaxept backend integration tips can be found in <a href="#Backend_Tips">Backend tips section</a></p>
     <h1><a id="Payment_without_Security_code"></a>Payment without Security code</h1>
     <hr>
-    <p>Payment without Security Code (CVC), is not a standard practice and can only be approved in exceptional cases. The below flow requires approval from Nexi/Nets. Contact your account manager to enable this option.</p>
+    <p>Payment without Security Code (CVC), is not a standard practice and can only be approved in exceptional cases. The below flow requires approval from Nets. Contact your account manager to enable this option.</p>
 
     <p><strong>Initial payments</strong></p>
     <p>Refer to merchant info constructor <code>MerchantInfo</code> in <strong><a href="#Getting_started_with_card_payment">Getting started with card payment</a></strong> to set initial payment without Security Code.</p>
@@ -1941,6 +1941,11 @@ The above copyright notice and this permission notice shall be included in all c
 <ul>
     <li>Rebranded "Nets" to "Nexi/Nets" as the new company name</li>
     <li>Fixed: <a href="https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/issues/75">Registering cards does not work in 2.7.1</a></li>
+</ul>
+<h4><a id="v273_Released_18Sep2023"></a>v2.7.3 Released: 18-Sep-2023</h4>
+<h4><a id="Release_notes_754"></a>Release notes:</h4>
+<ul>
+    <li>Fixed: <a href="https://github.com/Nets-mobile-acceptance/Netaxept-Android-SDK/issues/81">SDK crashes when opening 3DS activity when R8 is in full mode</a></li>
 </ul>
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>
 
