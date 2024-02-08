@@ -36,7 +36,7 @@ public class RegisterPaymentHandlerImpl implements RegisterPaymentHandler {
      * - in this method create a request to your backend to register a payment synchronously
      * (the body of the request, here, is stored in a {@link eu.nets.pia.sample.data.PaymentFlowCache}
      * - with the register response, create a {@link eu.nets.pia.data.model.TransactionInfo} with
-     * transactionId, redirectOK and redirectCance
+     * transactionId, redirectOK and redirectCancel
      * - return the TransactionInfo Object
      * This handler will be passed to the SDK and will be used as a first step when making a payment. This
      * transactionId will be used to send the paymentRequest to Netaxept.
