@@ -1,0 +1,9 @@
+{
+  "appium:appActivity": "eu.nets.pia.sample.ui.activity.main.MainActivity",
+  "appium:platformVersion": "ANDROID_PLATFORM_VERSION=13",
+  "platformName": "Android",
+  "appium:app": "/Users/piotr/workshop/assigment/pia-sdk-android-release-sample-2.7.2.apk",
+  "appium:appPackage": "eu.nets.pia.sample",
+  "appium:deviceName": "Android-33",
+  "appium:automationName": "UiAutomator2"
+}
