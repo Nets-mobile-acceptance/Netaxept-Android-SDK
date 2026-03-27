@@ -40,15 +40,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.ProcessResult;
-import eu.nets.pia.RegisterPaymentHandler;
 import eu.nets.pia.card.CardProcessActivityLauncherInput;
 import eu.nets.pia.card.CardProcessActivityResultContract;
 import eu.nets.pia.card.CardScheme;
@@ -58,7 +53,6 @@ import eu.nets.pia.data.model.MerchantInfo;
 import eu.nets.pia.data.model.PiaLanguage;
 import eu.nets.pia.sample.BuildConfig;
 import eu.nets.pia.sample.R;
-import eu.nets.pia.sample.RegisterPaymentHandlerImpl;
 import eu.nets.pia.sample.data.PaymentFlowCache;
 import eu.nets.pia.sample.data.PaymentFlowState;
 import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
@@ -95,47 +89,26 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
-    //not logged in views
-    @BindView(R.id.not_logged_in_layout)
     RelativeLayout mNotLoggedInLayout;
-    @BindView(R.id.customer_id_et)
     EditText mSignUpEditText;
-    //end
-    //logged in views
-    @BindView(R.id.main_layout)
+
     RelativeLayout mMainLayout;
-    @BindView(R.id.imageView)
     ImageView mBackground;
-    @BindView(R.id.toolbar)
     CustomToolbar mToolbar;
-    @BindView(R.id.customer_id_label)
     TextView mCustomerIdLabel;
-    @BindView(R.id.app_version_label)
     TextView mAppVersionLabel;
-    @BindView(R.id.url_switch)
+
     SwitchCompat mUrlSwitch;
-    @BindView(R.id.switch_sistem_auth)
     SwitchCompat mSystemAuthSwitch;
-    @BindView(R.id.exclude_co_branded_dankort_and_mastercard)
     SwitchCompat excludeCoBrandedDankortAndMastercard;
-    @BindView(R.id.switch_disable_image)
     SwitchCompat includeCustomCardImageSwitch;
-    //section-start-to-remove-by-script
-    @BindView(R.id.switch_disable_cardio)
-    SwitchCompat mDisableCardIOSwitch;
-    //section-end-to-remove-by-script
-    @BindView(R.id.switch_sample_skip_confirmation)
     SwitchCompat mSkipConfirmationSwitch;
-    @BindView(R.id.language_dropdown)
+
     Spinner mLanguageSpinner;
 
-    @BindView(R.id.phone_number_text)
     TextView customerPhoneNumber;
-    @BindView(R.id.change_phone_number)
     TextView changePhoneNumber;
 
-    //end
-    @BindView(R.id.spinner_holder)
     protected RelativeLayout mProgressBar;
 
     private static final String ORDER_NUMBER = "PiaSDK-Android";
@@ -158,8 +131,36 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+        mNotLoggedInLayout = findViewById(R.id.not_logged_in_layout);
+        mSignUpEditText = findViewById(R.id.customer_id_et);
 
+        mMainLayout = findViewById(R.id.main_layout);
+        mBackground = findViewById(R.id.imageView);
+        mToolbar = findViewById(R.id.toolbar);
+        mCustomerIdLabel = findViewById(R.id.customer_id_label);
+        mAppVersionLabel = findViewById(R.id.app_version_label);
+
+        mUrlSwitch = findViewById(R.id.url_switch);
+        mSystemAuthSwitch = findViewById(R.id.switch_sistem_auth);
+        excludeCoBrandedDankortAndMastercard = findViewById(R.id.exclude_co_branded_dankort_and_mastercard);
+        includeCustomCardImageSwitch = findViewById(R.id.switch_disable_image);
+        mSkipConfirmationSwitch = findViewById(R.id.switch_sample_skip_confirmation);
+
+        mLanguageSpinner = findViewById(R.id.language_dropdown);
+
+        customerPhoneNumber = findViewById(R.id.phone_number_text);
+        changePhoneNumber = findViewById(R.id.change_phone_number);
+
+        mProgressBar = findViewById(R.id.spinner_holder);
+
+        click(R.id.change_customer_id, this::onChangeCustomerId);
+        click(R.id.change_phone_number, this::onChangePhoneNumber);
+        click(R.id.action_customize_ui, this::onCustomizeUi);
+        click(R.id.details_app_version, this::onShowAppVersion);
+        click(R.id.sign_up_btn, this::onSignUp);
+        click(R.id.action_change_merchant_info, this::onChangeMerchantInfo);
+        click(R.id.save_card, this::onSaveCardBtnClicked);
+        click(R.id.save_sgroup_card, this::onSaveSGroupCardBtnClicked);
         if (PiaSampleSharedPreferences.getCustomerId().isEmpty()) {
             //user is not logged in
             mToolbar.setVisibility(View.GONE);
@@ -221,19 +222,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                 }
             });
 
-            //section-start-to-remove-by-script
-            mDisableCardIOSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    PiaSampleSharedPreferences.setDisableCardIo(isChecked);
-                    //also, update the flag inside the SDK
-                    PiaInterfaceConfiguration.getInstance().setDisableCardIO(isChecked);
-                }
-            });
-            //section-end-to-remove-by-script
-
-
-
             excludeCoBrandedDankortAndMastercard.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 HashSet<CardScheme> excludeCardSchemes = new HashSet<>();
                 if (isChecked) {
@@ -261,11 +249,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
 
             mSystemAuthSwitch.setChecked(PiaSampleSharedPreferences.isUseSystemAuth());
             mUrlSwitch.setChecked(PiaSampleSharedPreferences.isPiaTestMode());
-
-            //section-start-to-remove-by-script
-            mDisableCardIOSwitch.setChecked(PiaSampleSharedPreferences.isDisableCardIo());
-            //section-end-to-remove-by-script
-            Set<CardScheme> excludedSet = PiaSampleSharedPreferences.getExcludedCardSchemeSet();
 
             excludeCoBrandedDankortAndMastercard.setChecked(!PiaSampleSharedPreferences.getExcludedCardSchemeSet().isEmpty());
 
@@ -313,24 +296,20 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
         });
     }
 
-    @OnClick(R.id.change_customer_id)
     public void onChangeCustomerId() {
         //show input popup to change id
         showInputDialog();
     }
 
-    @OnClick(R.id.change_phone_number)
     public void onChangePhoneNumber() {
         //show input popup to change phone number
         showInputDialogChangeNumber();
     }
 
-    @OnClick(R.id.action_customize_ui)
     public void onCustomizeUi() {
         startActivity(new Intent(this, UICustomizationActivity.class));
     }
 
-    @OnClick(R.id.details_app_version)
     public void onShowAppVersion() {
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
@@ -352,7 +331,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
         }
     }
 
-    @OnClick(R.id.sign_up_btn)
     public void onSignUp() {
         String customerId = mSignUpEditText.getText().toString();
         if (customerId.isEmpty()) {
@@ -369,11 +347,13 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
         }
     }
 
-    @OnClick(R.id.action_change_merchant_info)
     public void onChangeMerchantInfo() {
         startActivity(new Intent(this, MerchantBESettingsActivity.class));
     }
 
+    private void click(int viewId, Runnable action) {
+        findViewById(viewId).setOnClickListener(v -> action.run());
+    }
     private void showInputDialog() {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.InputAlertDialogTheme);
@@ -408,7 +388,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
         alertDialog.setView(layout);
 
         alertDialog.setPositiveButton(R.string.action_save, null);
-        alertDialog.setNegativeButton(R.string.pia_action_cancel, null);
+        alertDialog.setNegativeButton(eu.nets.pia.R.string.pia_action_cancel, null);
 
         final AlertDialog mDialog = alertDialog.create();
 
@@ -456,7 +436,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     /**
      * This is the Save Card functionality;
      */
-    @OnClick(R.id.save_card)
     public void onSaveCardBtnClicked() {
         //store in cache the payment request -- for register, a payment with zero amount is required
         mPaymentCache.setPaymentRegisterRequest(getPaymentRequest());
@@ -480,7 +459,6 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     /**
      * This is the Save S-Business Card functionality;
      */
-    @OnClick(R.id.save_sgroup_card)
     public void onSaveSGroupCardBtnClicked() {
         //store in cache the payment request -- for register, a payment with zero amount is requred
         mPaymentCache.setPaymentRegisterRequest(getPaymentRequest());
@@ -751,7 +729,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
         alertDialog.setView(layout);
 
         alertDialog.setPositiveButton(R.string.action_save, null);
-        alertDialog.setNegativeButton(R.string.pia_action_cancel, null);
+        alertDialog.setNegativeButton(eu.nets.pia.R.string.pia_action_cancel, null);
 
         final AlertDialog mDialog = alertDialog.create();
 

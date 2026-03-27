@@ -16,9 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 import eu.nets.pia.sample.ui.adapter.CurrencyAdapter;
@@ -44,11 +41,8 @@ import eu.nets.pia.sample.ui.adapter.CurrencyAdapter;
 
 public class CheckoutFragment extends Fragment {
 
-    @BindView(R.id.price_value_et)
     protected EditText mPriceView;
-    @BindView(R.id.currency_dropdown)
     protected Spinner mCurrencyDropdown;
-
     private FragmentCallback mCallback;
 
     public CheckoutFragment() {
@@ -60,7 +54,13 @@ public class CheckoutFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_checkout, container, false);
-        ButterKnife.bind(this, view);
+        mPriceView = view.findViewById(R.id.price_value_et);
+        mCurrencyDropdown = view.findViewById(R.id.currency_dropdown);
+        view.findViewById(R.id.payment_btn).setOnClickListener(v -> {
+            if (mCallback != null) {
+                mCallback.onPayClicked();
+            }
+        });
         return view;
     }
 
@@ -120,13 +120,6 @@ public class CheckoutFragment extends Fragment {
                 //do nothing
             }
         });
-    }
-
-    @OnClick(R.id.payment_btn)
-    protected void onPayClicked() {
-        if (mCallback != null) {
-            mCallback.onPayClicked();
-        }
     }
 
     public String getPriceString() {

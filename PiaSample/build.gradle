@@ -1,16 +1,22 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 buildscript {
 
+    //section-start-to-remove-by-script class=baseStep
+    ext.kotlin_version = '1.8.22'
+
+    //section-end-to-remove-by-script
 
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.13.2'
+        //section-start-to-remove-by-script class=baseStep
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        //section-end-to-remove-by-script
         classpath 'com.google.firebase:firebase-appdistribution-gradle:3.2.0'
         classpath 'com.google.gms:google-services:4.3.15'
-
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

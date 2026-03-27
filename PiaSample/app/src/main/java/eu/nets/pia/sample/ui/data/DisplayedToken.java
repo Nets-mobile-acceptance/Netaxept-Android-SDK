@@ -74,25 +74,25 @@ public class DisplayedToken extends PaymentMethod {
     public int getCardSchemeLogo() {
         switch (issuer) {
             case PaymentMethodsFragment.ID_VISA:
-                return R.drawable.pia_visa;
+                return eu.nets.pia.R.drawable.pia_visa;
             case PaymentMethodsFragment.ID_MASTERCARD:
-                return R.drawable.pia_master_card;
+                return eu.nets.pia.R.drawable.pia_master_card;
             case PaymentMethodsFragment.ID_AMERICAN_EXPRESS:
-                return R.drawable.pia_american_express;
+                return eu.nets.pia.R.drawable.pia_american_express;
             case PaymentMethodsFragment.ID_DANKORT:
-                return R.drawable.pia_dan_kort;
+                return eu.nets.pia.R.drawable.pia_dan_kort;
             case PaymentMethodsFragment.ID_JCB:
-                return R.drawable.pia_jcb;
+                return eu.nets.pia.R.drawable.pia_jcb;
             case PaymentMethodsFragment.ID_MAESTRO:
-                return R.drawable.pia_maestro_icon;
+                return eu.nets.pia.R.drawable.pia_maestro_icon;
             case PaymentMethodsFragment.ID_FORBRUGSFORENINGEN:
-                return R.drawable.pia_ic_forbrugsforeningen_logo;
+                return eu.nets.pia.R.drawable.pia_ic_forbrugsforeningen_logo;
             case PaymentMethodsFragment.ID_DINERS:
-                return R.drawable.pia_diners;
+                return eu.nets.pia.R.drawable.pia_diners;
             case PaymentMethodsFragment.ID_S_BUSINESS_CARD:
                 return R.drawable.ic_s_group_card;
             default:
-                return R.drawable.pia_visa;
+                return eu.nets.pia.R.drawable.pia_visa;
         }
     }
 }

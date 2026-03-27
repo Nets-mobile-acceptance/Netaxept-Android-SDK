@@ -18,8 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 import eu.nets.pia.sample.network.model.Method;
@@ -115,15 +113,14 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public class TokenMethodViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.card_scheme_logo)
         ImageView mCardLogo;
-        @BindView(R.id.card_scheme_digits)
         TextView mCardSchemeDigits;
 
 
         public TokenMethodViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            mCardLogo = itemView.findViewById(R.id.card_scheme_logo);
+            mCardSchemeDigits = itemView.findViewById(R.id.card_scheme_digits);
         }
 
         public void setupTokenCardHolder(final DisplayedToken method) {
@@ -147,7 +144,6 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public class NewCardMethodViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.supported_schemes_layout)
         LinearLayout mSupportedSchemesLayout;
 
         //values in DP
@@ -157,7 +153,7 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         public NewCardMethodViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            mSupportedSchemesLayout = itemView.findViewById(R.id.supported_schemes_layout);
         }
 
         public void setupNewCardHolder(final PaymentMethod method) {
@@ -202,15 +198,13 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public class SBusinessViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.card_scheme_logo)
         ImageView mCardLogo;
-
-        @BindView(R.id.payment_type_description)
         TextView mPaymentTypeText;
 
         public SBusinessViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            mCardLogo = itemView.findViewById(R.id.card_scheme_logo);
+            mPaymentTypeText = itemView.findViewById(R.id.payment_type_description);
         }
 
         public void setupPaymentHolder(final PaymentMethod method) {
@@ -270,12 +264,11 @@ public class PaymentMethodsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public class OtherMethodViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.card_scheme_logo)
         ImageView mCardLogo;
 
         public OtherMethodViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            mCardLogo = itemView.findViewById(R.id.card_scheme_logo);
         }
 
         public void setupOtherPaymentHolder(final PaymentMethod method) {

@@ -14,8 +14,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.data.PiaSampleSharedPreferences;
 import eu.nets.pia.sample.network.MerchantRestClient;
@@ -41,24 +39,21 @@ import eu.nets.pia.sample.ui.widget.CustomToolbar;
  */
 
 public class MerchantBESettingsActivity extends AppCompatActivity {
-
-    @BindView(R.id.toolbar)
     CustomToolbar mToolbar;
-    @BindView(R.id.test_env_et)
     EditText mTestEnvEdit;
-    @BindView(R.id.prod_env_et)
     EditText mProdEnvEdit;
-    @BindView(R.id.test_merchant_id_et)
     EditText mTestIdEdit;
-    @BindView(R.id.prod_merchant_id_et)
     EditText mProdIdEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_merchant_be_settings);
-        ButterKnife.bind(this);
-
+        mToolbar = findViewById(R.id.toolbar);
+        mTestEnvEdit = findViewById(R.id.test_env_et);
+        mProdEnvEdit = findViewById(R.id.prod_env_et);
+        mTestIdEdit = findViewById(R.id.test_merchant_id_et);
+        mProdIdEdit = findViewById(R.id.prod_merchant_id_et);
         setupToolbar();
         showPreviousConfiguration();
     }
@@ -136,7 +131,7 @@ public class MerchantBESettingsActivity extends AppCompatActivity {
                             dialog.cancel();
                         }
                     });
-            builder.setNegativeButton(R.string.pia_action_cancel, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(eu.nets.pia.R.string.pia_action_cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();

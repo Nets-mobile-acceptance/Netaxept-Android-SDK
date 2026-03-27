@@ -89,11 +89,11 @@ public class Method implements Parcelable {
             case PaymentMethodsFragment.ID_MAESTRO:
                 return R.drawable.maestro_logo;
             case PaymentMethodsFragment.ID_FORBRUGSFORENINGEN:
-                return R.drawable.pia_ic_forbrugsforeningen_logo;
+                return eu.nets.pia.R.drawable.pia_ic_forbrugsforeningen_logo;
             case PaymentMethodsFragment.ID_S_BUSINESS_CARD:
                 return R.drawable.ic_s_group;
             default:
-                return R.drawable.pia_visa;
+                return eu.nets.pia.R.drawable.pia_visa;
         }
     }
 

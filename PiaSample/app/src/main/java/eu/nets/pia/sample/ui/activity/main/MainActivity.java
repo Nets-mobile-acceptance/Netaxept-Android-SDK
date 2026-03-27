@@ -28,8 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.ProcessResult;
@@ -104,11 +102,8 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    @BindView(R.id.spinner_holder)
     protected RelativeLayout mProgressBar;
-    @BindView(R.id.toolbar_view)
     Toolbar mToolbar;
-    @BindView(R.id.frame_layout)
     FragmentContainerView mFrame;
 
     private AlertDialog mEnvironmentDialog;
@@ -122,8 +117,9 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-
+        mProgressBar = findViewById(R.id.spinner_holder);
+        mToolbar = findViewById(R.id.toolbar_view);
+        mFrame = findViewById(R.id.frame_layout);
         String customerId = PiaSampleSharedPreferences.getCustomerId();
         if (customerId.isEmpty()) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -145,6 +141,10 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
         //first time activity is created show checkout
         changeFragment(new CheckoutFragment());
 
+        //section-start-to-remove-by-script class=finalStep
+        //check if user is running on Nets env
+        checkBaseUrl();
+        //section-end-to-remove-by-script
 
         //This is need to be set so that the SDK remember that what was the Skip Confirmation status.
         PiaInterfaceConfiguration.getInstance().setSkipConfirmationSelected(PiaSampleSharedPreferences.getEnableSkipConfirmation());
@@ -275,11 +275,9 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings_item:
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-                break;
+        if (item.getItemId() == R.id.settings_item) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -600,16 +598,26 @@ public class MainActivity extends AppCompatActivity implements MerchantRestClien
 
     private CardScheme cardSchemeFrom(SchemeType schemeType) {
         switch (schemeType) {
-            case VISA: return CardScheme.visa;
-            case MASTER_CARD: return CardScheme.masterCard;
-            case AMEX: return CardScheme.amex;
-            case DINERS_CLUB_INTERNATIONAL: return CardScheme.dinersClubInternational;
-            case DANKORT: return CardScheme.dankort;
-            case JCB: return CardScheme.jcb;
-            case MAESTRO: return CardScheme.maestro;
-            case FORBRUGSFORENINGEN: return CardScheme.forbrugsforeningen;
-            case SGROUP: return CardScheme.sBusiness;
-            default: return null;
+            case VISA:
+                return CardScheme.visa;
+            case MASTER_CARD:
+                return CardScheme.masterCard;
+            case AMEX:
+                return CardScheme.amex;
+            case DINERS_CLUB_INTERNATIONAL:
+                return CardScheme.dinersClubInternational;
+            case DANKORT:
+                return CardScheme.dankort;
+            case JCB:
+                return CardScheme.jcb;
+            case MAESTRO:
+                return CardScheme.maestro;
+            case FORBRUGSFORENINGEN:
+                return CardScheme.forbrugsforeningen;
+            case SGROUP:
+                return CardScheme.sBusiness;
+            default:
+                return null;
         }
     }
 

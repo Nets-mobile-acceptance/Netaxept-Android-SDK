@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.network.model.Method;
 import eu.nets.pia.sample.network.model.PaymentMethodsResponse;
@@ -72,9 +70,7 @@ public class PaymentMethodsFragment extends Fragment {
     public static final String ID_MOBILE_PAY = "MobilePay";
     public static final String ID_S_BUSINESS_CARD = "SBusinessCard";
 
-    @BindView(R.id.toolbar)
     CustomToolbar mToolbar;
-    @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
     private static String KEY_PAYMENT_METHODS = "KEY_PAYMENT_METHODS";
@@ -110,7 +106,8 @@ public class PaymentMethodsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_payment_methods, container, false);
-        ButterKnife.bind(this, view);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
         return view;
     }
 

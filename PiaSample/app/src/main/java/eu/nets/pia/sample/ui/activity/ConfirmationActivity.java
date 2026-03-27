@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import eu.nets.pia.sample.R;
 import eu.nets.pia.sample.ui.widget.CustomToolbar;
 
@@ -44,13 +42,9 @@ public class ConfirmationActivity extends AppCompatActivity {
     public static final String TITLE = "TITLE";
     public static final String MESSAGE = "MESSAGE";
 
-    @BindView(R.id.custom_toolbar)
     CustomToolbar mToolbar;
-    @BindView(R.id.status_icon)
     ImageView mStatusIcon;
-    @BindView(R.id.status_message)
     TextView mStatusMessage;
-    @BindView(R.id.root_view)
     ConstraintLayout mRootView;
 
     public enum Result {
@@ -61,8 +55,10 @@ public class ConfirmationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmation);
-        ButterKnife.bind(this);
-
+        mToolbar = findViewById(R.id.custom_toolbar);
+        mStatusIcon = findViewById(R.id.status_icon);
+        mStatusMessage = findViewById(R.id.status_message);
+        mRootView = findViewById(R.id.root_view);
         Result result;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             result = getIntent().getSerializableExtra("RESULT", Result.class);

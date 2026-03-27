@@ -42,7 +42,6 @@ public class SampleApplication extends Application {
         PiaSampleSharedPreferences.initPrefs(this);
 
         //set the SDK configuration related to CardIo at runtime
-        PiaInterfaceConfiguration.getInstance().setDisableCardIO(PiaSampleSharedPreferences.isDisableCardIo());
         PiaInterfaceConfiguration.getInstance().setDisableSaveCardOption(PiaSampleSharedPreferences.isDisableSaveCardOption());
 
         //apply custom UI elements to SDK such as colors, fonts and icons
@@ -59,7 +58,7 @@ public class SampleApplication extends Application {
         PiaInterfaceConfiguration.getInstance().setButtonFont(Typeface.SERIF);
         PiaInterfaceConfiguration.getInstance().setFieldFont(Typeface.MONOSPACE);
         PiaInterfaceConfiguration.getInstance().setSaveCardSwitchDefault(true);
-        PiaInterfaceConfiguration.getInstance().setLogoDrawable(ContextCompat.getDrawable(this, R.drawable.pia_digital_payment_by_nets));
+        PiaInterfaceConfiguration.getInstance().setLogoDrawable(ContextCompat.getDrawable(this, eu.nets.pia.R.drawable.pia_digital_payment_by_nets));
 
         //Scan Card UI configuration
         PiaInterfaceConfiguration.getInstance().setCardIOButtonTextFont(Typeface.SERIF);

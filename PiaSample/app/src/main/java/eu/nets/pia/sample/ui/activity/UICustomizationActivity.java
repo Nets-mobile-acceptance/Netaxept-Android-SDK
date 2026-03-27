@@ -20,9 +20,6 @@ import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import eu.nets.pia.PiaInterfaceConfiguration;
 import eu.nets.pia.PiaSDK;
 import eu.nets.pia.sample.R;
@@ -55,13 +52,8 @@ public class UICustomizationActivity extends AppCompatActivity {
      * This Activity is for testing purpose, to understand how SDK UI customization works.
      */
 
-    @BindView(R.id.toolbar)
     CustomToolbar mToolbar;
-
-    @BindView(R.id.nets_save_card_text)
     EditText mSaveCardText;
-
-    @BindView(R.id.use_button_pay_text_label)
     AppCompatSpinner mPayButtonTextLabel;
 
     private PiaSDKTheme customTheme;
@@ -89,8 +81,10 @@ public class UICustomizationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uicustomization);
-        ButterKnife.bind(this);
-
+        mToolbar = findViewById(R.id.toolbar);
+        mSaveCardText = findViewById(R.id.nets_save_card_text);
+        mPayButtonTextLabel = findViewById(R.id.use_button_pay_text_label);
+        initOnClickListeners();
         uiMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         customTheme = PiaSDK.netsStandardThemeForUIMode(uiMode, this);
         netsTheme = PiaSDK.netsStandardThemeForUIMode(uiMode, this);
@@ -98,9 +92,61 @@ public class UICustomizationActivity extends AppCompatActivity {
         setupToolbar();
 
         handleGeneralUICustomizationSwitches();
-        handleCardIoCustomizationSwitches();
         handlePayButtonTextLabel();
         handlePreviousSelection();
+    }
+
+    private void initOnClickListeners() {
+        findViewById(R.id.nets_nav_bar_color).setOnClickListener(v -> onNetsNavBar());
+        findViewById(R.id.dark_nav_bar_color).setOnClickListener(v -> onDarkNavBar());
+
+        findViewById(R.id.nets_nav_bar_item_color).setOnClickListener(v -> onNetsNavBarItem());
+        findViewById(R.id.dark_nav_bar_item_color).setOnClickListener(v -> onDarkNavBarItem());
+
+        findViewById(R.id.nets_nav_bar_title_color).setOnClickListener(v -> onNetsNavBarTitle());
+        findViewById(R.id.dark_nav_bar_title_color).setOnClickListener(v -> onDarkNavBarTitle());
+
+        findViewById(R.id.nets_background_color).setOnClickListener(v -> onNetsBackgroundColor());
+        findViewById(R.id.dark_background_color).setOnClickListener(v -> onDarkBackgroundColor());
+
+        findViewById(R.id.nets_button_text_color).setOnClickListener(v -> onNetsButtonTextColor());
+        findViewById(R.id.dark_button_text_color).setOnClickListener(v -> onDarkButtonTextColor());
+
+        findViewById(R.id.nets_button_background).setOnClickListener(v -> onNetsButtonBackground());
+        findViewById(R.id.dark_button_background).setOnClickListener(v -> onDarkButtonBackground());
+
+        findViewById(R.id.nets_label_text_color).setOnClickListener(v -> onNetsLabelTextColor());
+        findViewById(R.id.dark_label_text_color).setOnClickListener(v -> onDarkLabelTextColor());
+
+        findViewById(R.id.nets_token_card_cvc_area_color).setOnClickListener(v -> onNetsTokenCardCvcAreaColor());
+        findViewById(R.id.dark_token_card_cvc_area_color).setOnClickListener(v -> onDarkTokenCardCvcAreaColor());
+
+        findViewById(R.id.nets_text_field_color).setOnClickListener(v -> onNetsTextFieldColor());
+        findViewById(R.id.dark_text_field_color).setOnClickListener(v -> onDarkTextFieldColor());
+
+        findViewById(R.id.nets_text_field_background_color).setOnClickListener(v -> onNetsTextFieldBackgroundColor());
+        findViewById(R.id.dark_text_field_background_color).setOnClickListener(v -> onDarkTextFieldBackgroundColor());
+
+        findViewById(R.id.nets_text_field_success_color).setOnClickListener(v -> onNetsTextFieldSuccessColor());
+        findViewById(R.id.dark_text_field_success_color).setOnClickListener(v -> onDarkTextFieldSuccessColor());
+
+        findViewById(R.id.nets_text_field_error_color).setOnClickListener(v -> onNetsTextFieldErrorColor());
+        findViewById(R.id.dark_text_field_error_color).setOnClickListener(v -> onDarkTextFieldErrorColor());
+
+        findViewById(R.id.nets_switch_thumb_color).setOnClickListener(v -> onNetsSwitchThumbColor());
+        findViewById(R.id.dark_switch_thumb_color).setOnClickListener(v -> onDarkSwitchThumbColor());
+
+        findViewById(R.id.nets_switch_on_tint_color).setOnClickListener(v -> onNetsSwitchOnTintColor());
+        findViewById(R.id.dark_switch_on_tint_color).setOnClickListener(v -> onDarkSwitchOnTintColor());
+
+        findViewById(R.id.nets_text_on_hint_color).setOnClickListener(v -> onTextInputHintDefaultColor());
+        findViewById(R.id.orange_text_on_hint_color).setOnClickListener(v -> onTextInputHintCustomColor());
+
+        findViewById(R.id.default_text_border_color).setOnClickListener(v -> onTextInputBorderCustomColor());
+        findViewById(R.id.customer_text_border_color).setOnClickListener(v -> onTextInputBorderDefaultColor());
+
+        findViewById(R.id.nets_switch_turn_off_color).setOnClickListener(v -> onSwitchTurnOffDefaultColor());
+        findViewById(R.id.dark_switch_turn_off_color).setOnClickListener(v -> onSwitchTurnOffDarkColor());
     }
 
     private void handleGeneralUICustomizationSwitches() {
@@ -221,32 +267,6 @@ public class UICustomizationActivity extends AppCompatActivity {
 
     }
 
-    private void handleCardIoCustomizationSwitches() {
-        ((SwitchCompat) findViewById(R.id.use_cardio_text_font)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                useCardIoTextFont = isChecked;
-                if (isChecked) {
-                    ((TextView) findViewById(R.id.cardio_text_font)).setTypeface(Typeface.MONOSPACE);
-                } else {
-                    ((TextView) findViewById(R.id.cardio_text_font)).setTypeface(null);
-                }
-            }
-        });
-
-        ((SwitchCompat) findViewById(R.id.use_button_cardio_text_font)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                useCardIoButtonTextFont = isChecked;
-                if (isChecked) {
-                    ((TextView) findViewById(R.id.cardio_button_text_font)).setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
-                } else {
-                    ((TextView) findViewById(R.id.cardio_button_text_font)).setTypeface(null);
-                }
-            }
-        });
-    }
-
     private void handlePayButtonTextLabel() {
         ArrayList<String> payTextArrayList = new ArrayList<>();
         payTextArrayList.add(PayButtonTextLabelOption.PAY.toString());
@@ -269,12 +289,6 @@ public class UICustomizationActivity extends AppCompatActivity {
         }
         if (configuration.isSaveCardSwitchDefault()) {
             ((SwitchCompat) findViewById(R.id.switch_turn_on_save_card_option)).setChecked(true);
-        }
-        if (configuration.getCardIOTextFont() != null) {
-            ((SwitchCompat) findViewById(R.id.use_cardio_text_font)).setChecked(true);
-        }
-        if (configuration.getCardIOButtonTextFont() != null) {
-            ((SwitchCompat) findViewById(R.id.use_button_cardio_text_font)).setChecked(true);
         }
 
         if (configuration.getSpannableSaveCardText() != null) {
@@ -374,181 +388,153 @@ public class UICustomizationActivity extends AppCompatActivity {
         mToolbar.setupRightView(mSaveAction);
     }
 
-    @OnClick(R.id.nets_nav_bar_color)
     public void onNetsNavBar() {
         customTheme.setToolbarColor(netsTheme.getToolbarColor());
         ((TextView) findViewById(R.id.nav_bar_color)).setTextColor(netsTheme.getToolbarColor());
     }
 
-    @OnClick(R.id.dark_nav_bar_color)
     public void onDarkNavBar() {
         customTheme.setToolbarColor(((ColorDrawable) findViewById(R.id.dark_nav_bar_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.nav_bar_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_nav_bar_color).getBackground()).getColor());
     }
 
-    @OnClick(R.id.nets_nav_bar_item_color)
     public void onNetsNavBarItem() {
         customTheme.setToolbarItemsColor(netsTheme.getToolbarItemsColor());
         ((TextView) findViewById(R.id.nav_bar_item_color)).setTextColor(netsTheme.getToolbarItemsColor());
     }
 
-    @OnClick(R.id.dark_nav_bar_item_color)
     public void onDarkNavBarItem() {
         customTheme.setToolbarItemsColor(((ColorDrawable) findViewById(R.id.dark_nav_bar_item_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.nav_bar_item_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_nav_bar_item_color).getBackground()).getColor());
     }
 
-    @OnClick(R.id.nets_nav_bar_title_color)
     public void onNetsNavBarTitle() {
         customTheme.setToolbarTitleColor(netsTheme.getToolbarTitleColor());
         ((TextView) findViewById(R.id.nav_bar_title_color)).setTextColor(netsTheme.getToolbarTitleColor());
     }
 
-    @OnClick(R.id.dark_nav_bar_title_color)
     public void onDarkNavBarTitle() {
         customTheme.setToolbarTitleColor(((ColorDrawable) findViewById(R.id.dark_nav_bar_title_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.nav_bar_title_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_nav_bar_title_color).getBackground()).getColor());
     }
 
-    @OnClick(R.id.nets_background_color)
     public void onNetsBackgroundColor() {
         customTheme.setBackgroundColor(netsTheme.getBackgroundColor());
         ((TextView) findViewById(R.id.background_color)).setTextColor(netsTheme.getBackgroundColor());
     }
 
-    @OnClick(R.id.dark_background_color)
     public void onDarkBackgroundColor() {
         customTheme.setBackgroundColor(((ColorDrawable) findViewById(R.id.dark_background_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.background_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_background_color).getBackground()).getColor());
     }
 
-    @OnClick(R.id.nets_button_text_color)
     public void onNetsButtonTextColor() {
         customTheme.setButtonTextColor(netsTheme.getButtonTextColor());
         ((TextView) findViewById(R.id.button_text_color)).setTextColor(netsTheme.getButtonTextColor());
     }
 
-    @OnClick(R.id.dark_button_text_color)
     public void onDarkButtonTextColor() {
         customTheme.setButtonTextColor(((ColorDrawable) findViewById(R.id.dark_button_text_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.button_text_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_button_text_color).getBackground()).getColor());
 
     }
 
-    @OnClick(R.id.nets_button_background)
     public void onNetsButtonBackground() {
         customTheme.setButtonBackgroundColor(netsTheme.getButtonBackgroundColor());
         ((TextView) findViewById(R.id.button_background_color)).setTextColor(netsTheme.getButtonBackgroundColor());
     }
 
-    @OnClick(R.id.dark_button_background)
     public void onDarkButtonBackground() {
         customTheme.setButtonBackgroundColor(((ColorDrawable) findViewById(R.id.dark_button_background).getBackground()).getColor());
         ((TextView) findViewById(R.id.button_background_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_button_background).getBackground()).getColor());
     }
 
-    @OnClick(R.id.nets_label_text_color)
     public void onNetsLabelTextColor() {
         customTheme.setLabelTextColor(netsTheme.getLabelTextColor());
         ((TextView) findViewById(R.id.label_text_color)).setTextColor(netsTheme.getLabelTextColor());
 
     }
 
-    @OnClick(R.id.dark_label_text_color)
     public void onDarkLabelTextColor() {
         customTheme.setLabelTextColor(((ColorDrawable) findViewById(R.id.dark_label_text_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.label_text_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_label_text_color).getBackground()).getColor());
 
     }
 
-    @OnClick(R.id.nets_token_card_cvc_area_color)
     public void onNetsTokenCardCvcAreaColor() {
         customTheme.setTokenCardCVCLayoutBackgroundColor(netsTheme.getTokenCardCVCLayoutBackgroundColor());
         ((TextView) findViewById(R.id.token_card_cvc_area_color)).setTextColor(netsTheme.getTokenCardCVCLayoutBackgroundColor());
 
     }
 
-    @OnClick(R.id.dark_token_card_cvc_area_color)
     public void onDarkTokenCardCvcAreaColor() {
         customTheme.setTokenCardCVCLayoutBackgroundColor(((ColorDrawable) findViewById(R.id.dark_token_card_cvc_area_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.token_card_cvc_area_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_token_card_cvc_area_color).getBackground()).getColor());
 
     }
 
-    @OnClick(R.id.nets_text_field_color)
     public void onNetsTextFieldColor() {
         customTheme.setTextFieldTextColor(netsTheme.getTextFieldTextColor());
         ((TextView) findViewById(R.id.text_field_color)).setTextColor(netsTheme.getTextFieldTextColor());
 
     }
 
-    @OnClick(R.id.dark_text_field_color)
     public void onDarkTextFieldColor() {
         customTheme.setTextFieldTextColor(((ColorDrawable) findViewById(R.id.dark_text_field_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.text_field_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_text_field_color).getBackground()).getColor());
 
     }
 
-    @OnClick(R.id.nets_text_field_background_color)
     public void onNetsTextFieldBackgroundColor() {
         customTheme.setTextFieldBackgroundColor(netsTheme.getTextFieldBackgroundColor());
         ((TextView) findViewById(R.id.text_field_background_color)).setTextColor(netsTheme.getTextFieldBackgroundColor());
 
     }
 
-    @OnClick(R.id.dark_text_field_background_color)
     public void onDarkTextFieldBackgroundColor() {
         customTheme.setTextFieldBackgroundColor(((ColorDrawable) findViewById(R.id.dark_text_field_background_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.text_field_background_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_text_field_background_color).getBackground()).getColor());
 
     }
 
-    @OnClick(R.id.nets_text_field_success_color)
     public void onNetsTextFieldSuccessColor() {
         customTheme.setTextFieldSuccessColor(netsTheme.getTextFieldSuccessColor());
         ((TextView) findViewById(R.id.text_field_success_color)).setTextColor(netsTheme.getTextFieldSuccessColor());
 
     }
 
-    @OnClick(R.id.dark_text_field_success_color)
     public void onDarkTextFieldSuccessColor() {
         customTheme.setTextFieldSuccessColor(((ColorDrawable) findViewById(R.id.dark_text_field_success_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.text_field_success_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_text_field_success_color).getBackground()).getColor());
 
     }
 
-    @OnClick(R.id.nets_text_field_error_color)
     public void onNetsTextFieldErrorColor() {
         customTheme.setTextFieldSuccessColor(netsTheme.getTextFieldErrorColor());
         ((TextView) findViewById(R.id.text_field_error_color)).setTextColor(netsTheme.getTextFieldErrorColor());
     }
 
-    @OnClick(R.id.dark_text_field_error_color)
     public void onDarkTextFieldErrorColor() {
         customTheme.setTextFieldErrorColor(((ColorDrawable) findViewById(R.id.dark_text_field_error_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.text_field_error_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_text_field_error_color).getBackground()).getColor());
     }
 
-    @OnClick(R.id.nets_switch_thumb_color)
     public void onNetsSwitchThumbColor() {
         customTheme.setSwitchThumbColor(netsTheme.getSwitchThumbColor());
         ((TextView) findViewById(R.id.switch_thumb_color)).setTextColor(netsTheme.getSwitchThumbColor());
     }
 
-    @OnClick(R.id.dark_switch_thumb_color)
     public void onDarkSwitchThumbColor() {
         customTheme.setSwitchThumbColor(((ColorDrawable) findViewById(R.id.dark_switch_thumb_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.switch_thumb_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_switch_thumb_color).getBackground()).getColor());
     }
 
-    @OnClick(R.id.nets_switch_on_tint_color)
     public void onNetsSwitchOnTintColor() {
         customTheme.setSwitchOnTintColor(netsTheme.getSwitchOnTintColor());
         ((TextView) findViewById(R.id.switch_on_tint_color)).setTextColor(netsTheme.getSwitchOnTintColor());
 
     }
 
-    @OnClick(R.id.dark_switch_on_tint_color)
     public void onDarkSwitchOnTintColor() {
         customTheme.setSwitchOnTintColor(((ColorDrawable) findViewById(R.id.dark_switch_on_tint_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.switch_on_tint_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_switch_on_tint_color).getBackground()).getColor());
@@ -556,14 +542,12 @@ public class UICustomizationActivity extends AppCompatActivity {
     }
 
     /*Cardio text input hint*/
-    @OnClick(R.id.nets_text_on_hint_color)
     public void onTextInputHintDefaultColor() {
         customTheme.setTextFieldHintColor(netsTheme.getTextFieldHintColor());
         ((TextView) findViewById(R.id.text_on_hint_color)).setTextColor(netsTheme.getTextFieldHintColor());
 
     }
 
-    @OnClick(R.id.orange_text_on_hint_color)
     public void onTextInputHintCustomColor() {
         customTheme.setTextFieldHintColor(((ColorDrawable) findViewById(R.id.orange_text_on_hint_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.text_on_hint_color)).setTextColor(((ColorDrawable) findViewById(R.id.orange_text_on_hint_color).getBackground()).getColor());
@@ -571,96 +555,24 @@ public class UICustomizationActivity extends AppCompatActivity {
     }
     /*Cardio text input hint*/
 
-    @OnClick(R.id.default_text_border_color)
     public void onTextInputBorderCustomColor() {
         customTheme.setTextFieldBorderColor(netsTheme.getTextFieldBorderColor());
         ((TextView) findViewById(R.id.text_border_color)).setTextColor(netsTheme.getTextFieldBorderColor());
 
     }
 
-    @OnClick(R.id.customer_text_border_color)
     public void onTextInputBorderDefaultColor() {
         customTheme.setTextFieldBorderColor(((ColorDrawable) findViewById(R.id.customer_text_border_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.text_border_color)).setTextColor(((ColorDrawable) findViewById(R.id.customer_text_border_color).getBackground()).getColor());
 
     }
 
-    //section card io customization
-    @OnClick(R.id.nets_cardio_background_color)
-    public void onNetsCardIoBackground() {
-        customTheme.setCardIOBackgroundColor(netsTheme.getCardIOBackgroundColor());
-        ((TextView) findViewById(R.id.cardio_background_color)).setTextColor(netsTheme.getCardIOBackgroundColor());
-
-    }
-
-    @OnClick(R.id.dark_cardio_background_color)
-    public void onDarkCardIoBackground() {
-        customTheme.setCardIOBackgroundColor(((ColorDrawable) findViewById(R.id.dark_cardio_background_color).getBackground()).getColor());
-        ((TextView) findViewById(R.id.cardio_background_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_cardio_background_color).getBackground()).getColor());
-
-    }
-
-    @OnClick(R.id.nets_cardio_text_color)
-    public void onNetsCardIoTextColor() {
-        customTheme.setCardIOTextColor(netsTheme.getCardIOTextColor());
-        ((TextView) findViewById(R.id.cardio_text_color)).setTextColor(netsTheme.getCardIOTextColor());
-
-    }
-
-    @OnClick(R.id.dark_cardio_text_color)
-    public void onDarkCardIoTextColor() {
-        customTheme.setCardIOTextColor(((ColorDrawable) findViewById(R.id.dark_cardio_text_color).getBackground()).getColor());
-        ((TextView) findViewById(R.id.cardio_text_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_cardio_text_color).getBackground()).getColor());
-
-    }
-
-    @OnClick(R.id.nets_cardio_frame_color)
-    public void onNetsCardIoFrameColor() {
-        customTheme.setCardIOPreviewFrameColor(netsTheme.getCardIOPreviewFrameColor());
-        ((TextView) findViewById(R.id.cardio_frame_color)).setTextColor(netsTheme.getCardIOPreviewFrameColor());
-
-    }
-
-    @OnClick(R.id.dark_cardio_frame_color)
-    public void onDarkCardIoFrameColor() {
-        customTheme.setCardIOPreviewFrameColor(((ColorDrawable) findViewById(R.id.dark_cardio_frame_color).getBackground()).getColor());
-        ((TextView) findViewById(R.id.cardio_frame_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_cardio_frame_color).getBackground()).getColor());
-    }
-
-    @OnClick(R.id.nets_cardio_button_background)
-    public void onNetsCardIoButtonBackgroundColor() {
-        customTheme.setCardIOButtonBackgroundColor(netsTheme.getCardIOButtonBackgroundColor());
-        ((TextView) findViewById(R.id.cardio_button_background)).setTextColor(netsTheme.getCardIOButtonBackgroundColor());
-    }
-
-    @OnClick(R.id.dark_cardio_button_background)
-    public void onDarkCardIoButtonBackgroundColor() {
-        customTheme.setCardIOButtonBackgroundColor(((ColorDrawable) findViewById(R.id.dark_cardio_button_background).getBackground()).getColor());
-        ((TextView) findViewById(R.id.cardio_button_background)).setTextColor(((ColorDrawable) findViewById(R.id.dark_cardio_button_background).getBackground()).getColor());
-    }
-
-    @OnClick(R.id.nets_cardio_button_text_color)
-    public void onNetsCardIoButtonTextColor() {
-        customTheme.setCardIOButtonTextColor(netsTheme.getCardIOButtonTextColor());
-        ((TextView) findViewById(R.id.cardio_button_text_color)).setTextColor(netsTheme.getCardIOButtonTextColor());
-
-    }
-
-    @OnClick(R.id.dark_cardio_button_text_color)
-    public void onDarkCardIoButtonTextColor() {
-        customTheme.setCardIOButtonTextColor(((ColorDrawable) findViewById(R.id.dark_cardio_button_text_color).getBackground()).getColor());
-        ((TextView) findViewById(R.id.cardio_button_text_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_cardio_button_text_color).getBackground()).getColor());
-
-    }
-
-    @OnClick(R.id.nets_switch_turn_off_color)
     public void onSwitchTurnOffDefaultColor() {
         customTheme.setSwitchOffTintColor(netsTheme.getSwitchOffTintColor());
         ((TextView) findViewById(R.id.text_switch_turn_off_color)).setTextColor(netsTheme.getSwitchOffTintColor());
 
     }
 
-    @OnClick(R.id.dark_switch_turn_off_color)
     public void onSwitchTurnOffDarkColor() {
         customTheme.setSwitchOffTintColor(((ColorDrawable) findViewById(R.id.dark_switch_turn_off_color).getBackground()).getColor());
         ((TextView) findViewById(R.id.text_switch_turn_off_color)).setTextColor(((ColorDrawable) findViewById(R.id.dark_switch_turn_off_color).getBackground()).getColor());
