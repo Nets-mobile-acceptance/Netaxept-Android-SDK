@@ -16,17 +16,8 @@ Detailed documentation can be found [here](https://htmlpreview.github.io/?https:
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:eu.nets.pia:pia-sdk:2.7.5') { transitive = true; changing = true; }
+implementation('eu.nets.pia:pia-sdk:eu.nets.pia:pia-sdk:2.7.5')
 ```
-
-**Important:** for the release version of your _.apk_, add the following rules in your application's `proguard-rules.pro` file:
-```pro
-# Rules required by Card.Io library
--keep class eu.nets.pia.cardio.** { *; }
--dontwarn eu.nets.pia.cardio.**
-```
-
-**Note:** the library is available through both `jcenter()` and `mavenCentral()` repositories.
 
 # Frequently Asked Questions
 ---
