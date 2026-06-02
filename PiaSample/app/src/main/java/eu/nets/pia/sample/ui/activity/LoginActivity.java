@@ -103,6 +103,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
     SwitchCompat excludeCoBrandedDankortAndMastercard;
     SwitchCompat includeCustomCardImageSwitch;
     SwitchCompat mSkipConfirmationSwitch;
+    SwitchCompat mDisableCardScannerSwitch;
 
     Spinner mLanguageSpinner;
 
@@ -145,6 +146,7 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
         excludeCoBrandedDankortAndMastercard = findViewById(R.id.exclude_co_branded_dankort_and_mastercard);
         includeCustomCardImageSwitch = findViewById(R.id.switch_disable_image);
         mSkipConfirmationSwitch = findViewById(R.id.switch_sample_skip_confirmation);
+        mDisableCardScannerSwitch = findViewById(R.id.switch_disable_card_scanner);
 
         mLanguageSpinner = findViewById(R.id.language_dropdown);
 
@@ -247,12 +249,22 @@ public class LoginActivity extends AppCompatActivity implements MerchantRestClie
                 }
             });
 
+            mDisableCardScannerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    PiaSampleSharedPreferences.setDisableCardIo(isChecked);
+                    //also, update the flag inside the SDK
+                    PiaInterfaceConfiguration.getInstance().setDisableCardIO(isChecked);
+                }
+            });
+
             mSystemAuthSwitch.setChecked(PiaSampleSharedPreferences.isUseSystemAuth());
             mUrlSwitch.setChecked(PiaSampleSharedPreferences.isPiaTestMode());
 
             excludeCoBrandedDankortAndMastercard.setChecked(!PiaSampleSharedPreferences.getExcludedCardSchemeSet().isEmpty());
 
             mSkipConfirmationSwitch.setChecked(PiaSampleSharedPreferences.getEnableSkipConfirmation());
+            mDisableCardScannerSwitch.setChecked(PiaSampleSharedPreferences.getDisableCardIo());
 
             setupLanguageSpinner();
         }

@@ -41,8 +41,8 @@ public class SampleApplication extends Application {
         //init the preference file from Application Class
         PiaSampleSharedPreferences.initPrefs(this);
 
-        //set the SDK configuration related to CardIo at runtime
         PiaInterfaceConfiguration.getInstance().setDisableSaveCardOption(PiaSampleSharedPreferences.isDisableSaveCardOption());
+        PiaInterfaceConfiguration.getInstance().setDisableCardIO(PiaSampleSharedPreferences.getDisableCardIo());
 
         //apply custom UI elements to SDK such as colors, fonts and icons
         //uncomment the method call to test the customization
@@ -59,10 +59,6 @@ public class SampleApplication extends Application {
         PiaInterfaceConfiguration.getInstance().setFieldFont(Typeface.MONOSPACE);
         PiaInterfaceConfiguration.getInstance().setSaveCardSwitchDefault(true);
         PiaInterfaceConfiguration.getInstance().setLogoDrawable(ContextCompat.getDrawable(this, eu.nets.pia.R.drawable.pia_digital_payment_by_nets));
-
-        //Scan Card UI configuration
-        PiaInterfaceConfiguration.getInstance().setCardIOButtonTextFont(Typeface.SERIF);
-        PiaInterfaceConfiguration.getInstance().setCardIOTextFont(Typeface.MONOSPACE);
 
         //PiaSDK localization language
         PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.SWEDISH);
@@ -82,7 +78,6 @@ public class SampleApplication extends Application {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setColor(ContextCompat.getColor(this, R.color.light_gray));
         drawable.setCornerRadius(8);
-        PiaInterfaceConfiguration.getInstance().setCardIOButtonBackgroundSelector(drawable);
         PiaInterfaceConfiguration.getInstance().setPayButtonText(PayButtonTextLabelOption.RESERVE);
     }
 

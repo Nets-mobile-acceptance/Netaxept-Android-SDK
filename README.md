@@ -1,4 +1,4 @@
-# PiA - Netaxept Android SDK v2.7.6
+# PiA - Netaxept Android SDK v2.7.8
 ----
 ![Logo](readme-files/NetsLogo.jpg)
 
@@ -16,7 +16,7 @@ Detailed documentation can be found [here](https://htmlpreview.github.io/?https:
 ----
 In your `build.gradle` application level file, add:
 ```gradle
-implementation('eu.nets.pia:pia-sdk:2.7.7')
+implementation('eu.nets.pia:pia-sdk:2.7.8') { transitive = true; changing = true; }
 ```
 
 # Frequently Asked Questions

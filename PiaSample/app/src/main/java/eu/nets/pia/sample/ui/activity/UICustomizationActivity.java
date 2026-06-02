@@ -54,7 +54,6 @@ public class UICustomizationActivity extends AppCompatActivity {
 
     CustomToolbar mToolbar;
     EditText mSaveCardText;
-    AppCompatSpinner mPayButtonTextLabel;
 
     private PiaSDKTheme customTheme;
     private PiaSDKTheme netsTheme;
@@ -70,9 +69,6 @@ public class UICustomizationActivity extends AppCompatActivity {
     private final Integer mEditFieldRoundedCorner = 50;
     //end section
 
-    //section cardio customization
-    private boolean useCardIoTextFont;
-    private boolean useCardIoButtonTextFont;
 
     private int uiMode;
     //end section
@@ -83,7 +79,6 @@ public class UICustomizationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_uicustomization);
         mToolbar = findViewById(R.id.toolbar);
         mSaveCardText = findViewById(R.id.nets_save_card_text);
-        mPayButtonTextLabel = findViewById(R.id.use_button_pay_text_label);
         initOnClickListeners();
         uiMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         customTheme = PiaSDK.netsStandardThemeForUIMode(uiMode, this);
@@ -92,7 +87,6 @@ public class UICustomizationActivity extends AppCompatActivity {
         setupToolbar();
 
         handleGeneralUICustomizationSwitches();
-        handlePayButtonTextLabel();
         handlePreviousSelection();
     }
 
@@ -267,15 +261,6 @@ public class UICustomizationActivity extends AppCompatActivity {
 
     }
 
-    private void handlePayButtonTextLabel() {
-        ArrayList<String> payTextArrayList = new ArrayList<>();
-        payTextArrayList.add(PayButtonTextLabelOption.PAY.toString());
-        payTextArrayList.add(PayButtonTextLabelOption.RESERVE.toString());
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, payTextArrayList);
-        mPayButtonTextLabel.setAdapter(adapter);
-    }
-
     private void handlePreviousSelection() {
         PiaInterfaceConfiguration configuration = PiaInterfaceConfiguration.getInstance();
         if (configuration.getLogoDrawable() != null) {
@@ -320,12 +305,6 @@ public class UICustomizationActivity extends AppCompatActivity {
         } else {
             ((SwitchCompat) findViewById(R.id.switch_sample_button_rounded_corner)).setChecked(false);
         }
-        if (configuration.getPayButtonText() == PayButtonTextLabelOption.PAY) {
-            mPayButtonTextLabel.setSelection(0);
-        } else {
-            mPayButtonTextLabel.setSelection(1);
-        }
-
         //end section
     }
 
@@ -342,28 +321,13 @@ public class UICustomizationActivity extends AppCompatActivity {
         configuration.setButtonFont(mUseSampleFont ? Typeface.SERIF : null);
         configuration.setFieldFont(mUseSampleFont ? Typeface.SERIF : null);
         configuration.setLabelFont(mUseSampleFont ? Typeface.SERIF : null);
-        configuration.setCardIOTextFont(mUseSampleFont ? Typeface.SERIF : null);
-        configuration.setCardIOButtonTextFont(mUseSampleFont ? Typeface.SERIF : null);
 
-        //create gradient drawable for testing purpose
-        //it's recommended to pass here the XML drawable for button states: normal, pressed, disabled
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setColor(customTheme.getCardIOBackgroundColor());
-
-        drawable.setCornerRadius(8);
-        configuration.setCardIOButtonBackgroundSelector(drawable);
-
-        configuration.setCardIOTextFont(useCardIoTextFont ? Typeface.MONOSPACE : null);
-        configuration.setCardIOButtonTextFont(useCardIoButtonTextFont ? Typeface.MONOSPACE : null);
         configuration.setSaveCardSwitchDefault(mTurnSaveCardSwitchOn);
 
         configuration.setSpannableSaveCardText(new SpannableString(mSaveCardText.getText().toString()));
         if (configuration.getButtonRoundCorner() != null) {
             configuration.setButtonRoundCorner((int) getResources().getDimension(R.dimen.custom_button_radius));
         }
-        configuration.setPayButtonText((mPayButtonTextLabel.getSelectedItem().toString().equals("PAY"))
-                ? PayButtonTextLabelOption.PAY : PayButtonTextLabelOption.RESERVE);
-
     }
 
     private void setupToolbar() {

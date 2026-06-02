@@ -58,16 +58,8 @@
         <li>Please add dependency on the following library to the <code>build.gradle</code> file.</li>
     </ul>
     <pre><code class="language-gradle"><span class="hljs-keyword">dependencies</span> {
-	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.7.7'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
+	implementation(<span class="hljs-string">'eu.nets.pia:pia-sdk:2.7.8'</span>) { transitive = <span class="hljs-keyword">true</span>; changing = <span class="hljs-keyword">true</span>;}
         }
-    </code></pre>
-    <ul>
-        <li>In your application's <code>proguard-rules.pro</code> file, add the following rules for <strong>Card.Io</strong> library:
-            </ul>
-    <pre><code class="language-gradle">
-        #Rules required by Card.Io library
-        -<span class="hljs-keyword">keep</span> class <span class="hljs-string">eu.nets.pia.cardio.**</span> { *; }
-        -<span class="hljs-keyword">dontwarn</span> <span class="hljs-string">eu.nets.pia.cardio.**</span>
     </code></pre>
     <ul>
         <li><strong>PiA SDK</strong> is using Retrofit open-source HTTP client library for the network service which requires the acknowledgement and the same applies to the app that utilizes it needs to add acknowledgement for Retrofit reference library also. You can find it via <a href="http://square.github.io/retrofit/">Retrofit</a>.</li>
@@ -484,7 +476,7 @@
             <hr>
             <p>Below you can find the interaction between the application that uses the PiA SDK and the PiA SDK for the <strong>Register Flow</strong>:</p>
             <p><img src="doc-files/register_flow.png" alt="Register flow image"></p>
-                <p><strong>Note:</strong> Camera permission is handled automatically by the Card.IO library.</p>
+                <p><strong>Note:</strong> Camera permission is handled automatically by the Lens24 library.</p>
                
 			   <p>SDK now offers a declarative approach to instantiate a Paypal payment flow, with a callback for making a registeration request and giving response to SDK via callback.</p>
 				
@@ -518,7 +510,7 @@
 	
                 <p><strong>The main flow for registering a card:</strong></p>
                 <ul>
-                    <li>Scan Credit Card screen is displayed. User can scan the card, to simplify the process, or can proceed to Manual Entry screen. After scanning successfully, he will be prompted to manual entry screen, with the fields pre-populated (card number and expiration date - if were detected the <a href="https://github.com/card-io">Card.IO</a> library), to check if the data is valid, and correct if necessary.</li>
+                    <li>Scan Credit Card screen is displayed. User can scan the card, to simplify the process, or can proceed to Manual Entry screen. After scanning successfully, he will be prompted to manual entry screen, with the fields pre-populated (card number and expiration date - if were detected the <a href="https://github.com/vlasentiy/Lens24">Lens24</a> library), to check if the data is valid, and correct if necessary.</li>
                     <li>User fills the CVV/CVC, and click Save Card button.</li>
                     <li>3D Secure WebView is prompted (3DS authentication is performed unless it has been waived by you or your chosen card acquirer). Here he can navigate inside this web page, using custom build controls (Back, Forward, Close).</li>
                     <li>If user closes the webview (or clicks hardware back button) he will return to the manual entry page.</li>
@@ -1122,7 +1114,7 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
 <h2 id='other-configurations' class='heading'>Other Configurations</h2>
 
 
-    <p>The SDK offers customization of fonts, margins and other settings thorough <code>PiaInterfaceConfiguration.getInstance()</code>. Among these settings are <em>CardIO</em> scanning interface customization, a <em>disableSaveCardOption</em> boolean to manage the visibility of <em>save card for later use</em> enquiry as well as custom <code>attributedSaveCardText</code> for the enquiry.<br>
+    <p>The SDK offers customization of fonts, margins and other settings thorough <code>PiaInterfaceConfiguration.getInstance()</code>. Among these settings are <em>Lens24</em> scanning interface customization, a <em>disableSaveCardOption</em> boolean to manage the visibility of <em>save card for later use</em> enquiry as well as custom <code>attributedSaveCardText</code> for the enquiry.<br>
     <p><strong>Note:</strong> The SDK now supports dynamic language configuration. Through <code>PiaInterfaceConfiguration</code>, the SDK can ignore the device's locale, and use only the specified one. The possible values are found in the <code>PiaLanguage</code> enum:
     </p>
     <pre><code class="language-java">
@@ -1167,10 +1159,6 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
 		PiaInterfaceConfiguration.getInstance().setLogoDrawable(ContextCompat.getDrawable(<span class="hljs-keyword">this</span>, R.drawable.digital_payment_by_nets));
 		PiaInterfaceConfiguration.getInstance().setDisableSaveCardOption(true);
     
-    <span class="hljs-comment">//Scan Card UI configuration</span>
-		PiaInterfaceConfiguration.getInstance().setCardIOButtonTextFont(Typeface.SERIF);
-		PiaInterfaceConfiguration.getInstance().setCardIOTextFont(Typeface.MONOSPACE);
-    
     <span class="hljs-comment">//PiaSDK localization language</span>
 		PiaInterfaceConfiguration.getInstance().setPiaLanguage(PiaLanguage.<span class="hljs-keyword">SWEDISH</span>);
     
@@ -1186,27 +1174,8 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
 		PiaInterfaceConfiguration.getInstance().setActionButtonBottomMargin(50);
 		PiaInterfaceConfiguration.getInstance().setFieldRoundCorner(50);
 		PiaInterfaceConfiguration.getInstance().setButtonRoundCorner(R.drawable.custom_rounded_button);
-		GradientDrawable drawable = new GradientDrawable();
-		drawable.setColor(ContextCompat.getColor(<span class="hljs-keyword">this</span>, R.color.light_gray));
-		drawable.setCornerRadius(8);
-		PiaInterfaceConfiguration.getInstance().setCardIOButtonBackgroundSelector(drawable);
     }
     </code></pre>
-    <p>For further understanding, please check the sample code as well as these images below:</p>
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th style="text-align:center">Card IO</th>
-                <th style="text-align:center">Card IO dark</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td style="text-align:center"><img src="doc-files/Android_UI_Customization_for_CardIOView.png" width="90%" height="auto" alt=""></td>
-                <td style="text-align:center"><img src="doc-files/Android_UI_Customization_dark_theme_for_CardIOView.png" width="90%" height="auto" alt=""></td>
-            </tr>
-        </tbody>
-    </table>
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
@@ -1285,7 +1254,7 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
     <h1><a id="Limitations"></a>Limitations</h1>
     <hr>
     <p>Known limitations in the SDK:</p>
-    <p><strong>Card IO Library - Scanner</strong></p>
+    <p><strong>Lens24 - Scanner</strong></p>
     <ul>
         <li>Non-embossed cards cannot be scanned</li>
         <li>Expiry Date cannot always be scanned</li>
@@ -1299,7 +1268,7 @@ PiaSDK.setTheme(darkTheme, Configuration.UI_MODE_NIGHT_YES)
     <h1><a id="Disable_card_scanner"></a>Disable card scanner</h1>
     <hr>
     <p>If you wish to disable card scanning functionality, you can toggle the following parameter within <code>PiaInterfaceConfiguration</code> API.</p>
-    <pre><code class="language-java">  PiaInterfaceConfiguration.getInstance().setDisableCardIO(true);</code></pre>
+    <pre><code class="language-java">  PiaInterfaceConfiguration.getInstance().setDisableCardScanner(true);</code></pre>
     <h1><a id="Error_Codes_Handling"></a>Error Codes Handling</h1>
     <hr>
     <p>In the following link, you can find the Microsoft Excel document with the error codes handled inside the <strong>PiA SDK</strong>, along with further description on how they are used. <a href="error-codes/PiA_SDK-Netaxept_-_Response_codes.xlsx">PiA SDK - Netaxept - Response codes</a></p>
@@ -1961,7 +1930,7 @@ The above copyright notice and this permission notice shall be included in all c
     <li>Fix 16kB page size issue</li>
     <li>Added Android 16 support</li>
 </ul>
-<h4><a id="v276_Released_06May2026"></a>v2.7.6 Released: 05-May-2026</h4>
+<h4><a id="v276_Released_06May2026"></a>v2.7.6 Released: 06-May-2026</h4>
 <h4><a id="Release_notes_757"></a>Release notes:</h4>
 <ul>
     <li>Added landscape support for SDK screens</li>
@@ -1969,11 +1938,16 @@ The above copyright notice and this permission notice shall be included in all c
     <li>Minor UI fixes</li>
     <li>Fixed app crashes caused by the Mobile SDK</li>
 </ul>
-<h4><a id="v276_Released_06May2026"></a>v2.7.7 Released: 12-May-2026</h4>
-<h4><a id="Release_notes_757"></a>Release notes:</h4>
+<h4><a id="v277_Released_12May2026"></a>v2.7.7 Released: 12-May-2026</h4>
+<h4><a id="Release_notes_758"></a>Release notes:</h4>
 <ul>
     <li>Minor UI fixes</li>
 </ul>
+    <h4><a id="v278_Released_01Jun2026"></a>v2.7.8 Released: 01-Jun-2026</h4>
+    <h4><a id="Release_notes_759"></a>Release notes:</h4>
+    <ul>
+        <li>Add disabling card scanner</li>
+    </ul>
 <h4><a id="PSD2_requirements"></a>PSD2 requirements:</h4>
 
 <ul>

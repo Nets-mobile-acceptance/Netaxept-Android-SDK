@@ -330,10 +330,35 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/exclude_branded_dankort_and_master_card"
+                    android:id="@+id/disable_card_scanner_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/sample_fast_flow_container"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/text_disable_card_scanner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/disable_card_scanner"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/pia_text_normal" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_disable_card_scanner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:theme="@style/SwitchStyleBasic" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/exclude_branded_dankort_and_master_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/disable_card_scanner_container"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 

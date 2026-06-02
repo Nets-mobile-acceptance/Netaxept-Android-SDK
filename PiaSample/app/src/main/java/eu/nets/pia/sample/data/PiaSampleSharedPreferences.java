@@ -91,7 +91,7 @@ public class PiaSampleSharedPreferences {
         prefsEditor.commit();
     }
 
-    public static boolean isDisableCardIo() {
+    public static boolean getDisableCardIo() {
         return mSharedPrefs.getBoolean(DISABLE_CARD_IO, false);
     }
 
